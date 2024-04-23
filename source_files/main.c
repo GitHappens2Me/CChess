@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "../header_files/board.h"
 #include "../header_files/main.h"
 #include "../header_files/inout.h"
+#include "../header_files/move.h"
 
 int main(int argc, char *argv[]) {
 
@@ -17,7 +19,14 @@ int main(int argc, char *argv[]) {
 
     print_board(board);
     
+    Move test = {0x100, 0x10000, 0};
+
+    apply_move(board, test);
+    
+    print_board(board);
+
     /*
+
     printf("\n");
     for (int i = 0; i < NUM_OF_PIECE_TYPES; i++){
         printf("%d:\n", i);

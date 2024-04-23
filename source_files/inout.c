@@ -20,7 +20,7 @@
 void print_pieces(Board* board, int piecetype){
 
    //uint64_t all_pieces = get_all_pieces(board);
-    uint64_t all_pieces = board->state[piecetype];
+    uint64_t all_pieces = board->pieces[piecetype];
 
     // Determine the number of bits in an int64_t
     int numBits = sizeof(all_pieces) * 8;
@@ -56,18 +56,19 @@ void print_board(Board* board){
     str_board[NUM_OF_BITS] = '\0'; // Null terminate the string
     
     for(int piece_type = 0; piece_type < NUM_OF_PIECE_TYPES; piece_type++){
-        uint64_t current_pieces = board->state[piece_type];
+        uint64_t current_pieces = board->pieces[piece_type];
         for (int i = NUM_OF_BITS - 1; i >= 0; i--) {   
             if (current_pieces & ((uint64_t)1 << i)){
                 str_board[NUM_OF_BITS - 1 - i] = get_symbol_for_piecetype(piece_type);
             }  
         }
     }
-
+    printf("\n");
     for(int i = 0; i < strlen(str_board); i++){
         printf("%c", str_board[i]);
         if((i+1) % NUM_OF_COLLUMNS == 0) printf("\n");
     }
+    printf("\n");
 }
 
 char get_symbol_for_piecetype(int piece_type){
@@ -84,9 +85,9 @@ char get_symbol_for_piecetype(int piece_type){
         case 9: return 'b';
         case 10: return 'q';
         case 11: return 'k';
-        default: 
+        default:
             printf("No piece-symbol for %i", piece_type);
             exit(EXIT_FAILURE);
-}
+    }
 
 }

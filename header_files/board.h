@@ -1,7 +1,8 @@
 #pragma once
 
-#include <stdlib.h>
 #include <stdint.h>
+#include "../header_files/move.h"
+
 
 #define NUM_OF_COLLUMNS (8)
 #define NUM_OF_ROWS (8)
@@ -25,7 +26,8 @@
 
 typedef struct {
     // defines the current State of pieces on the board
-    uint64_t* state;
+    // via 12 64Bit integers
+    uint64_t* pieces;
     // TODO: Castling Rights
     // TODO: en Passant
 } Board;
@@ -39,3 +41,5 @@ void initialize_board(Board* board);
 
 // returns integer that represents the position of all pieces (white and black)
 uint64_t get_all_pieces(Board* board);
+
+int apply_move(Board* board, Move move);

@@ -3,6 +3,8 @@
         "stdlib.h": "c",
         "board.h": "c",
         "stdio.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "move.h": "c",
+        "stdint.h": "c"
     }
 }
