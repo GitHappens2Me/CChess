@@ -89,5 +89,23 @@ char get_symbol_for_piecetype(int piece_type){
             printf("No piece-symbol for %i", piece_type);
             exit(EXIT_FAILURE);
     }
+}
 
+void print_position(uint64_t position){
+    // Determine the number of bits in an int64_t
+    int numBits = sizeof(position) * 8;
+    
+    // Iterate through each bit from left to right
+    for (int i = numBits - 1; i >= 0; i--) {
+        // Check if the current bit is set
+        if (position & ((uint64_t)1 << i))
+            printf("1");
+        else
+            printf("0");
+
+        if(i % 8 == 0){
+            printf("\n");
+        }
+    }
+    printf("\n");
 }

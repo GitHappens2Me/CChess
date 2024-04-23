@@ -6,6 +6,7 @@
 #include "../header_files/main.h"
 #include "../header_files/inout.h"
 #include "../header_files/move.h"
+#include "../header_files/notation.h"
 
 int main(int argc, char *argv[]) {
 
@@ -34,6 +35,14 @@ int main(int argc, char *argv[]) {
         printf("\n");
     
     }*/
+
+
+    while (1) {
+        char input[100];
+        printf("Enter a position ");
+        scanf("%s", &input);
+        print_position(get_bitmap_from_position(input));
+    }
     printf("Bye Bye\n");
     
 }
