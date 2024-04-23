@@ -3,6 +3,7 @@
 
 #include "../header_files/board.h"
 #include "../header_files/main.h"
+#include "../header_files/inout.h"
 
 int main(int argc, char *argv[]) {
 
@@ -14,7 +15,7 @@ int main(int argc, char *argv[]) {
 
     initialize_board(board);
 
-    //print_board(board);
+    print_board(board);
     
     /*
     printf("\n");
@@ -23,7 +24,7 @@ int main(int argc, char *argv[]) {
         print_pieces(board, i);
         printf("\n");
     
-    }
+    }*/
     printf("Bye Bye\n");
-    */
+    
 }

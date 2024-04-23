@@ -7,6 +7,7 @@
 
 // Allocates the necessary memory to a board
 void create_board(Board** board){
+    printf("Creating Board\n");
     *board = ( Board *)malloc(sizeof(Board));
     (*board)->state = (int64_t *)malloc(NUM_OF_ROWS * sizeof(int64_t));
     for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
@@ -14,32 +15,11 @@ void create_board(Board** board){
     }
 }
 
-// prints the given board in a human-readable form to the console 
-void print_pieces(Board* board, int piecetype){
 
-   //uint64_t all_pieces = get_all_pieces(board);
-    uint64_t all_pieces = board->state[piecetype];
-
-    // Determine the number of bits in an int64_t
-    int numBits = sizeof(all_pieces) * 8;
-    
-    // Iterate through each bit from left to right
-    for (int i = numBits - 1; i >= 0; i--) {
-        // Check if the current bit is set
-        if (all_pieces & ((uint64_t)1 << i))
-            printf("1");
-        else
-            printf("0");
-
-        if(i % 8 == 0){
-            printf("\n");
-        }
-    }
-    printf("\n");
-}
 
 // initializes board to start position
 void initialize_board(Board* board){
+    printf("Initializing Board\n");
     board->state[WHITE_PAWNS] = 0x000000000000FF00;
     board->state[WHITE_ROOKS] = 0x0000000000000081;
     board->state[WHITE_KNIGHTS] = 0x0000000000000042;
