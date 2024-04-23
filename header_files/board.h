@@ -7,6 +7,19 @@
 #define NUM_OF_ROWS (8)
 #define NUM_OF_PIECE_TYPES (12)
 
+#define WHITE_PAWNS 0
+#define WHITE_ROOKS 1
+#define WHITE_KNIGHTS 2
+#define WHITE_BISHOPS 3
+#define WHITE_QUEENS 4
+#define WHITE_KING 5
+#define BLACK_PAWNS 6
+#define BLACK_ROOKS 7
+#define BLACK_KNIGHTS 8
+#define BLACK_BISHOPS 9
+#define BLACK_QUEENS 10
+#define BLACK_KING 11
+
 
 
 typedef struct {
@@ -20,7 +33,7 @@ typedef struct {
 void create_board(Board** board);
 
 // prints the given board in a human-readable form to the console 
-void print_board(Board* board);
+void print_pieces(Board* board, int piecetype);
 
 // initializes board to start position
 void initialize_board(Board* board);

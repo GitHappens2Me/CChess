@@ -14,7 +14,16 @@ int main(int argc, char *argv[]) {
 
     initialize_board(board);
 
-    print_board(board);
-
+    //print_board(board);
+    
+    /*
+    printf("\n");
+    for (int i = 0; i < NUM_OF_PIECE_TYPES; i++){
+        printf("%d:\n", i);
+        print_pieces(board, i);
+        printf("\n");
+    
+    }
     printf("Bye Bye\n");
+    */
 }
