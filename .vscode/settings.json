@@ -5,6 +5,7 @@
         "stdio.h": "c",
         "main.h": "c",
         "move.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "notation.h": "c"
     }
 }

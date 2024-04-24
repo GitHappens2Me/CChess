@@ -41,7 +41,10 @@ int main(int argc, char *argv[]) {
         char input[100];
         printf("Enter a position ");
         scanf("%s", &input);
-        print_position(get_bitmap_from_position(input));
+        if(get_bitmap_from_position(input)){
+            print_position(get_bitmap_from_position(input));
+        }
+        
     }
     printf("Bye Bye\n");
     
