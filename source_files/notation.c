@@ -24,7 +24,7 @@
  * 
  *  returns: corresponding bitmap as uint64_t
  */
-uint64_t get_bitmap_from_position(char* notation){
+uint64_t get_bitmap_from_notation(char* notation){
     if(strlen(notation) != 2){
         printf("Notation %s not valid!\n", notation);
         return 0;
@@ -32,21 +32,46 @@ uint64_t get_bitmap_from_position(char* notation){
 
     //printf("not: %s\n", notation);
 
-    int column = tolower(notation[0]) - 'a';
+    int column = tolower(notation[0]) - 'a';    // 0 - 7
     //printf("col: %d\n", column);
 
-    int row = (notation[1] - '0') - 1;
+    int row = (notation[1] - '0') - 1;      // 0 - 7
     //printf("row: %d\n", row);
 
     if(column < 0 || column >= NUM_OF_COLLUMNS || row < 0 || row >= NUM_OF_ROWS){
         printf("Notation %s not valid!", notation);
         return 0;
     }
-    /*
-    position = position << (7 - column);
-    position = position << (8 * row);*/
 
+    // bitshift 1ULL (0x..001) to correct position
     uint64_t position = 1ULL << (NUM_OF_COLLUMNS * row + (7 - column));
 
     return position;
+}
+
+
+/*
+ *  Returns the corresponding chess notation from a given uint64_t bitmap.
+ *  Bitmap: uint64_t bitmap representing the position of a piece.
+ *  Returns: corresponding chess notation as char*
+ */
+char* get_notation_from_bitmap(uint64_t bitmap) {
+    char* notation = (char*)malloc(3 * sizeof(char));
+    int row = 0, column = 0;
+
+    // Find the row and column of the set bit (1)
+    for (int i = 0; i < 64; ++i) {
+        if (bitmap & (1ULL << i)) {
+            row = i / NUM_OF_ROWS;
+            column = i % NUM_OF_COLLUMNS;
+            break;
+        }
+    }
+
+    // Convert row and column to chess notation
+    notation[0] = 'a' + column;
+    notation[1] = '1' + row;
+    notation[2] = '\0'; // Null-terminate the string
+
+    return notation;
 }
