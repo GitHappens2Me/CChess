@@ -1,6 +1,8 @@
 #pragma once
 
+//#include "../header_files/board.h"
 
+// gcc -o main main.c board.c inout.c move.c .\notation.c
 
 /*
 

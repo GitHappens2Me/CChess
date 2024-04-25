@@ -35,16 +35,16 @@ int main(int argc, char *argv[]) {
         printf("\n");
     
     }*/
-
+    print_position(get_pieces_of_player(board, PLAYER_BLACK));
 
     while (1) {
         char input[100];
         printf("Enter a position ");
         scanf("%s", &input);
-        /*
+        
         if(get_bitmap_from_notation(input)){
             print_position(get_bitmap_from_notation(input));
-        }*/
+        }
         if(get_bitmap_from_notation(input)){
             print_position(rook_move_vector(get_bitmap_from_notation(input)));
         }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 
+
 typedef struct {
     uint64_t origin;
     uint64_t destination;
@@ -16,3 +17,4 @@ typedef struct {
 // returns bitmap of possible "movement vector". 
 // -> all squares a rook at given position can move to on an empty board 
 uint64_t rook_move_vector(uint64_t position);
+

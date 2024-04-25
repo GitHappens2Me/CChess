@@ -56,3 +56,18 @@ int apply_move(Board* board, Move move){
         //TODO Capture etc.
     }
 }
+
+
+uint64_t get_pieces_of_player(Board* board, int player){
+    uint64_t all_pieces = 0;
+    if(player == PLAYER_WHITE){
+        for(int i = 0; i < 6; i++){
+            all_pieces = all_pieces | board->pieces[i];
+        }
+    }else if(player == PLAYER_BLACK){
+        for(int i = 6; i < 12; i++){
+            all_pieces = all_pieces | board->pieces[i];
+        }
+    }
+    return all_pieces; 
+}

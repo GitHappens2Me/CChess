@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "../header_files/move.h"
+#include "../header_files/board.h"
 
 
 #define NUM_OF_COLLUMNS (8)
@@ -22,6 +23,8 @@
 #define BLACK_QUEENS 10
 #define BLACK_KING 11
 
+#define PLAYER_WHITE 0
+#define PLAYER_BLACK 1
 
 
 typedef struct {
@@ -43,3 +46,7 @@ void initialize_board(Board* board);
 uint64_t get_all_pieces(Board* board);
 
 int apply_move(Board* board, Move move);
+
+uint64_t get_pieces_of_player(Board* board, int player);
+
+Move* generate_peseudolegal_moves(Board board, int player);
