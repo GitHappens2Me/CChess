@@ -99,9 +99,6 @@ uint64_t generate_legal_moves_for_piece(Board* board, uint64_t position){
 }
 
 
-//TODO move move generation to move_generation.c 
-// Probkems with "Include"?
-
 uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player){
     uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
@@ -109,15 +106,15 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
     uint64_t next = position;
 
     // parameters for {right, left, down, up}
-    int dir_of_bitshift[] = {RIGHT, LEFT, RIGHT, LEFT};
-    int num_of_bitshift[] = {1, 1, 8, 8};
+    int shift_direction[] = {RIGHT, LEFT, RIGHT, LEFT};
+    int shift_amount[] = {1, 1, 8, 8};
     uint64_t edges[] = {COLLUMN_h, COLLUMN_a, ROW_1, ROW_8};
 
     // move in all direction
     for(int direction = 0; direction < 4; direction++){
         for(int i = 0; i < NUM_OF_COLLUMNS; i++){   // TODO: NUM_OF_COLLUMNS only works for square boards (i think thats fine tho)
-            if     (dir_of_bitshift[direction] == LEFT ) next <<= num_of_bitshift[direction];
-            else if(dir_of_bitshift[direction] == RIGHT) next >>= num_of_bitshift[direction];
+            if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
+            else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
             // Collision with own piece
             if(next & own_pieces){
                 break;
@@ -137,7 +134,38 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
 }
 
 uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player){
-    return 0;
+        uint64_t possible_moves = position;
+    uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
+    uint64_t own_pieces = get_pieces_of_player(board, player);
+    uint64_t next = position;
+
+    // parameters for {down-right, down-left, up-left, up-right}
+    int shift_direction[] = {RIGHT, RIGHT, LEFT, LEFT};
+    int shift_amount[] = {9, 7, 9, 7};
+    uint64_t edges_vertical[] = {ROW_1, ROW_1, ROW_8, ROW_8};
+    uint64_t edges_horizontal[] = {COLLUMN_h, COLLUMN_a, COLLUMN_a, COLLUMN_h};
+
+    // move in all direction
+    for(int direction = 0; direction < 4; direction++){
+        for(int i = 0; i < NUM_OF_COLLUMNS; i++){   // TODO: NUM_OF_COLLUMNS only works for square boards (i think thats fine tho)
+            if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
+            else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
+            // Collision with own piece
+            if(next & own_pieces){
+                break;
+            // Collision with opponent piece or H-FILE reached
+            }else if(next & opponent_pieces || next & edges_horizontal[direction] || next & edges_vertical[direction]){
+                possible_moves |= next;
+                break;
+            // No Collision
+            }else{
+                possible_moves |= next;
+            }
+        }
+    next = position;
+    }
+
+    return possible_moves;
 }
 
 int get_opponent(int player){

@@ -43,7 +43,9 @@ int main(int argc, char *argv[]) {
     //print_position(COLLUMN_a);
     //print_position(ROW_1);
 
-    print_position(generate_pseudolegal_moves_for_rook(board, get_bitmap_from_notation("e4"), PLAYER_WHITE));
+    print_position(generate_pseudolegal_moves_for_rook(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
+    print_position(generate_pseudolegal_moves_for_bishop(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
+
 
 
 
