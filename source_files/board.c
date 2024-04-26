@@ -74,6 +74,27 @@ uint64_t get_pieces_of_player(Board* board, int player){
     return all_pieces; 
 }
 
+
+int get_opponent(int player){
+    if(player == PLAYER_BLACK) return PLAYER_WHITE;
+    if(player == PLAYER_WHITE) return PLAYER_BLACK;
+}
+
+
+
+int get_piece_type_at(Board* board, uint64_t position){
+    for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
+        if((board->pieces[i] & position) != 0){
+            //print_position(board->pieces[i] & position);
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+// ---------- MOVE GENERATION ----------------
+
 //TODO Should i return a bitmap or an array of moves. 
 uint64_t generate_legal_moves_for_piece(Board* board, uint64_t position){
     switch(get_piece_type_at(board, position)){
@@ -95,6 +116,7 @@ uint64_t generate_legal_moves_for_piece(Board* board, uint64_t position){
         case WHITE_KING:
         case BLACK_KING: 
 
+        default: printf("No piece at position"); return 0ULL;
     }
 }
 
@@ -127,14 +149,14 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
                 possible_moves |= next;
             }
         }
-    next = position;
+        next = position;
     }
 
     return possible_moves;
 }
 
 uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player){
-        uint64_t possible_moves = position;
+    uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
     uint64_t own_pieces = get_pieces_of_player(board, player);
     uint64_t next = position;
@@ -162,30 +184,59 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
                 possible_moves |= next;
             }
         }
-    next = position;
+        next = position;
     }
 
     return possible_moves;
 }
 
-int get_opponent(int player){
-    if(player == PLAYER_BLACK) return PLAYER_WHITE;
-    if(player == PLAYER_WHITE) return PLAYER_BLACK;
-}
+uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player){
+    uint64_t possible_moves = position;
+    uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
+    uint64_t own_pieces = get_pieces_of_player(board, player);
+    uint64_t next = position;
 
+    
+    /*
+           2 3
+          1   4
+            N 
+          8   5
+           7 6  
+    */
+    // parameters for {1, 2, 3, 4, 5, 6, 7, 8} (see diagramm above):
+    int shift_direction[] = {LEFT, LEFT, LEFT, LEFT, RIGHT, RIGHT, RIGHT, RIGHT};
+    int shift_amount[] = {10, 17, 15, 6, 10, 17, 15, 6};
 
+    
+    //TODO rename COLLUMN_a to COLLUMN_A
+    uint64_t edges_vertical[] = {ROW_1, ROW_1, ROW_8, ROW_8};
+    uint64_t edges_horizontal[] = {COLLUMN_h, COLLUMN_a, COLLUMN_a, COLLUMN_h};
 
-int get_piece_type_at(Board* board, uint64_t position){
-    for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
-        if((board->pieces[i] & position) != 0){
-            //print_position(board->pieces[i] & position);
-            return i;
+    // move in all direction
+    for(int direction = 0; direction < 8; direction++){
+        next = position;
+        if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
+        else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
+        // Collision with own piece
+
+        if(next & own_pieces){
+            continue;
+        
+        // Collision with opponent piece or H-FILE reached
+
+        }else if(next & opponent_pieces){//TODO Edge cases (also check for e.g. ROW_2 and COLLUMN_b)        
+            possible_moves |= next;
+            continue;
+        // No Collision
+        }else{
+            possible_moves |= next;
         }
     }
-    return -1;
+
+    return possible_moves & ~position;
+
 }
-
-
 
 
 /*
