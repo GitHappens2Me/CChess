@@ -26,6 +26,16 @@
 #define PLAYER_WHITE 0
 #define PLAYER_BLACK 1
 
+#define LEFT 0
+#define RIGHT 1
+
+
+//TODO rename COLLUMN to RANK
+#define ROW_1 0xFF
+#define COLLUMN_a 0x8080808080808080
+#define ROW_8 0xFF00000000000000
+#define COLLUMN_h 0x1010101010101
+
 
 typedef struct {
     // defines the current State of pieces on the board
@@ -49,4 +59,16 @@ int apply_move(Board* board, Move move);
 
 uint64_t get_pieces_of_player(Board* board, int player);
 
-Move* generate_peseudolegal_moves(Board board, int player);
+uint64_t generate_all_legal_moves(Board board, int player);
+uint64_t generate_all_peseudolegal_moves(Board board, int player);
+
+uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position);
+uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player);
+uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player);
+uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player);
+uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player);
+uint64_t generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player);
+uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int player);
+
+int get_piece_type_at(Board* board, uint64_t position);
+int get_opponent(int player);

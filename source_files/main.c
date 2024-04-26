@@ -35,7 +35,17 @@ int main(int argc, char *argv[]) {
         printf("\n");
     
     }*/
+    printf("Black's Pieces:");
     print_position(get_pieces_of_player(board, PLAYER_BLACK));
+
+    printf("Piecetypeindex: %d\n", get_piece_type_at(board, get_bitmap_from_notation("a8")));
+
+    //print_position(COLLUMN_a);
+    //print_position(ROW_1);
+
+    print_position(generate_pseudolegal_moves_for_rook(board, get_bitmap_from_notation("e4"), PLAYER_WHITE));
+
+
 
     while (1) {
         char input[100];

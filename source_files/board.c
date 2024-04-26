@@ -5,6 +5,8 @@
 #include "../header_files/main.h"
 #include "../header_files/board.h"
 #include "../header_files/move.h"
+#include "../header_files/inout.h"
+
 
 // Allocates the necessary memory to a board
 void create_board(Board** board){
@@ -71,3 +73,169 @@ uint64_t get_pieces_of_player(Board* board, int player){
     }
     return all_pieces; 
 }
+
+//TODO Should i return a bitmap or an array of moves. 
+uint64_t generate_legal_moves_for_piece(Board* board, uint64_t position){
+    switch(get_piece_type_at(board, position)){
+        case WHITE_PAWNS:
+        case BLACK_PAWNS: 
+
+        case WHITE_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_WHITE);
+        case BLACK_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_BLACK);
+
+        case WHITE_KNIGHTS:
+        case BLACK_KNIGHTS: 
+
+        case WHITE_BISHOPS: return generate_pseudolegal_moves_for_bishop(board, position, PLAYER_WHITE);
+        case BLACK_BISHOPS: return generate_pseudolegal_moves_for_bishop(board, position, PLAYER_BLACK);
+
+        case WHITE_QUEENS:
+        case BLACK_QUEENS:
+
+        case WHITE_KING:
+        case BLACK_KING: 
+
+    }
+}
+
+
+//TODO move move generation to move_generation.c 
+// Probkems with "Include"?
+
+uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player){
+    uint64_t possible_moves = position;
+    uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
+    uint64_t own_pieces = get_pieces_of_player(board, player);
+    uint64_t next = position;
+
+    // parameters for {right, left, down, up}
+    int dir_of_bitshift[] = {RIGHT, LEFT, RIGHT, LEFT};
+    int num_of_bitshift[] = {1, 1, 8, 8};
+    uint64_t edges[] = {COLLUMN_h, COLLUMN_a, ROW_1, ROW_8};
+
+    // move in all direction
+    for(int direction = 0; direction < 4; direction++){
+        for(int i = 0; i < NUM_OF_COLLUMNS; i++){   // TODO: NUM_OF_COLLUMNS only works for square boards (i think thats fine tho)
+            if     (dir_of_bitshift[direction] == LEFT ) next <<= num_of_bitshift[direction];
+            else if(dir_of_bitshift[direction] == RIGHT) next >>= num_of_bitshift[direction];
+            // Collision with own piece
+            if(next & own_pieces){
+                break;
+            // Collision with opponent piece or H-FILE reached
+            }else if(next & opponent_pieces || next & edges[direction]){
+                possible_moves |= next;
+                break;
+            // No Collision
+            }else{
+                possible_moves |= next;
+            }
+        }
+    next = position;
+    }
+
+    return possible_moves;
+}
+
+uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player){
+    return 0;
+}
+
+int get_opponent(int player){
+    if(player == PLAYER_BLACK) return PLAYER_WHITE;
+    if(player == PLAYER_WHITE) return PLAYER_BLACK;
+}
+
+
+
+int get_piece_type_at(Board* board, uint64_t position){
+    for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
+        if((board->pieces[i] & position) != 0){
+            //print_position(board->pieces[i] & position);
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+
+
+/*
+alter rook code:
+uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player){
+    uint64_t possible_moves = position;
+    uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
+    uint64_t own_pieces = get_pieces_of_player(board, player);
+    uint64_t next = position;
+
+ // Sliding to the right
+    for(int i = 0; i < NUM_OF_COLLUMNS; i++){
+        next >>= 1;
+        // Collision with own piece
+        if(next & own_pieces){
+            break;
+        // Collision with opponent piece or H-FILE reached
+        }else if(next & opponent_pieces || next & COLLUMN_h){
+            possible_moves |= next;
+            break;
+        // No Collision
+        }else{
+            possible_moves |= next;
+        }
+    }
+    next = position;
+
+    // Sliding to the right
+    for(int i = 0; i < NUM_OF_COLLUMNS; i++){
+        next <<= 1;
+        // Collision with own piece
+        if(next & own_pieces){
+            break;
+        // Collision with opponent piece or A-FILE reached
+        }else if(next & opponent_pieces || next & COLLUMN_a){
+            possible_moves |= next;
+            break;
+        // No Collision
+        }else{
+            possible_moves |= next;
+        }
+    }
+    next = position;
+    
+    // Sliding down
+    for(int i = 0; i < NUM_OF_ROWS; i++){
+        next >>= 8;
+        // Collision with own piece
+        if(next & own_pieces){
+            break;
+        // Collision with opponent piece or ROW_1 reached
+        }else if(next & opponent_pieces || next & ROW_1){
+            possible_moves |= next;
+            break;
+        // No Collision
+        }else{
+            possible_moves |= next;
+        }
+    }
+    next = position;
+
+    // Sliding up
+    for(int i = 0; i < NUM_OF_ROWS; i++){
+        next <<= 8;
+        // Collision with own piece
+        if(next & own_pieces){
+            break;
+        // Collision with opponent piece or ROW_8
+        }else if(next & opponent_pieces || next & ROW_8){
+            possible_moves |= next;
+            break;
+        // No Collision
+        }else{
+            possible_moves |= next;
+        }
+    }
+    
+
+    return possible_moves;
+
+*/
