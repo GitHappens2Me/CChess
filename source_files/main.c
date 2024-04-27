@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         printf("Enter a position ");
         scanf("%s", &input);
         
-        print_position(generate_pseudolegal_moves_for_king(board, get_bitmap_from_notation(input), PLAYER_WHITE));
+        print_position(generate_pseudolegal_moves_for_pawn(board, get_bitmap_from_notation(input), PLAYER_BLACK));
 
     }
     printf("Bye Bye\n");

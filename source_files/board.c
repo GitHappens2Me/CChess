@@ -307,82 +307,50 @@ uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, in
 }
 
 
-/*
-alter rook code:
-uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player){
+// TODO Refactor and improve ALL move generation: 
+// replace if-clause with clever bit operations
+uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player){
     uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
     uint64_t own_pieces = get_pieces_of_player(board, player);
     uint64_t next = position;
 
- // Sliding to the right
-    for(int i = 0; i < NUM_OF_COLLUMNS; i++){
-        next >>= 1;
-        // Collision with own piece
-        if(next & own_pieces){
-            break;
-        // Collision with opponent piece or H-FILE reached
-        }else if(next & opponent_pieces || next & COLLUMN_h){
-            possible_moves |= next;
-            break;
-        // No Collision
-        }else{
+    uint64_t start_row;
+    int shift_direction;
+    int shift_amount_diagonal[] = {7,9};  
+
+    if(player == PLAYER_WHITE){
+        start_row = ROW_2;
+        shift_direction = LEFT;
+    }else if(player == PLAYER_BLACK){
+        start_row = ROW_7;
+        shift_direction = RIGHT;
+    }
+
+    if(shift_direction == LEFT) next <<= 8;
+    if(shift_direction == RIGHT) next >>= 8;
+
+    if(!(next & (opponent_pieces | own_pieces))) possible_moves |= next;
+
+
+    if(position & start_row){
+        if(shift_direction == LEFT) next <<= 8;
+        if(shift_direction == RIGHT) next >>= 8;
+        if(~(next & own_pieces) | ~(next & opponent_pieces)) possible_moves |= next;
+    }
+
+    for(int i = 0; i < 2; i++){
+        next = position;
+        if(shift_direction == LEFT) next <<= shift_amount_diagonal[i];
+        if(shift_direction == RIGHT) next >>= shift_amount_diagonal[i];
+
+        //BUG: Prevents capture in both direction when position is on file a or h
+        if ((next & opponent_pieces) && !((position & COLLUMN_a) || (position & COLLUMN_h))) {
             possible_moves |= next;
         }
     }
-    next = position;
+    	
 
-    // Sliding to the right
-    for(int i = 0; i < NUM_OF_COLLUMNS; i++){
-        next <<= 1;
-        // Collision with own piece
-        if(next & own_pieces){
-            break;
-        // Collision with opponent piece or A-FILE reached
-        }else if(next & opponent_pieces || next & COLLUMN_a){
-            possible_moves |= next;
-            break;
-        // No Collision
-        }else{
-            possible_moves |= next;
-        }
-    }
-    next = position;
-    
-    // Sliding down
-    for(int i = 0; i < NUM_OF_ROWS; i++){
-        next >>= 8;
-        // Collision with own piece
-        if(next & own_pieces){
-            break;
-        // Collision with opponent piece or ROW_1 reached
-        }else if(next & opponent_pieces || next & ROW_1){
-            possible_moves |= next;
-            break;
-        // No Collision
-        }else{
-            possible_moves |= next;
-        }
-    }
-    next = position;
+    return possible_moves & ~position;
+}
 
-    // Sliding up
-    for(int i = 0; i < NUM_OF_ROWS; i++){
-        next <<= 8;
-        // Collision with own piece
-        if(next & own_pieces){
-            break;
-        // Collision with opponent piece or ROW_8
-        }else if(next & opponent_pieces || next & ROW_8){
-            possible_moves |= next;
-            break;
-        // No Collision
-        }else{
-            possible_moves |= next;
-        }
-    }
-    
-
-    return possible_moves;
-
-*/
