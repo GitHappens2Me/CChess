@@ -135,13 +135,17 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
     // move in all direction
     for(int direction = 0; direction < 4; direction++){
         for(int i = 0; i < NUM_OF_COLLUMNS; i++){   // TODO: NUM_OF_COLLUMNS only works for square boards (i think thats fine tho)
+            
+            // Prevent moving of the board
+            if(next & edges[direction]) break;
+            
             if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
             else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
             // Collision with own piece
             if(next & own_pieces){
                 break;
-            // Collision with opponent piece or H-FILE reached
-            }else if(next & opponent_pieces || next & edges[direction]){
+            // Collision with opponent piece
+            }else if(next & opponent_pieces){
                 possible_moves |= next;
                 break;
             // No Collision
@@ -152,7 +156,8 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
         next = position;
     }
 
-    return possible_moves;
+    // removes original position from possibles squares to move to
+    return possible_moves & ~position;
 }
 
 uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player){
@@ -170,13 +175,17 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
     // move in all direction
     for(int direction = 0; direction < 4; direction++){
         for(int i = 0; i < NUM_OF_COLLUMNS; i++){   // TODO: NUM_OF_COLLUMNS only works for square boards (i think thats fine tho)
+            
+            // prevent moving of the board
+            if(next & edges_horizontal[direction] || next & edges_vertical[direction]) break;
+                
             if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
             else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
             // Collision with own piece
             if(next & own_pieces){
                 break;
             // Collision with opponent piece or H-FILE reached
-            }else if(next & opponent_pieces || next & edges_horizontal[direction] || next & edges_vertical[direction]){
+            }else if(next & opponent_pieces ){
                 possible_moves |= next;
                 break;
             // No Collision
@@ -186,8 +195,8 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
         }
         next = position;
     }
-
-    return possible_moves;
+    // removes original position from possibles squares to move to
+    return possible_moves & ~position;
 }
 
 uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player){
@@ -218,10 +227,7 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
         // Prevent knight from moving over the edge of the board
         if(next & edges_vertical[direction]  || next & edges_horizontal[direction] || next & edges_spacer[direction]){
             continue;
-        }else{
-            printf("Dir: %d\n",direction);
         }
-
         if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
         else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
         // Collision with own piece
@@ -240,9 +246,13 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
         }
     }
 
-    // removes the knights position from possible squares
+    // removes original position from possibles squares to move to
     return possible_moves & ~position;
 
+}
+
+uint64_t generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player){
+    return generate_pseudolegal_moves_for_bishop(board, position, player) | generate_pseudolegal_moves_for_rook(board, position, player);
 }
 
 

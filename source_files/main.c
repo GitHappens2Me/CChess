@@ -50,20 +50,18 @@ int main(int argc, char *argv[]) {
     print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
 
 
-
-
-
     while (1) {
         char input[100];
         printf("Enter a position ");
         scanf("%s", &input);
         
-        if(get_bitmap_from_notation(input)){
-            print_position(get_bitmap_from_notation(input));
-        }
-        if(get_bitmap_from_notation(input)){
-            print_position(rook_move_vector(get_bitmap_from_notation(input)));
-        }
+        print_position(generate_pseudolegal_moves_for_rook(board, get_bitmap_from_notation(input), PLAYER_WHITE));
+
+        print_position(generate_pseudolegal_moves_for_bishop(board, get_bitmap_from_notation(input), PLAYER_WHITE));
+
+        print_position(generate_pseudolegal_moves_for_queen(board, get_bitmap_from_notation(input), PLAYER_WHITE));
+
+        
     }
     printf("Bye Bye\n");
     
