@@ -45,7 +45,9 @@ int main(int argc, char *argv[]) {
 
     print_position(generate_pseudolegal_moves_for_rook(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
     print_position(generate_pseudolegal_moves_for_bishop(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
-    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("g3"), PLAYER_WHITE));
+
+    printf("a5\n");
+    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
 
 
 

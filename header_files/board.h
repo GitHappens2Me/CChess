@@ -36,6 +36,11 @@
 #define ROW_8 0xFF00000000000000
 #define COLLUMN_h 0x1010101010101
 
+#define ROW_2 0x000000000000FF00
+#define ROW_7 0x00FF000000000000
+#define COLLUMN_b 0x4040404040404040
+#define COLLUMN_g 0x202020202020202
+
 
 typedef struct {
     // defines the current State of pieces on the board

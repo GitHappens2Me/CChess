@@ -196,7 +196,6 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
     uint64_t own_pieces = get_pieces_of_player(board, player);
     uint64_t next = position;
 
-    
     /*
            2 3
           1   4
@@ -204,18 +203,25 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
           8   5
            7 6  
     */
-    // parameters for {1, 2, 3, 4, 5, 6, 7, 8} (see diagramm above):
-    int shift_direction[] = {LEFT, LEFT, LEFT, LEFT, RIGHT, RIGHT, RIGHT, RIGHT};
-    int shift_amount[] = {10, 17, 15, 6, 10, 17, 15, 6};
-
+    // parameters for:            {1,         2,         3,         4,         5,         6,         7,         8}(see diagramm above):
+    int shift_direction[] =       {LEFT,      LEFT,      LEFT,      LEFT,      RIGHT,     RIGHT,     RIGHT,     RIGHT};
+    int shift_amount[] =          {10,        17,        15,        6,         10,        17,        15,        6};
+    uint64_t edges_vertical[] =   {ROW_8,     ROW_8,     ROW_8,     ROW_8,     ROW_1,     ROW_1,     ROW_1,     ROW_1};
+    uint64_t edges_horizontal[] = {COLLUMN_a, COLLUMN_a, COLLUMN_h, COLLUMN_h, COLLUMN_h, COLLUMN_h, COLLUMN_a, COLLUMN_a};
+    uint64_t edges_spacer[] =     {COLLUMN_b, ROW_7,     ROW_7,     COLLUMN_g, COLLUMN_g, ROW_2,     ROW_2,     COLLUMN_b}; // the knight moves 2 squares in a given direction so we need to check if it can move off the board
     
-    //TODO rename COLLUMN_a to COLLUMN_A
-    uint64_t edges_vertical[] = {ROW_1, ROW_1, ROW_8, ROW_8};
-    uint64_t edges_horizontal[] = {COLLUMN_h, COLLUMN_a, COLLUMN_a, COLLUMN_h};
 
     // move in all direction
     for(int direction = 0; direction < 8; direction++){
         next = position;
+
+        // Prevent knight from moving over the edge of the board
+        if(next & edges_vertical[direction]  || next & edges_horizontal[direction] || next & edges_spacer[direction]){
+            continue;
+        }else{
+            printf("Dir: %d\n",direction);
+        }
+
         if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
         else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
         // Collision with own piece
@@ -225,7 +231,7 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
         
         // Collision with opponent piece or H-FILE reached
 
-        }else if(next & opponent_pieces){//TODO Edge cases (also check for e.g. ROW_2 and COLLUMN_b)        
+        }else if(next & opponent_pieces){       
             possible_moves |= next;
             continue;
         // No Collision
@@ -234,6 +240,7 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
         }
     }
 
+    // removes the knights position from possible squares
     return possible_moves & ~position;
 
 }
