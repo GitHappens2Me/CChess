@@ -332,25 +332,31 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
 
     if(!(next & (opponent_pieces | own_pieces))) possible_moves |= next;
 
-
+    // double move if not moved yet
     if(position & start_row){
         if(shift_direction == LEFT) next <<= 8;
         if(shift_direction == RIGHT) next >>= 8;
         if(~(next & own_pieces) | ~(next & opponent_pieces)) possible_moves |= next;
     }
 
-    for(int i = 0; i < 2; i++){
-        next = position;
-        if(shift_direction == LEFT) next <<= shift_amount_diagonal[i];
-        if(shift_direction == RIGHT) next >>= shift_amount_diagonal[i];
 
-        //BUG: Prevents capture in both direction when position is on file a or h
-        if ((next & opponent_pieces) && !((position & COLLUMN_a) || (position & COLLUMN_h))) {
-            possible_moves |= next;
-        }
+    // Captures 
+    if(shift_direction == LEFT){
+        // to the right
+        next = position << 7;
+        if((next & opponent_pieces) && !(position & COLLUMN_h)) possible_moves |= next;
+        // to the left
+        next = position << 9;
+        if((next & opponent_pieces) && !(position & COLLUMN_a)) possible_moves |= next;
+    }else if(shift_direction == RIGHT){
+        // to the left
+        next = position >> 7;
+        if((next & opponent_pieces) && !(position & COLLUMN_a)) possible_moves |= next;
+        // to the right
+        next = position >> 9;
+        if((next & opponent_pieces) && !(position & COLLUMN_h)) possible_moves |= next;
     }
-    	
-
+    
     return possible_moves & ~position;
 }
 
