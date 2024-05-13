@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 
     printf("a5\n");
     print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
-
+    
 
     while (1) {
         char input[100];

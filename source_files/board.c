@@ -48,6 +48,8 @@ uint64_t get_all_pieces(Board* board){
 }
 
 
+
+
 int apply_move(Board* board, Move move){
     // is_VALID Check
     if (1){
@@ -75,6 +77,7 @@ uint64_t get_pieces_of_player(Board* board, int player){
 }
 
 
+
 int get_opponent(int player){
     if(player == PLAYER_BLACK) return PLAYER_WHITE;
     if(player == PLAYER_WHITE) return PLAYER_BLACK;
@@ -92,6 +95,21 @@ int get_piece_type_at(Board* board, uint64_t position){
     return -1;
 }
 
+// TODO THis does not work
+
+int is_in_check(Board* board, uint64_t king_pos, int king_color){
+    uint64_t attackers = 0ULL;
+    uint64_t possible_attackers = 0ULL;
+
+    if (king_color == PLAYER_WHITE) {
+        possible_attackers = generate_pseudolegal_moves_for_queen(board, king_pos, king_color);
+        attackers |= (attackers & board->pieces[BLACK_QUEENS]);
+        possible_attackers = generate_pseudolegal_moves_for_rook(board, king_pos, king_color);
+        attackers |= (attackers & board->pieces[BLACK_ROOKS]);
+        possible_attackers = generate_pseudolegal_moves_for_bishop(board, king_pos, king_color);
+        attackers |= (attackers & board->pieces[BLACK_ROOKS]);
+    }
+}
 
 // ---------- MOVE GENERATION ----------------
 
