@@ -44,7 +44,7 @@ uint64_t get_all_pieces(Board* board){
     uint64_t all_pieces = 0;
     for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
         all_pieces = all_pieces | board->pieces[i];
-        printf("%d\n",board->pieces[i]);
+        //printf("%d\n",board->pieces[i]);
     }
     return all_pieces; 
 }
@@ -55,12 +55,23 @@ uint64_t get_all_pieces(Board* board){
 
 int apply_move(Board* board, Move move, int forced){
     // is_VALID Check
-    if (forced == FORCED ){//|| is_pseudo_legal_move(board, move)){
+    
+    if (forced == FORCED || is_pseudo_legal_move(board, move)){
+
+        int piece_type = get_piece_type_at(board, move.origin);
+        //printf("Piecetype moved: %d\n", piece_type);
+        //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
+
         //remove piece from origin
-        board->pieces[move.piece_type] = board->pieces[move.piece_type] & ~move.origin;
+        board->pieces[piece_type] = board->pieces[piece_type] & ~move.origin;
         //add piece to destination
-        board->pieces[move.piece_type] = board->pieces[move.piece_type] | move.destination;
+        board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
         //TODO Capture etc.
+        return 1;
+    }else{
+        printf("Move not legal\n");
+        print_move(move);
+        return 0;
     }
 }
 

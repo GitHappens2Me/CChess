@@ -8,6 +8,9 @@
 #include "../header_files/move.h"
 #include "../header_files/notation.h"
 
+
+//TODO: use github Issues to track Progress
+
 int main(int argc, char *argv[]) {
 
     printf("Hello World!\n");
@@ -20,9 +23,9 @@ int main(int argc, char *argv[]) {
 
     print_board(board);
     
-    Move test = {0x100, 0x10000, 0};
+    Move test_move = {0x100, 0x10000};
 
-    apply_move(board, test, FORCED);
+    apply_move(board, test_move, FORCED);
     printf("After h3");
     print_board(board);
 
@@ -62,7 +65,11 @@ int main(int argc, char *argv[]) {
         }
         pos = pos << 1;
     }
-/*
+
+
+    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("b1"), PLAYER_WHITE));
+    
+    print_board(board);
     while (1) {
         char origin[100];
         printf("Enter a Origin ");
@@ -71,14 +78,17 @@ int main(int argc, char *argv[]) {
         printf("Enter a Destinaton ");
         scanf("%s", &dest);
 
-        Move *move;
+        Move move = create_move(get_bitmap_from_notation(origin), get_bitmap_from_notation(dest)); 
 
-        create_move(move, origin, dest); 
-
-        apply_move(board, *move, UNFORCED);
         
+        if(apply_move(board, move, UNFORCED) == 1){
+            print_move(move);
+            print_board(board);
+        }
 
-    }*/
+
+
+    }
 
 
     while (1) {
