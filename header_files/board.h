@@ -56,6 +56,9 @@ struct Board {
     uint64_t* pieces;
     // TODO: Castling Rights
     // TODO: en Passant
+    
+    // Defines whose turn is is
+    int current_Player;
 };
 
 
@@ -71,6 +74,8 @@ uint64_t get_all_pieces(Board* board);
 int apply_move(Board* board, Move move, int forced);
 
 uint64_t get_pieces_of_player(Board* board, int player);
+int get_piece_color(Board *board, uint64_t position);
+int get_current_player(Board *board);
 
 uint64_t generate_all_legal_moves(Board board, int player);
 uint64_t generate_all_peseudolegal_moves(Board board, int player);

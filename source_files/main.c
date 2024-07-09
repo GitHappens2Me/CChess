@@ -21,14 +21,14 @@ int main(int argc, char *argv[]) {
 
     initialize_board(board);
 
-    print_board(board);
-    
-    Move test_move = {0x100, 0x10000};
 
+    /*
+    print_board(board);
+    Move test_move = {0x100, 0x10000};
     apply_move(board, test_move, FORCED);
     printf("After h3");
     print_board(board);
-
+    */
     /*
 
     printf("\n");
@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
         if(apply_move(board, move, UNFORCED) == 1){
             print_move(move);
             print_board(board);
+            printf("Current Player: %d\n", board->current_Player);
         }
 
 

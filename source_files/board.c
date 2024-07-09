@@ -7,17 +7,16 @@
 #include "../header_files/board.h"
 
 
-
-// Allocates the necessary memory to a board
-void create_board(Board** board){
+// Allocates and Initializes the necessary memory to a board
+void create_board(Board** board) {
     printf("Creating Board\n");
-    *board = ( Board *)malloc(sizeof(Board));
-    (*board)->pieces = (int64_t *)malloc(NUM_OF_ROWS * sizeof(int64_t));
-    for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
+    *board = malloc(sizeof(Board));
+    (*board)->pieces = malloc(NUM_OF_ROWS * sizeof(uint64_t));
+    for (int i = 0; i < NUM_OF_PIECE_TYPES; i++) {
         (*board)->pieces[i] = 0x0;
     }
+    (*board)->current_Player = PLAYER_WHITE;
 }
-
 
 
 // initializes board to start position
@@ -67,6 +66,11 @@ int apply_move(Board* board, Move move, int forced){
         //add piece to destination
         board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
         //TODO Capture etc.
+
+        // Changes whose turn it is:
+        board->current_Player = get_opponent(board->current_Player);
+        
+
         return 1;
     }else{
         printf("Move not legal\n");
@@ -96,6 +100,15 @@ uint64_t get_pieces_of_player(Board* board, int player){
 int get_opponent(int player){
     if(player == PLAYER_BLACK) return PLAYER_WHITE;
     if(player == PLAYER_WHITE) return PLAYER_BLACK;
+}
+
+int get_piece_color(Board *board, uint64_t position){
+    if(get_piece_type_at(board, position) <= 5) return 0;
+    else return 1;
+}
+
+int get_current_player(Board *board){
+    return board->current_Player;
 }
 
 
