@@ -69,7 +69,7 @@ char* get_notation_from_bitmap(uint64_t bitmap) {
     }
 
     // Convert row and column to chess notation
-    notation[0] = 'a' + column;
+    notation[0] = 'h' - column;
     notation[1] = '1' + row;
     notation[2] = '\0'; // Null-terminate the string
 

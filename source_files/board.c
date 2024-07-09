@@ -38,6 +38,8 @@ void initialize_board(Board* board){
     board->pieces[BLACK_KING] = 0x0800000000000000;
 }
 
+
+// Returns bitmap of all Pieces on the Board 
 uint64_t get_all_pieces(Board* board){
     uint64_t all_pieces = 0;
     for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
@@ -46,8 +48,6 @@ uint64_t get_all_pieces(Board* board){
     }
     return all_pieces; 
 }
-
-
 
 
 int apply_move(Board* board, Move move){
@@ -75,6 +75,7 @@ uint64_t get_pieces_of_player(Board* board, int player){
     }
     return all_pieces; 
 }
+
 
 
 
@@ -114,10 +115,11 @@ int is_in_check(Board* board, uint64_t king_pos, int king_color){
 // ---------- MOVE GENERATION ----------------
 
 //TODO Should i return a bitmap or an array of moves. 
-uint64_t generate_legal_moves_for_piece(Board* board, uint64_t position){
+
+uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position){
     switch(get_piece_type_at(board, position)){
-        case WHITE_PAWNS:
-        case BLACK_PAWNS: 
+        case WHITE_PAWNS: return generate_pseudolegal_moves_for_pawn(board, position, PLAYER_WHITE);
+        case BLACK_PAWNS: return generate_pseudolegal_moves_for_pawn(board, position, PLAYER_BLACK);
 
         case WHITE_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_WHITE);
         case BLACK_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_BLACK);
@@ -134,7 +136,8 @@ uint64_t generate_legal_moves_for_piece(Board* board, uint64_t position){
         case WHITE_KING: return generate_pseudolegal_moves_for_king(board, position, PLAYER_WHITE);
         case BLACK_KING: return generate_pseudolegal_moves_for_king(board, position, PLAYER_BLACK);
 
-        default: printf("No piece at position"); return 0ULL;
+        default:    //printf("No piece at position\n"); 
+                    return 0ULL;
     }
 }
 

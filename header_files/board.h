@@ -67,7 +67,9 @@ uint64_t get_pieces_of_player(Board* board, int player);
 uint64_t generate_all_legal_moves(Board board, int player);
 uint64_t generate_all_peseudolegal_moves(Board board, int player);
 
+
 uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position);
+
 uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player);
 uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player);
 uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player);

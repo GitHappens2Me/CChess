@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     Move test = {0x100, 0x10000, 0};
 
     apply_move(board, test);
-    
+    printf("After h3");
     print_board(board);
 
     /*
@@ -35,10 +35,10 @@ int main(int argc, char *argv[]) {
         printf("\n");
     
     }*/
-    printf("Black's Pieces:");
+    printf("Black's Pieces:\n");
     print_position(get_pieces_of_player(board, PLAYER_BLACK));
 
-    printf("Piecetypeindex: %d\n", get_piece_type_at(board, get_bitmap_from_notation("a8")));
+    printf("Piecetypeindex: %d\n\n", get_piece_type_at(board, get_bitmap_from_notation("a8")));
 
     //print_position(COLLUMN_a);
     //print_position(ROW_1);
@@ -50,12 +50,28 @@ int main(int argc, char *argv[]) {
     print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
     
 
+    
+    uint64_t pos = 1;    
+    for(int i = 0; i < 64; i++){
+        
+        uint64_t pslegalmoves = generate_pseudolegal_moves_for_piece(board, pos);
+
+        if(pslegalmoves != 0){
+            printf("Possible Moves from %s\n", get_notation_from_bitmap(pos));
+            print_position(pslegalmoves);
+        }
+        pos = pos << 1;
+    }
+
+
+
     while (1) {
         char input[100];
         printf("Enter a position ");
         scanf("%s", &input);
         
-        print_position(generate_pseudolegal_moves_for_pawn(board, get_bitmap_from_notation(input), PLAYER_BLACK));
+
+        print_position(generate_pseudolegal_moves_for_piece(board, get_bitmap_from_notation(input)));
 
     }
     printf("Bye Bye\n");
