@@ -1,8 +1,10 @@
 #pragma once
 
 #include <stdint.h>
+
 #include "../header_files/move.h"
 #include "../header_files/board.h"
+
 
 
 #define NUM_OF_COLLUMNS (8)
@@ -44,14 +46,17 @@
 #define COLLUMN_b 0x4040404040404040
 #define COLLUMN_g 0x202020202020202
 
+// Forward declaration of Board
+typedef struct Board Board;
 
-typedef struct {
-    // defines the current State of pieces on the board
+// Define the Board struct
+struct Board {
+    // Defines the current state of pieces on the board
     // via 12 64Bit integers
     uint64_t* pieces;
     // TODO: Castling Rights
     // TODO: en Passant
-} Board;
+};
 
 
 void create_board(Board** board);

@@ -4,10 +4,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../header_files/main.h"
 #include "../header_files/board.h"
-#include "../header_files/move.h"
-#include "../header_files/inout.h"
+
 
 
 // Allocates the necessary memory to a board

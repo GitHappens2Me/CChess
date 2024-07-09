@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include "../header_files/move.h"
-//#include "../header_files/board.h"
+
 
 /*
 void create_move(Move** move, uint64_t origin, uint64_t dest){
@@ -14,7 +14,7 @@ void create_move(Move** move, uint64_t origin, uint64_t dest){
     (*move)->destination = dest;
 }*/
 
-/*int is_pseudo_legal_move(Board *board, Move move){
+int is_pseudo_legal_move(Board *board, Move move){
     uint64_t ps_legal_destinations = generate_pseudolegal_moves_for_piece(board, move.origin);
     return (ps_legal_destinations & move.destination > 0);
-}*/
+}
