@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     
     Move test = {0x100, 0x10000, 0};
 
-    apply_move(board, test);
+    apply_move(board, test, FORCED);
     printf("After h3");
     print_board(board);
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
     
 
-    
+
     uint64_t pos = 1;    
     for(int i = 0; i < 64; i++){
         
@@ -62,7 +62,23 @@ int main(int argc, char *argv[]) {
         }
         pos = pos << 1;
     }
+/*
+    while (1) {
+        char origin[100];
+        printf("Enter a Origin ");
+        scanf("%s", &origin);
+        char dest[100];
+        printf("Enter a Destinaton ");
+        scanf("%s", &dest);
 
+        Move *move;
+
+        create_move(move, origin, dest); 
+
+        apply_move(board, *move, UNFORCED);
+        
+
+    }*/
 
 
     while (1) {

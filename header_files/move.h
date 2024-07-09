@@ -11,10 +11,6 @@ typedef struct {
     int piece_type;
 } Move;
 
-//int is_move_valid(Board* board, Move move);
+//void create_move(Move** move, uint64_t origin, uint64_t dest);
 
-
-// returns bitmap of possible "movement vector". 
-// -> all squares a rook at given position can move to on an empty board 
-uint64_t rook_move_vector(uint64_t position);
-
+//int is_pseudo_legal_move(Board *board, Move move);

@@ -1,3 +1,5 @@
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -50,9 +52,12 @@ uint64_t get_all_pieces(Board* board){
 }
 
 
-int apply_move(Board* board, Move move){
+
+
+
+int apply_move(Board* board, Move move, int forced){
     // is_VALID Check
-    if (1){
+    if (forced == FORCED ){//|| is_pseudo_legal_move(board, move)){
         //remove piece from origin
         board->pieces[move.piece_type] = board->pieces[move.piece_type] & ~move.origin;
         //add piece to destination

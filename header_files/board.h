@@ -29,6 +29,9 @@
 #define LEFT 0
 #define RIGHT 1
 
+#define FORCED 0
+#define UNFORCED 1
+
 
 //TODO rename COLLUMN to RANK
 #define ROW_1 0xFF
@@ -60,7 +63,7 @@ void initialize_board(Board* board);
 // returns integer that represents the position of all pieces (white and black)
 uint64_t get_all_pieces(Board* board);
 
-int apply_move(Board* board, Move move);
+int apply_move(Board* board, Move move, int forced);
 
 uint64_t get_pieces_of_player(Board* board, int player);
 

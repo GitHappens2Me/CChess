@@ -6,6 +6,7 @@
         "main.h": "c",
         "move.h": "c",
         "stdint.h": "c",
-        "notation.h": "c"
+        "notation.h": "c",
+        "inout.h": "c"
     }
 }
