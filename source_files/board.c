@@ -53,20 +53,28 @@ uint64_t get_all_pieces(Board* board){
 
 
 int apply_move(Board* board, Move move, int forced){
-    // is_VALID Check
-    
+
     if (forced == FORCED || is_pseudo_legal_move(board, move)){
 
         int piece_type = get_piece_type_at(board, move.origin);
         //printf("Piecetype moved: %d\n", piece_type);
         //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
 
-        //remove piece from origin
-        board->pieces[piece_type] = board->pieces[piece_type] & ~move.origin;
-        //add piece to destination
-        board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
-        //TODO Capture etc.
+        // For Captures
+        if(move.destination & get_all_pieces(board)){
+            printf("Capture!");
+            int captured_piece_type = get_piece_type_at(board, move.destination);
+            // remove captured piece
+            board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~move.destination;
+        }
 
+        // remove piece from origin
+        board->pieces[piece_type] = board->pieces[piece_type] & ~move.origin;
+        // add piece to destination
+        board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
+
+
+        
         // Changes whose turn it is:
         board->current_Player = get_opponent(board->current_Player);
         
@@ -125,18 +133,8 @@ int get_piece_type_at(Board* board, uint64_t position){
 
 // TODO THis does not work
 
-int is_in_check(Board* board, uint64_t king_pos, int king_color){
-    uint64_t attackers = 0ULL;
-    uint64_t possible_attackers = 0ULL;
-
-    if (king_color == PLAYER_WHITE) {
-        possible_attackers = generate_pseudolegal_moves_for_queen(board, king_pos, king_color);
-        attackers |= (attackers & board->pieces[BLACK_QUEENS]);
-        possible_attackers = generate_pseudolegal_moves_for_rook(board, king_pos, king_color);
-        attackers |= (attackers & board->pieces[BLACK_ROOKS]);
-        possible_attackers = generate_pseudolegal_moves_for_bishop(board, king_pos, king_color);
-        attackers |= (attackers & board->pieces[BLACK_ROOKS]);
-    }
+int is_attacked(Board* board, uint64_t position, int attacking_color){
+    //TODO
 }
 
 // ---------- MOVE GENERATION ----------------
