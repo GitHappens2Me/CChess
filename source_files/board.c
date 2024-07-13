@@ -172,7 +172,40 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
 
 // ---------- MOVE GENERATION ----------------
 
-//TODO Should i return a bitmap or an array of moves. 
+/*
+// #TODO This function is a work in Progress
+Move* generate_all_legal_moves_for_player(Board* board, int player){
+
+    // #TODO This assumes 200 possible moves in a given position. This is too much for the average case.
+    Move* legal_moves = malloc(sizeof(Move) * 200);
+
+    if(player == PLAYER_WHITE){
+        // Looping through all the piece_types of the player
+        for(int piece_type = 0; piece_type <= 5; piece_type++){
+            // This array holds the position of all individual pieces of the piece_type
+            uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
+
+            // #TODO implement "get_all_pieces_of_type"
+            int num_of_pieces = split_bitmap(get_all_pieces_of_type(board, piece_type, indivdual_pieces));
+            printf("For piecetype %d, there are %d pieces\n", piece_type, num_of_pieces);
+
+            // Looping trough all the pieces of that type
+            for(int piece = 0; piece < num_of_pieces; piece++){
+                uint64_t piece_position = indivdual_pieces[piece];
+                uint64_t legal_destinations = generate_pseudolegal_moves_for_piece(board, piece_position);
+                
+                Move* legal_moves_by_piece = malloc(sizeof(uint64_t) * 30);
+                 // #TODO implement "get_moves_from_destination_bitmap"
+                int num_of_moves = get_moves_from_destination_bitmap(piece_position, legal_destinations, legal_moves_by_piece);
+                
+                printf("For piece %d of piece_type %d, there are %d moves\n", piece, piece_type, num_of_moves);
+
+                // #TODO implement "append_to_array"
+                legal_moves = append_to_array(legal_moves, legal_moves_by_piece);
+            }
+        }
+    }
+}*/
 
 uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position){
     switch(get_piece_type_at(board, position)){

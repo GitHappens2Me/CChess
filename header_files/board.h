@@ -109,7 +109,8 @@ int get_piece_type_at(Board* board, uint64_t position);
  *  returns the player to which the piece on the specified square belongs to  
  *
  *  board: board which is tested
- *
+ *  position: square, the piece stands on
+ *  
  *  returns: 
  *          PLAYER_WHITE ( 0 ) or PLAYER_BLACK ( 1 )
  *          depending on whose piece it is
@@ -160,9 +161,21 @@ int get_opponent(int player);
  */
 int is_attacked(Board* board, uint64_t position, int attacking_color);
 
-uint64_t generate_all_legal_moves(Board board, int player);
-uint64_t generate_all_peseudolegal_moves(Board board, int player);
 
+/*
+ *  generates all legal moves for the specified player at the current boardstate
+ *  
+ *  b: board, current board state
+ *  player: player, whose moves are generated
+ *
+ *  returns: 
+ *           array of type Move
+ * 
+ *  notes: This Function returns an array of type "Move". In contrast to returning a uint64_t bitmap of all legal destination squares
+ *         #TODO a "count_legal_moves" function might be needed to initialize a sufficiant array beforehand
+ */
+Move* generate_all_legal_moves_for_player(Board* board, int player);
+//uint64_t generate_all_peseudolegal_moves(Board board, int player);
 
 uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position);
 

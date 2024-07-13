@@ -67,20 +67,11 @@ int main(int argc, char *argv[]) {
     }
 
 
-
-    
     // Test by Playing: 
     print_board(board);
     while (1) {
-        char origin[100];
-        printf("Enter a Origin ");
-        scanf("%s", &origin);
-        char dest[100];
-        printf("Enter a Destinaton ");
-        scanf("%s", &dest);
-
-        Move move = create_move(get_bitmap_from_notation(origin), get_bitmap_from_notation(dest)); 
-
+        Move move = get_move_from_user();
+        
         
         if(apply_move(board, move, UNFORCED) == 1){
             print_move(move);

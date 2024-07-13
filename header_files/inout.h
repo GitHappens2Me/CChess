@@ -31,7 +31,8 @@ void print_pieces(Board* board, int piecetype);
  */
 void print_board(Board* board);
 
-
 char get_symbol_for_piecetype(int piece_type);
 
 void print_position(uint64_t position);
+
+Move get_move_from_user();
