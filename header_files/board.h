@@ -68,17 +68,21 @@ void create_board(Board** board);
 // initializes board to start position
 void initialize_board(Board* board);
 
-// returns integer that represents the position of all pieces (white and black)
-uint64_t get_all_pieces(Board* board);
 
 /*
 Applies move to board. Checks for validity of move first, except forced = True
 */
 int apply_move(Board* board, Move move, int forced);
 
+// returns integer that represents the position of all pieces (white and black)
+uint64_t get_all_pieces(Board* board);
 uint64_t get_pieces_of_player(Board* board, int player);
+uint64_t get_all_pieces_of_type(Board* board, int piece_type);
+
+int get_piece_type_at(Board* board, uint64_t position);
 int get_piece_color(Board *board, uint64_t position);
 int get_current_player(Board *board);
+int get_opponent(int player);
 
 int is_attacked(Board* board, uint64_t position, int attacking_color);
 
@@ -95,5 +99,3 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
 uint64_t generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player);
 uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int player);
 
-int get_piece_type_at(Board* board, uint64_t position);
-int get_opponent(int player);

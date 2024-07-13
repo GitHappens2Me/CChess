@@ -131,10 +131,30 @@ int get_piece_type_at(Board* board, uint64_t position){
     return -1;
 }
 
-// TODO THis does not work
+uint64_t get_all_pieces_of_type(Board* board, int piece_type){
+    return board->pieces[piece_type];
+}
+
+
+// TODO Add Pawns (and Kings?)
 
 int is_attacked(Board* board, uint64_t position, int attacking_color){
-    //TODO
+    
+    uint64_t bishop_attack_path = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color));
+    uint64_t rook_attack_path = generate_pseudolegal_moves_for_rook(board, position, get_opponent(attacking_color));
+    uint64_t knight_attack_path = generate_pseudolegal_moves_for_rook(board, position, get_opponent(attacking_color));
+ 
+    if(attacking_color == PLAYER_WHITE){
+        if((bishop_attack_path & get_all_pieces_of_type(board, WHITE_BISHOPS)) || (bishop_attack_path & get_all_pieces_of_type(board, WHITE_QUEENS))) return 1;
+        if((rook_attack_path & get_all_pieces_of_type(board, WHITE_ROOKS)) || (rook_attack_path & get_all_pieces_of_type(board, WHITE_QUEENS))) return 1;
+        if((knight_attack_path & get_all_pieces_of_type(board, WHITE_KNIGHTS))) return 1;
+    }
+    else{
+        if((bishop_attack_path & get_all_pieces_of_type(board, BLACK_BISHOPS)) || (bishop_attack_path & get_all_pieces_of_type(board, BLACK_QUEENS))) return 1;
+        if((rook_attack_path & get_all_pieces_of_type(board, BLACK_ROOKS)) || (rook_attack_path & get_all_pieces_of_type(board, BLACK_QUEENS))) return 1;
+        if((knight_attack_path & get_all_pieces_of_type(board, BLACK_KNIGHTS))) return 1;
+    }
+
 }
 
 // ---------- MOVE GENERATION ----------------

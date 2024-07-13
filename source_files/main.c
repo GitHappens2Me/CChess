@@ -67,8 +67,9 @@ int main(int argc, char *argv[]) {
     }
 
 
-    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("b1"), PLAYER_WHITE));
+
     
+    // Test by Playing: 
     print_board(board);
     while (1) {
         char origin[100];
@@ -85,13 +86,22 @@ int main(int argc, char *argv[]) {
             print_move(move);
             print_board(board);
             printf("Current Player: %d\n", board->current_Player);
+
+            if(is_attacked(board, move.destination, board->current_Player)){
+                printf("The Destination Square is attacked\n");
+            }else{
+                printf("Not Attacked\n");
+            }
+
         }
+
+
 
 
 
     }
 
-
+    // Test by showing posible Moves for specified Piece
     while (1) {
         char input[100];
         printf("Enter a position ");
