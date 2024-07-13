@@ -52,7 +52,7 @@ void print_pieces(Board* board, int piecetype){
  */
 void print_board(Board* board){
     char str_board[NUM_OF_BITS + 1];
-    memset(str_board, '0', NUM_OF_BITS); // Initialize the board with spaces
+    memset(str_board, '.', NUM_OF_BITS); // Initialize the board with spaces
     str_board[NUM_OF_BITS] = '\0'; // Null terminate the string
     
     for(int piece_type = 0; piece_type < NUM_OF_PIECE_TYPES; piece_type++){

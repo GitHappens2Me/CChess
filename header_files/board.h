@@ -79,11 +79,85 @@ uint64_t get_all_pieces(Board* board);
 uint64_t get_pieces_of_player(Board* board, int player);
 uint64_t get_all_pieces_of_type(Board* board, int piece_type);
 
+/*
+ *  returns the piece_type of piece at the specified square
+ *
+ *  board: board which is tested
+ *  position: square, where the piece is standing
+ *
+ *  returns: 
+ *          the piece_type acording to this list:
+ *          Empty Squares = -1
+ *          WHITE_PAWNS =    0
+ *          WHITE_ROOKS =    1
+ *          WHITE_KNIGHTS =  2
+ *          WHITE_BISHOPS =  3
+ *          WHITE_QUEENS =   4
+ *          WHITE_KING =     5
+ *          BLACK_PAWNS =    6
+ *          BLACK_ROOKS =    7
+ *          BLACK_KNIGHTS =  8
+ *          BLACK_BISHOPS =  9
+ *          BLACK_QUEENS =  10
+ *          BLACK_KING =    11
+ *  
+ *  notes: Empty squares return -1, which might cause a #BUG (see get_piece_color())
+ */ 
 int get_piece_type_at(Board* board, uint64_t position);
+
+/*
+ *  returns the player to which the piece on the specified square belongs to  
+ *
+ *  board: board which is tested
+ *
+ *  returns: 
+ *          PLAYER_WHITE ( 0 ) or PLAYER_BLACK ( 1 )
+ *          depending on whose piece it is
+ *  
+ *  notes: 
+ * 
+ *  #BUG: Empty squares belong to White as the check (piece_type <= 5) is true for -1
+ *        which is what get_piece_type_at() returnes for empty squares. 
+ */ 
 int get_piece_color(Board *board, uint64_t position);
+
+/*
+ *  returns the current player 
+ *
+ *  board: board from which the current player is retuned
+ *
+ *  returns: 
+ *          PLAYER_WHITE ( 0 ) or PLAYER_BLACK ( 1 )
+ *          depending on whose turn it is
+ *  
+ *  notes: this function is funcionally identical with: board->current_Player;
+ */ 
 int get_current_player(Board *board);
+
+/*
+ *  returns the opponent of the specified player
+ *
+ *  player: player, whose opponent will be returned
+ *
+ *  returns: 
+ *          PLAYER_WHITE ( 0 ), if player == PLAYER_BLACK ( 1 )
+ *          PLAYER_BLACK ( 1 ), if player == PLAYER_WHITE ( 0 )
+ */ 
 int get_opponent(int player);
 
+/*
+ *  tests if a specified square is attacked by the specified player
+ *  
+ *  b: board, on which is being tested
+ *  position: square, which is tested
+ *  attacking_color: color of the (potentially) attacking player
+ *
+ *  returns: 
+ *           1, if square is attacked
+ *           0, if square is not attacked
+ * 
+ *  notes: 
+ */
 int is_attacked(Board* board, uint64_t position, int attacking_color);
 
 uint64_t generate_all_legal_moves(Board board, int player);

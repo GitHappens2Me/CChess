@@ -20,7 +20,10 @@ Example Function Comment:
  *  returns: the approximate value of pi obtained by suming the first n terms
  *           in the above series
  *           returns zero on error (if n is non-positive)
+ * 
+ *  notes: 
+ * 
+ *  TODO: 
  */
-
 
 

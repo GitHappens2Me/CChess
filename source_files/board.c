@@ -111,8 +111,8 @@ int get_opponent(int player){
 }
 
 int get_piece_color(Board *board, uint64_t position){
-    if(get_piece_type_at(board, position) <= 5) return 0;
-    else return 1;
+    if(get_piece_type_at(board, position) <= 5) return PLAYER_WHITE;
+    else return PLAYER_BLACK;
 }
 
 int get_current_player(Board *board){
@@ -136,8 +136,21 @@ uint64_t get_all_pieces_of_type(Board* board, int piece_type){
 }
 
 
-// TODO Add Pawns (and Kings?)
-
+/*
+ * tests if a specified square is attacked by the specified player
+ *
+ *  b: board, on which is being tested
+ *  position: square, which is tested
+ *  attacking_color: color of the (potentially) attacking player
+ *
+ *  returns: 
+ *           1, if square is attacked
+ *           0, if square is not attacked
+ * 
+ *  notes: 
+ * 
+ *  #TODO: Include Pawns (and the Opponent King) in the test
+ */
 int is_attacked(Board* board, uint64_t position, int attacking_color){
     
     uint64_t bishop_attack_path = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color));
