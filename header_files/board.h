@@ -68,6 +68,17 @@ void create_board(Board** board);
 // initializes board to start position
 void initialize_board(Board* board);
 
+/*
+ *  splits the a bitmap into an array of bitmaps with only one bit set
+ *
+ *  
+ *
+ *  pieces: bitmap of all pieces
+ *  indivdual_pieces: pointer to array of single-bit bitmaps
+ *
+ *  returns: number of pieces 
+ */ 
+int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces);
 
 /*
 Applies move to board. Checks for validity of move first, except forced = True

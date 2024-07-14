@@ -135,6 +135,23 @@ uint64_t get_all_pieces_of_type(Board* board, int piece_type){
     return board->pieces[piece_type];
 }
 
+int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
+
+    int numBits = sizeof(pieces) * 8;
+    int counter = 0;
+    uint64_t indivdual_piece = (uint64_t)1;
+
+    for (int i = numBits - 1; i >= 0; i--) {
+        // Check if the current bit is set
+        if (pieces & indivdual_piece){
+            indivdual_pieces[counter] = indivdual_piece;
+            counter++;
+        }
+        indivdual_piece = indivdual_piece << 1;
+    }
+    return counter;
+}
+
 
 /*
  * tests if a specified square is attacked by the specified player
@@ -185,8 +202,8 @@ Move* generate_all_legal_moves_for_player(Board* board, int player){
             // This array holds the position of all individual pieces of the piece_type
             uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
 
-            // #TODO implement "get_all_pieces_of_type"
-            int num_of_pieces = split_bitmap(get_all_pieces_of_type(board, piece_type, indivdual_pieces));
+            // #TODO implement "get_all_pieces_of_type" and  "split_bitmap"
+            int num_of_pieces = split_bitmap(get_all_pieces_of_type(board, piece_type), indivdual_pieces);
             printf("For piecetype %d, there are %d pieces\n", piece_type, num_of_pieces);
 
             // Looping trough all the pieces of that type

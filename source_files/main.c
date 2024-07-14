@@ -66,6 +66,15 @@ int main(int argc, char *argv[]) {
         pos = pos << 1;
     }
 
+    // Test split_bitmap
+    uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
+    int count = split_bitmap(get_all_pieces(board), indivdual_pieces);
+    printf("NUmber of Pieces in Position: %d\n",count);
+    for(int i = 0; i < count; i++){
+        //print_position(indivdual_pieces[i]);
+    }
+   
+    
 
     // Test by Playing: 
     print_board(board);
