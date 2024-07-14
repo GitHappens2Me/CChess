@@ -26,7 +26,7 @@
  */
 uint64_t get_bitmap_from_notation(char* notation){
     if(strlen(notation) != 2){
-        printf("Notation %s not valid!\n", notation);
+        //printf("Notation %s not valid!\n", notation);
         return 0;
     }
 
@@ -39,7 +39,7 @@ uint64_t get_bitmap_from_notation(char* notation){
     //printf("row: %d\n", row);
 
     if(column < 0 || column >= NUM_OF_COLLUMNS || row < 0 || row >= NUM_OF_ROWS){
-        printf("Notation %s not valid!", notation);
+        //printf("Notation '%s' not valid!", notation);
         return 0;
     }
 
@@ -54,6 +54,8 @@ uint64_t get_bitmap_from_notation(char* notation){
  *  Returns the corresponding chess notation from a given uint64_t bitmap.
  *  Bitmap: uint64_t bitmap representing the position of a piece.
  *  Returns: corresponding chess notation as char*
+ * 
+ *  note: maybe "void get_notation_from_bitmap(uint64_t bitmap, char* notation)" is better as i dont need to worry about memory management 
  */
 char* get_notation_from_bitmap(uint64_t bitmap) {
     char* notation = (char*)malloc(3 * sizeof(char));

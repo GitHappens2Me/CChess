@@ -1,15 +1,15 @@
 #pragma once
 
 
-
-
-//#include "../header_files/board.h"
-
-// gcc -o main main.c board.c inout.c move.c .\notation.c
-
 /*
+ Compile with: 
+    gcc -o main .\source_files\main.c .\source_files\board.c .\source_files\inout.c .\source_files\move.c .\source_files\notation.c
 
-Example Function Comment:
+ Run with:
+    ./main
+*/
+
+// Example Function Comment:
 
 /*
  * computes an approximation of pi using:
