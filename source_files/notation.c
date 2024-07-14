@@ -55,7 +55,9 @@ uint64_t get_bitmap_from_notation(char* notation){
  *  Bitmap: uint64_t bitmap representing the position of a piece.
  *  Returns: corresponding chess notation as char*
  * 
- *  note: maybe "void get_notation_from_bitmap(uint64_t bitmap, char* notation)" is better as i dont need to worry about memory management 
+ *  note: 
+ *      #TODO maybe "void get_notation_from_bitmap(uint64_t bitmap, char* notation)" is better as i dont need to worry about memory management 
+ *      #TODO check if bitmap contains only and atleast 1 set bit
  */
 char* get_notation_from_bitmap(uint64_t bitmap) {
     char* notation = (char*)malloc(3 * sizeof(char));
