@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
     
 
-
+/*
     uint64_t pos = 1;    
     for(int i = 0; i < 64; i++){
         
@@ -65,15 +65,28 @@ int main(int argc, char *argv[]) {
         }
         pos = pos << 1;
     }
-
+*/
     // Test split_bitmap
     uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
     int count = split_bitmap(get_all_pieces(board), indivdual_pieces);
-    printf("NUmber of Pieces in Position: %d\n",count);
+    printf("Number of Pieces in Position: %d\n",count);
     for(int i = 0; i < count; i++){
         //print_position(indivdual_pieces[i]);
     }
-   
+    
+    // Test initializing from FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    Board* fen_board;
+
+    create_board(&fen_board);
+    //char fen_String[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; // Using a writable buffer
+    char fen_String[] = "r4bnr/ppp1kppp/2n5/3qp3/2B3b1/3P1N2/PPP1QPPP/RNB1K2R w KQ - 3 7";
+    
+    initialize_board_FEN(fen_board, fen_String);
+
+    print_board(fen_board);
+
+    exit(1);
+
     
 
     // Test by Playing: 

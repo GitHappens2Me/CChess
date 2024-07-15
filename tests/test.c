@@ -11,6 +11,7 @@
 #include <assert.h>
 
 #include "test_notation.c"
+#include "test_board.c"
 
 /*
 #include "../header_files/board.h"
@@ -24,5 +25,6 @@ int main(int argc, char *argv[]) {
     
     test_get_bitmap_from_notation();
     test_get_notation_from_bitmap();
+    test_split_bitmap();
 
 }

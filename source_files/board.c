@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <ctype.h>
 
 #include "../header_files/board.h"
+#include "../header_files/inout.h"
 
 
 // Allocates and Initializes the necessary memory to a board
@@ -17,7 +19,6 @@ void create_board(Board** board) {
     }
     (*board)->current_Player = PLAYER_WHITE;
 }
-
 
 // initializes board to start position
 void initialize_board(Board* board){
@@ -35,6 +36,61 @@ void initialize_board(Board* board){
     board->pieces[BLACK_BISHOPS] = 0x2400000000000000;
     board->pieces[BLACK_QUEENS] = 0x1000000000000000;
     board->pieces[BLACK_KING] = 0x0800000000000000;
+}
+
+void initialize_board_FEN(Board* board, char* fen_string){
+    printf("Initializing Board to %s\n", fen_string);
+
+
+    // Elements of a FEN String [Pieces, active player, castling rights, en passant square, halvemove clock, fullmove clock]
+    char* element = strtok(fen_string, " ");
+
+    // Iterates through all 8 ranks (8 -> 1)
+    char* rank = strtok(element, "/");
+
+    uint64_t rank_mask = ROW_8; 
+
+    while( rank != NULL ) {
+        printf("%s\n", rank );
+        
+        uint64_t collumn_mask = COLLUMN_a;
+        int piece = 0;
+        while (rank[piece] != '\0') {
+            printf("%d: %c\n", piece, rank[piece]);
+        
+            printf("Collumn:\n");
+            print_position(collumn_mask);
+
+            if(isalpha(rank[piece])){  
+                // Using rank_mask & collumn as mask set the corresponsing bit on the board
+                board->pieces[get_piecetype_for_symbol(rank[piece])] |= (rank_mask & collumn_mask); 
+                collumn_mask >>= 1; // moves current collumn (/file) right one
+
+            }else if(isdigit(rank[piece])){
+                collumn_mask >>= (rank[piece] - '0'); // moves current collumn (/file) right the specified number of squares 
+
+            }
+            piece++;
+        }
+
+        rank = strtok(NULL, "/");
+        
+        // moves current rank down one 
+        rank_mask >>= 8;
+    }
+
+
+    // Initialize secondary information (e.g: w KQkq - 0 1) 
+    //                                  (player, castling, en passant, halvmove clock, fullmove clock     )
+/*
+    while( element != NULL ) {
+        printf("%s\n", element );
+
+        element = strtok(NULL, " ");
+    }
+*/
+    printf("finished");
+
 }
 
 
@@ -137,17 +193,17 @@ uint64_t get_all_pieces_of_type(Board* board, int piece_type){
 
 int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
 
-    int numBits = sizeof(pieces) * 8;
+    int number_of_bits = NUM_OF_BITS; 
     int counter = 0;
-    uint64_t indivdual_piece = (uint64_t)1;
+    uint64_t indivdual_piece = 1ULL;
 
-    for (int i = numBits - 1; i >= 0; i--) {
+    for (int i = 0; i < number_of_bits; i++) {
         // Check if the current bit is set
         if (pieces & indivdual_piece){
             indivdual_pieces[counter] = indivdual_piece;
             counter++;
         }
-        indivdual_piece = indivdual_piece << 1;
+        indivdual_piece <<= 1;
     }
     return counter;
 }

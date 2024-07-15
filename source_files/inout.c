@@ -91,6 +91,26 @@ char get_symbol_for_piecetype(int piece_type){
     }
 }
 
+char get_piecetype_for_symbol(char symbol){
+    switch (symbol) {
+        case 'P':  return 0;
+        case 'R':  return 1;
+        case 'N':  return 2;
+        case 'B':  return 3;
+        case 'Q':  return 4;
+        case 'K':  return 5;
+        case 'p':  return 6;
+        case 'r':  return 7;
+        case 'n':  return 8;
+        case 'b':  return 9;
+        case 'q': return 10;
+        case 'k': return 11;
+        default:
+            printf("No symbol for %s", symbol);
+            exit(EXIT_FAILURE);
+    }
+}
+
 void print_position(uint64_t position){
     // Determine the number of bits in an int64_t
     int numBits = sizeof(position) * 8;

@@ -12,30 +12,30 @@
 #define NUM_OF_PIECE_TYPES (12)
 #define NUM_OF_BITS (64)
 
-#define WHITE_PAWNS 0
-#define WHITE_ROOKS 1
-#define WHITE_KNIGHTS 2
-#define WHITE_BISHOPS 3
-#define WHITE_QUEENS 4
-#define WHITE_KING 5
-#define BLACK_PAWNS 6
-#define BLACK_ROOKS 7
-#define BLACK_KNIGHTS 8
-#define BLACK_BISHOPS 9
-#define BLACK_QUEENS 10
-#define BLACK_KING 11
+#define WHITE_PAWNS (0)
+#define WHITE_ROOKS (1)
+#define WHITE_KNIGHTS (2)
+#define WHITE_BISHOPS (3)
+#define WHITE_QUEENS (4)
+#define WHITE_KING (5)
+#define BLACK_PAWNS (6)
+#define BLACK_ROOKS (7)
+#define BLACK_KNIGHTS (8)
+#define BLACK_BISHOPS (9)
+#define BLACK_QUEENS (10)
+#define BLACK_KING (11)
 
-#define PLAYER_WHITE 0
-#define PLAYER_BLACK 1
+#define PLAYER_WHITE (0)
+#define PLAYER_BLACK (1)
 
-#define LEFT 0
-#define RIGHT 1
+#define LEFT (0)
+#define RIGHT (1)
 
-#define FORCED 0
-#define UNFORCED 1
+#define FORCED (0)
+#define UNFORCED (1)
 
 
-//TODO rename COLLUMN to RANK
+//TODO rename ROW to RANK & COllumn to FIle
 #define ROW_1 0xFF
 #define COLLUMN_a 0x8080808080808080
 #define ROW_8 0xFF00000000000000
@@ -64,17 +64,16 @@ struct Board {
 
 void create_board(Board** board);
 
-
 // initializes board to start position
 void initialize_board(Board* board);
+
+void initialize_board_FEN(Board* board, char* fen_string);
 
 /*
  *  splits the a bitmap into an array of bitmaps with only one bit set
  *
- *  
- *
- *  pieces: bitmap of all pieces
- *  indivdual_pieces: pointer to array of single-bit bitmaps
+ *  pieces: uint64_t bitmap of all pieces 
+ *  indivdual_pieces: pointer to array of uint64_t bitmaps with one bit set
  *
  *  returns: number of pieces 
  */ 
