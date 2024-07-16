@@ -11,7 +11,7 @@
 
 // Allocates and Initializes the necessary memory to a board
 void create_board(Board** board) {
-    printf("Creating Board\n");
+    //printf("Creating Board\n");
     *board = malloc(sizeof(Board));
     if (*board == NULL) {
         fprintf(stderr, "Failed to allocate memory for board\n");
@@ -38,7 +38,11 @@ void free_board(Board* board) {
 
 
 void copy_board(Board* copy, Board* source) {
-    printf("Copying Board\n");
+    if (copy == NULL) {
+        fprintf(stderr, "Must Allocate Memory in order to copy a board\n");
+        exit(EXIT_FAILURE);
+    }
+    //printf("Copying Board\n");
     copy->pieces = malloc(NUM_OF_PIECE_TYPES * sizeof(uint64_t));
     if (copy->pieces == NULL) {
         fprintf(stderr, "Failed to allocate memory for pieces array\n");
@@ -130,25 +134,24 @@ uint64_t get_all_pieces(Board* board){
 
 
 int results_in_check(Board* board, Move move){
-    printf("Checking if move results in Check\n");
+    //printf("Checking if move results in Check\n");
     Board* board_copy;
     create_board(&board_copy);
     copy_board(board_copy, board);
 
-
     int player_color = board_copy->current_Player;
-
-
 
     apply_move_forced(board_copy, move);
 
     if(is_in_check(board_copy, player_color)){
         printf("player %d is in check after that move\n", player_color );
-    }else{
-        "player %d is not check after that move\n", player_color ;
     }
 
-    return is_in_check(board_copy, player_color);
+    int results_in_check = is_in_check(board_copy, player_color);
+
+    free_board(board_copy);
+
+    return results_in_check;
 }
 
 // applies the move without checks for validity
@@ -177,7 +180,7 @@ int apply_move(Board* board, Move move){
 
     //#TODO this needs to be changed at some point
     // A "get_all_legal_moves" function is needed to check if it is checkmate (all pseudo_legal moves result in check)
-    if (is_pseudo_legal_move(board, move) && !results_in_check(board, move)){
+    if (is_legal_move(board, move)){
 
         apply_move_forced(board, move);
         return 1;
@@ -284,7 +287,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
     
     uint64_t bishop_attack_path = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color));
     uint64_t rook_attack_path = generate_pseudolegal_moves_for_rook(board, position, get_opponent(attacking_color));
-    uint64_t knight_attack_path = generate_pseudolegal_moves_for_rook(board, position, get_opponent(attacking_color));
+    uint64_t knight_attack_path = generate_pseudolegal_moves_for_knight(board, position, get_opponent(attacking_color));
  
     if(attacking_color == PLAYER_WHITE){
         if((bishop_attack_path & get_all_pieces_of_type(board, WHITE_BISHOPS)) || (bishop_attack_path & get_all_pieces_of_type(board, WHITE_QUEENS))) return 1;
@@ -301,40 +304,75 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
 
 // ---------- MOVE GENERATION ----------------
 
-/*
-// #TODO This function is a work in Progress
-Move* generate_all_legal_moves_for_player(Board* board, int player){
 
-    // #TODO This assumes 200 possible moves in a given position. This is too much for the average case.
-    Move* legal_moves = malloc(sizeof(Move) * 200);
+int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_moves){
+    printf("PLAYER %d", player);
+    if(legal_moves == NULL){
+        fprintf(stderr, "Must Allocate Memory for all legal Moves\n");
+        exit(EXIT_FAILURE);
+    }
 
-    if(player == PLAYER_WHITE){
-        // Looping through all the piece_types of the player
-        for(int piece_type = 0; piece_type <= 5; piece_type++){
-            // This array holds the position of all individual pieces of the piece_type
-            uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
+    int move_counter = 0;
 
-            // #TODO implement "get_all_pieces_of_type" and  "split_bitmap"
-            int num_of_pieces = split_bitmap(get_all_pieces_of_type(board, piece_type), indivdual_pieces);
-            printf("For piecetype %d, there are %d pieces\n", piece_type, num_of_pieces);
 
-            // Looping trough all the pieces of that type
-            for(int piece = 0; piece < num_of_pieces; piece++){
-                uint64_t piece_position = indivdual_pieces[piece];
-                uint64_t legal_destinations = generate_pseudolegal_moves_for_piece(board, piece_position);
-                
-                Move* legal_moves_by_piece = malloc(sizeof(uint64_t) * 30);
-                 // #TODO implement "get_moves_from_destination_bitmap"
-                int num_of_moves = get_moves_from_destination_bitmap(piece_position, legal_destinations, legal_moves_by_piece);
-                
-                printf("For piece %d of piece_type %d, there are %d moves\n", piece, piece_type, num_of_moves);
+    int pawn_index = 0;
+    int king_index = 5;
+    if(player == PLAYER_BLACK){
+        pawn_index = 6;
+        king_index = 11;
+    }
 
-                // #TODO implement "append_to_array"
-                legal_moves = append_to_array(legal_moves, legal_moves_by_piece);
+    // Looping through all the piece_types of the player
+    for(int piece_type = pawn_index; piece_type <= king_index; piece_type++){
+        // This array holds the position of all individual pieces of the piece_type
+        uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
+
+        int num_of_pieces = split_bitmap(board->pieces[piece_type], indivdual_pieces);
+        printf("\nFor piecetype %c, there are %d pieces\n", get_symbol_for_piecetype(piece_type), num_of_pieces);
+
+        // Looping trough all the pieces of that type
+        for(int piece = 0; piece < num_of_pieces; piece++){
+            uint64_t piece_position = indivdual_pieces[piece];
+
+            Move* legal_moves_by_piece = malloc(sizeof(uint64_t) * 30);
+            int num_of_moves_by_piece = generate_legal_moves_for_piece(board, piece_position,legal_moves_by_piece);
+            printf("For piece %d of piece_type %c, there are %d moves\n", piece, get_symbol_for_piecetype(piece_type), num_of_moves_by_piece);
+            
+            // Append all moves by the piece to legal_moves
+            for(int i = move_counter; i < move_counter + num_of_moves_by_piece; i++){
+                legal_moves[i] = legal_moves_by_piece[i - move_counter];
             }
+            move_counter += num_of_moves_by_piece;
         }
     }
-}*/
+    
+    return move_counter;
+}
+
+
+int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves_by_piece){
+
+    int move_counter = 0;
+
+    if (legal_moves_by_piece == NULL) {
+        fprintf(stderr, "Must Allocate Memory for legal_moves\n");
+        exit(EXIT_FAILURE);
+    }
+
+    uint64_t pseudolegal_destinations = generate_pseudolegal_moves_for_piece(board, position);
+
+    Move* pseudolegal_moves = malloc(sizeof(uint64_t) * 30);
+    int num_of_pseudolegal_moves = get_moves_from_destination_bitmap(position, pseudolegal_destinations, pseudolegal_moves);
+    
+    for(int i = 0; i < num_of_pseudolegal_moves; i++){
+        if(is_legal_move(board, pseudolegal_moves[i])){
+            legal_moves_by_piece[move_counter] = pseudolegal_moves[i];
+            move_counter++;
+        }
+    }
+    //printf("From %d pseudolegal moves, %d are legal.\n", num_of_pseudolegal_moves, move_counter);
+    return move_counter;
+}
 
 uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position){
     switch(get_piece_type_at(board, position)){

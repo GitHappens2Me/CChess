@@ -205,21 +205,32 @@ int get_opponent(int player);
 
 int results_in_check(Board* board, Move move);
 
+/*
+ *  generates all legal moves (Array of type Move) for the specified player at the current boardstate
+ *  
+ *  board, current board state
+ *  player: player, whose moves are generated
+ *  legal_moves: pointer to Move-array, where the legal moves are stored
+ *
+ *  returns: number of legal_moves for that player
+ * 
+ *  notes: 
+ */
+int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_moves);
 
 /*
- *  generates all legal moves for the specified player at the current boardstate
+ *  generates all legal moves (Array of type Move) for a given piece
  *  
- *  b: board, current board state
- *  player: player, whose moves are generated
+ *  board, current board state
+ *  position: position of piece
+ *  legal_moves: pointer to Move-array, where the legal moves are stored
  *
- *  returns: 
- *           array of type Move
+ *  returns: number of legal_moves for that piece
  * 
- *  notes: This Function returns an array of type "Move". In contrast to returning a uint64_t bitmap of all legal destination squares
- *         #TODO a "count_legal_moves" function might be needed to initialize a sufficiant array beforehand
+ *  notes: This is the function where the Transition between Moves as a uint64 Bitmap to an array of Move-objects occur
+ *         
  */
-Move* generate_all_legal_moves_for_player(Board* board, int player);
-//uint64_t generate_all_peseudolegal_moves(Board board, int player);
+int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves);
 
 uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position);
 

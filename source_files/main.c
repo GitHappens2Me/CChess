@@ -11,6 +11,8 @@
 
 //TODO: use github Issues to track Progress
 
+//#TODO rename Pseudo-legal / legal (maybe valid, allowed etc?)
+
 int main(int argc, char *argv[]) {
 
     printf("Hello World!\n");
@@ -71,10 +73,10 @@ int main(int argc, char *argv[]) {
     uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
     int count = split_bitmap(get_all_pieces(board), indivdual_pieces);
     printf("Number of Pieces in Position: %d\n",count);
-    print_position(indivdual_pieces[1]);
-    for(int i = 0; i < count; i++){
-        print_position(indivdual_pieces[i]);
-    }
+    //print_position(indivdual_pieces[1]);
+    //for(int i = 0; i < count; i++){
+    //    print_position(indivdual_pieces[i]);
+    //}
     
     // Test initializing from FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     Board* fen_board;
@@ -104,9 +106,23 @@ int main(int argc, char *argv[]) {
     print_board(board_copy);
     exit(1);
 */
-    
+
+
+    Move* legal_moves = malloc(sizeof(Move) * 200);
+
+    int num_legal_moves = generate_all_legal_moves_for_player(board, PLAYER_WHITE, legal_moves);
+
+    printf("Legal Moves = %d\n", num_legal_moves);
+    for(int i = 0; i < num_legal_moves; i++){
+        print_move(legal_moves[i]);
+    }
+
 
     // Test by Playing: 
+
+    num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
+    printf("Legal Moves = %d\n", num_legal_moves);
+    
     print_board(board);
     while (1) {
         Move move = get_move_from_user();
@@ -114,6 +130,9 @@ int main(int argc, char *argv[]) {
         
         if(apply_move(board, move) == 1){
             print_move(move);
+            num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
+            printf("Legal Moves = %d\n", num_legal_moves);
+            
             print_board(board);
             printf("Current Player: %d\n", board->current_Player);
 
@@ -124,6 +143,7 @@ int main(int argc, char *argv[]) {
             }
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check");
+            
         }
 
 
@@ -131,6 +151,7 @@ int main(int argc, char *argv[]) {
 
 
     }
+
 
     // Test by showing posible Moves for specified Piece
     while (1) {
