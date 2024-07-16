@@ -64,6 +64,8 @@ struct Board {
 
 void create_board(Board** board);
 
+void copy_board(Board* copy, Board* source);
+
 // initializes board to start position
 void initialize_board(Board* board);
 
@@ -98,11 +100,33 @@ int is_in_check(Board* board, int king_color);
  */
 int is_attacked(Board* board, uint64_t position, int attacking_color);
 
+/*
+ *  changes the boardstate according to the provided move without any checks
+ *
+ *  board: board on which the move is made
+ *  move: move which is made
+ *  
+ *  returns: void
+ *  
+ *  notes: 
+ * 
+ */ 
+void apply_move_forced(Board* board, Move move);
 
 /*
-Applies move to board. Checks for validity of move first, except forced = True
-*/
-int apply_move(Board* board, Move move, int forced);
+ *  changes the boardstate according to the provided move if the move is valid
+ *
+ *  board: board on which the move is made
+ *  move: move which is made
+ *  
+ *  returns: 
+ *          1: if move was applied
+ *          0: if move couldnt be applied (invalid move)
+ *  
+ *  notes: Applying the move is done via the apply_move_forced function after validity test
+ * 
+ */ 
+int apply_move(Board* board, Move move);
 
 // returns integer that represents the position of all pieces (white and black)
 uint64_t get_all_pieces(Board* board);
@@ -175,6 +199,9 @@ int get_current_player(Board *board);
  *          PLAYER_BLACK ( 1 ), if player == PLAYER_WHITE ( 0 )
  */ 
 int get_opponent(int player);
+
+
+int results_in_check(Board* board, Move move);
 
 
 /*

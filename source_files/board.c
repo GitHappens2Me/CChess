@@ -20,7 +20,27 @@ void create_board(Board** board) {
     (*board)->current_Player = PLAYER_WHITE;
 }
 
-// initializes board to start position
+void copy_board(Board* copy, Board* source){
+    copy->pieces[WHITE_PAWNS] = source->pieces[WHITE_PAWNS];
+    copy->pieces[WHITE_ROOKS] = source->pieces[WHITE_ROOKS];
+    copy->pieces[WHITE_KNIGHTS] = source->pieces[WHITE_KNIGHTS];
+    copy->pieces[WHITE_BISHOPS] = source->pieces[WHITE_BISHOPS];
+    copy->pieces[WHITE_QUEENS] = source->pieces[WHITE_QUEENS];
+    copy->pieces[WHITE_KING] = source->pieces[WHITE_KING];
+
+    copy->pieces[BLACK_PAWNS] = source->pieces[BLACK_PAWNS];
+    copy->pieces[BLACK_ROOKS] = source->pieces[BLACK_ROOKS];
+    copy->pieces[BLACK_KNIGHTS] = source->pieces[BLACK_KNIGHTS];
+    copy->pieces[BLACK_BISHOPS] = source->pieces[BLACK_BISHOPS];
+    copy->pieces[BLACK_QUEENS] = source->pieces[BLACK_QUEENS];
+    copy->pieces[BLACK_KING] = source->pieces[BLACK_KING];
+
+    copy->current_Player = source->current_Player;
+    
+}
+
+
+// Initialize board to start position
 void initialize_board(Board* board){
     printf("Initializing Board\n");
     board->pieces[WHITE_PAWNS] = 0x000000000000FF00;
@@ -99,40 +119,43 @@ uint64_t get_all_pieces(Board* board){
 }
 
 
+int results_in_check(Board* board, Move move){
+
+    //varboard.C
+
+    return 0;
+}
+
+// applies the move without checks for validity
+void apply_move_forced(Board* board, Move move){
+    int piece_type = get_piece_type_at(board, move.origin);
+    //printf("Piecetype moved: %d\n", piece_type);
+    //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
 
 
+    // For Captures
+    if(move.destination & get_all_pieces(board)){
+        printf("Capture!");
+        int captured_piece_type = get_piece_type_at(board, move.destination);
+        // remove captured piece
+        board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~move.destination;
+    }
+     // remove piece from origin
+    board->pieces[piece_type] = board->pieces[piece_type] & ~move.origin;
+    // add piece to destination
+    board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
+    // Changes whose turn it is:
+    board->current_Player = get_opponent(board->current_Player);
+}
 
-int apply_move(Board* board, Move move, int forced){
+int apply_move(Board* board, Move move){
+    if (is_pseudo_legal_move(board, move) && !results_in_check(board, move)){
 
-    if (forced == FORCED || is_pseudo_legal_move(board, move)){
-
-        int piece_type = get_piece_type_at(board, move.origin);
-        //printf("Piecetype moved: %d\n", piece_type);
-        //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
-
-        // For Captures
-        if(move.destination & get_all_pieces(board)){
-            printf("Capture!");
-            int captured_piece_type = get_piece_type_at(board, move.destination);
-            // remove captured piece
-            board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~move.destination;
-        }
-
-        // remove piece from origin
-        board->pieces[piece_type] = board->pieces[piece_type] & ~move.origin;
-        // add piece to destination
-        board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
-
-
-        
-        // Changes whose turn it is:
-        board->current_Player = get_opponent(board->current_Player);
-        
-
+        apply_move_forced(board, move);
         return 1;
+
     }else{
-        printf("Move not legal\n");
-        print_move(move);
+        printf("Move not valid. Please choose a different Move\n");
         return 0;
     }
 }

@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     /*
     print_board(board);
     Move test_move = {0x100, 0x10000};
-    apply_move(board, test_move, FORCED);
+    apply_move(board, test_move);
     printf("After h3");
     print_board(board);
     */
@@ -67,11 +67,13 @@ int main(int argc, char *argv[]) {
     }
 */
     // Test split_bitmap
+
     uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
     int count = split_bitmap(get_all_pieces(board), indivdual_pieces);
     printf("Number of Pieces in Position: %d\n",count);
+    print_position(indivdual_pieces[1]);
     for(int i = 0; i < count; i++){
-        //print_position(indivdual_pieces[i]);
+        print_position(indivdual_pieces[i]);
     }
     
     // Test initializing from FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -85,7 +87,21 @@ int main(int argc, char *argv[]) {
 
     print_board(fen_board);
 
-    
+    // Test copying Board:
+    Board* board_copy;
+    create_board(&board_copy);
+    copy_board(board_copy, board);
+
+    Move e2e4 = {get_bitmap_from_notation("e2"), get_bitmap_from_notation("e4")};
+
+    apply_move(board, e2e4);
+
+    printf("Original\n:");
+    print_board(board);
+    printf("Copy\n:");
+    print_board(board_copy);
+    exit(1);
+
     
 
     // Test by Playing: 
@@ -94,7 +110,7 @@ int main(int argc, char *argv[]) {
         Move move = get_move_from_user();
         
         
-        if(apply_move(board, move, UNFORCED) == 1){
+        if(apply_move(board, move) == 1){
             print_move(move);
             print_board(board);
             printf("Current Player: %d\n", board->current_Player);
