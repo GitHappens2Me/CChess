@@ -79,6 +79,26 @@ void initialize_board_FEN(Board* board, char* fen_string);
  */ 
 int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces);
 
+
+int is_in_check(Board* board, int king_color);
+
+
+/*
+ *  tests if a specified square is attacked by the specified player
+ *  
+ *  b: board, on which is being tested
+ *  position: square, which is tested
+ *  attacking_color: color of the (potentially) attacking player
+ *
+ *  returns: 
+ *           1, if square is attacked
+ *           0, if square is not attacked
+ * 
+ *  notes: 
+ */
+int is_attacked(Board* board, uint64_t position, int attacking_color);
+
+
 /*
 Applies move to board. Checks for validity of move first, except forced = True
 */
@@ -155,21 +175,6 @@ int get_current_player(Board *board);
  *          PLAYER_BLACK ( 1 ), if player == PLAYER_WHITE ( 0 )
  */ 
 int get_opponent(int player);
-
-/*
- *  tests if a specified square is attacked by the specified player
- *  
- *  b: board, on which is being tested
- *  position: square, which is tested
- *  attacking_color: color of the (potentially) attacking player
- *
- *  returns: 
- *           1, if square is attacked
- *           0, if square is not attacked
- * 
- *  notes: 
- */
-int is_attacked(Board* board, uint64_t position, int attacking_color);
 
 
 /*

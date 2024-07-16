@@ -51,15 +51,15 @@ void initialize_board_FEN(Board* board, char* fen_string){
     uint64_t rank_mask = ROW_8; 
 
     while( rank != NULL ) {
-        printf("%s\n", rank );
+        //printf("%s\n", rank );
         
         uint64_t collumn_mask = COLLUMN_a;
         int piece = 0;
         while (rank[piece] != '\0') {
-            printf("%d: %c\n", piece, rank[piece]);
+            //printf("%d: %c\n", piece, rank[piece]);
         
-            printf("Collumn:\n");
-            print_position(collumn_mask);
+            //printf("Collumn:\n");
+            //print_position(collumn_mask);
 
             if(isalpha(rank[piece])){  
                 // Using rank_mask & collumn as mask set the corresponsing bit on the board
@@ -82,14 +82,8 @@ void initialize_board_FEN(Board* board, char* fen_string){
 
     // Initialize secondary information (e.g: w KQkq - 0 1) 
     //                                  (player, castling, en passant, halvmove clock, fullmove clock     )
-/*
-    while( element != NULL ) {
-        printf("%s\n", element );
 
-        element = strtok(NULL, " ");
-    }
-*/
-    printf("finished");
+    
 
 }
 
@@ -208,6 +202,14 @@ int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
     return counter;
 }
 
+
+int is_in_check(Board* board, int king_color){
+    int king_piece_index = -1;
+    if(king_color == PLAYER_WHITE) king_piece_index = WHITE_KING;
+    else king_piece_index = BLACK_KING;
+
+    return is_attacked(board, board->pieces[king_piece_index], get_opponent(king_color));
+}
 
 /*
  * tests if a specified square is attacked by the specified player

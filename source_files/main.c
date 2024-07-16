@@ -85,8 +85,7 @@ int main(int argc, char *argv[]) {
 
     print_board(fen_board);
 
-    exit(1);
-
+    
     
 
     // Test by Playing: 
@@ -105,7 +104,8 @@ int main(int argc, char *argv[]) {
             }else{
                 printf("Not Attacked\n");
             }
-
+            if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
+            if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check");
         }
 
 
