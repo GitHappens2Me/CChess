@@ -64,6 +64,8 @@ struct Board {
 
 void create_board(Board** board);
 
+void free_board(Board* board);
+
 void copy_board(Board* copy, Board* source);
 
 // initializes board to start position

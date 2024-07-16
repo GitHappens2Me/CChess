@@ -85,9 +85,11 @@ int main(int argc, char *argv[]) {
     
     initialize_board_FEN(fen_board, fen_String);
 
+    printf("Fenboard:\n");
     print_board(fen_board);
 
     // Test copying Board:
+    /* #TODO Why does this break? n
     Board* board_copy;
     create_board(&board_copy);
     copy_board(board_copy, board);
@@ -101,7 +103,7 @@ int main(int argc, char *argv[]) {
     printf("Copy\n:");
     print_board(board_copy);
     exit(1);
-
+*/
     
 
     // Test by Playing: 

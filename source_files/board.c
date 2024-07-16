@@ -13,31 +13,41 @@
 void create_board(Board** board) {
     printf("Creating Board\n");
     *board = malloc(sizeof(Board));
-    (*board)->pieces = malloc(NUM_OF_ROWS * sizeof(uint64_t));
+    if (*board == NULL) {
+        fprintf(stderr, "Failed to allocate memory for board\n");
+        exit(EXIT_FAILURE);
+    }
+    (*board)->pieces = malloc(NUM_OF_PIECE_TYPES * sizeof(uint64_t));
+    if ((*board)->pieces == NULL) {
+        fprintf(stderr, "Failed to allocate memory for pieces array\n");
+        free(*board);
+        exit(EXIT_FAILURE);
+    }
     for (int i = 0; i < NUM_OF_PIECE_TYPES; i++) {
         (*board)->pieces[i] = 0x0;
     }
     (*board)->current_Player = PLAYER_WHITE;
 }
 
-void copy_board(Board* copy, Board* source){
-    copy->pieces[WHITE_PAWNS] = source->pieces[WHITE_PAWNS];
-    copy->pieces[WHITE_ROOKS] = source->pieces[WHITE_ROOKS];
-    copy->pieces[WHITE_KNIGHTS] = source->pieces[WHITE_KNIGHTS];
-    copy->pieces[WHITE_BISHOPS] = source->pieces[WHITE_BISHOPS];
-    copy->pieces[WHITE_QUEENS] = source->pieces[WHITE_QUEENS];
-    copy->pieces[WHITE_KING] = source->pieces[WHITE_KING];
-
-    copy->pieces[BLACK_PAWNS] = source->pieces[BLACK_PAWNS];
-    copy->pieces[BLACK_ROOKS] = source->pieces[BLACK_ROOKS];
-    copy->pieces[BLACK_KNIGHTS] = source->pieces[BLACK_KNIGHTS];
-    copy->pieces[BLACK_BISHOPS] = source->pieces[BLACK_BISHOPS];
-    copy->pieces[BLACK_QUEENS] = source->pieces[BLACK_QUEENS];
-    copy->pieces[BLACK_KING] = source->pieces[BLACK_KING];
-
-    copy->current_Player = source->current_Player;
-    
+void free_board(Board* board) {
+    if (board != NULL) {
+        free(board->pieces);
+        free(board);
+    }
 }
+
+
+void copy_board(Board* copy, Board* source) {
+    printf("Copying Board\n");
+    copy->pieces = malloc(NUM_OF_PIECE_TYPES * sizeof(uint64_t));
+    if (copy->pieces == NULL) {
+        fprintf(stderr, "Failed to allocate memory for pieces array\n");
+        exit(EXIT_FAILURE);
+    }
+    memcpy(copy->pieces, source->pieces, NUM_OF_PIECE_TYPES * sizeof(uint64_t));
+    copy->current_Player = source->current_Player;
+}
+
 
 
 // Initialize board to start position
@@ -120,10 +130,25 @@ uint64_t get_all_pieces(Board* board){
 
 
 int results_in_check(Board* board, Move move){
+    printf("Checking if move results in Check\n");
+    Board* board_copy;
+    create_board(&board_copy);
+    copy_board(board_copy, board);
 
-    //varboard.C
 
-    return 0;
+    int player_color = board_copy->current_Player;
+
+
+
+    apply_move_forced(board_copy, move);
+
+    if(is_in_check(board_copy, player_color)){
+        printf("player %d is in check after that move\n", player_color );
+    }else{
+        "player %d is not check after that move\n", player_color ;
+    }
+
+    return is_in_check(board_copy, player_color);
 }
 
 // applies the move without checks for validity
@@ -149,6 +174,9 @@ void apply_move_forced(Board* board, Move move){
 }
 
 int apply_move(Board* board, Move move){
+
+    //#TODO this needs to be changed at some point
+    // A "get_all_legal_moves" function is needed to check if it is checkmate (all pseudo_legal moves result in check)
     if (is_pseudo_legal_move(board, move) && !results_in_check(board, move)){
 
         apply_move_forced(board, move);
@@ -228,8 +256,11 @@ int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
 
 int is_in_check(Board* board, int king_color){
     int king_piece_index = -1;
-    if(king_color == PLAYER_WHITE) king_piece_index = WHITE_KING;
-    else king_piece_index = BLACK_KING;
+    if(king_color == PLAYER_WHITE){
+         king_piece_index = WHITE_KING;
+    }else{ 
+        king_piece_index = BLACK_KING;
+    }
 
     return is_attacked(board, board->pieces[king_piece_index], get_opponent(king_color));
 }
