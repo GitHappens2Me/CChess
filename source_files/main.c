@@ -91,21 +91,21 @@ int main(int argc, char *argv[]) {
     print_board(fen_board);
 
     // Test copying Board:
-    /* #TODO Why does this break? n
+
     Board* board_copy;
     create_board(&board_copy);
     copy_board(board_copy, board);
 
     Move e2e4 = {get_bitmap_from_notation("e2"), get_bitmap_from_notation("e4")};
 
-    apply_move(board, e2e4);
+    apply_move(board_copy, e2e4);
 
     printf("Original\n:");
     print_board(board);
     printf("Copy\n:");
     print_board(board_copy);
-    exit(1);
-*/
+ 
+
 
 
     Move* legal_moves = malloc(sizeof(Move) * 200);
@@ -127,12 +127,26 @@ int main(int argc, char *argv[]) {
     while (1) {
         Move move = get_move_from_user();
         
+        /*
+        Fools Mate:
+        f2f3
+        e7e6
+        g2g4
+        d8h4    
+            
+            
+        */
         
         if(apply_move(board, move) == 1){
             print_move(move);
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
-            printf("Legal Moves = %d\n", num_legal_moves);
-            
+            if(num_legal_moves == 0){
+                printf("Player %d is Checkmate\n", board->current_Player);
+            }else{
+                printf("Player %d has %d Legal Moves.\n", board->current_Player, num_legal_moves);
+                print_move(legal_moves[0]);
+            }
+
             print_board(board);
             printf("Current Player: %d\n", board->current_Player);
 

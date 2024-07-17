@@ -23,8 +23,12 @@
 
 int main(int argc, char *argv[]) {
     
+    // notation.c:
     test_get_bitmap_from_notation();
     test_get_notation_from_bitmap();
+
+    // board.c
     test_split_bitmap();
+    test_initialize_board_FEN();
 
 }

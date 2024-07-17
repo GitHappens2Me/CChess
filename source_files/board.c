@@ -73,8 +73,12 @@ void initialize_board(Board* board){
 }
 
 void initialize_board_FEN(Board* board, char* fen_string){
-    printf("Initializing Board to %s\n", fen_string);
+    //printf("Initializing Board to %s\n", fen_string);
 
+    // Delete all pieces from board:
+    for (int i = 0; i < NUM_OF_PIECE_TYPES; i++) {
+        board->pieces[i] = 0x0;
+    }
 
     // Elements of a FEN String [Pieces, active player, castling rights, en passant square, halvemove clock, fullmove clock]
     char* element = strtok(fen_string, " ");
@@ -178,8 +182,6 @@ void apply_move_forced(Board* board, Move move){
 
 int apply_move(Board* board, Move move){
 
-    //#TODO this needs to be changed at some point
-    // A "get_all_legal_moves" function is needed to check if it is checkmate (all pseudo_legal moves result in check)
     if (is_legal_move(board, move)){
 
         apply_move_forced(board, move);
@@ -250,6 +252,9 @@ int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
         if (pieces & indivdual_piece){
             indivdual_pieces[counter] = indivdual_piece;
             counter++;
+        }else{
+            // this resets the unused rest of indivdual_pieces to all zeroes
+            indivdual_pieces[i] = 0ULL;
         }
         indivdual_piece <<= 1;
     }
@@ -413,8 +418,8 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
 
     // move in all direction
     for(int direction = 0; direction < 4; direction++){
-        for(int i = 0; i < NUM_OF_COLLUMNS; i++){   // TODO: NUM_OF_COLLUMNS only works for square boards (i think thats fine tho)
-            
+        for(int i = 0; i < NUM_OF_COLLUMNS; i++){   
+
             // Prevent moving of the board
             if(next & edges[direction]) break;
             
@@ -453,8 +458,8 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
 
     // move in all direction
     for(int direction = 0; direction < 4; direction++){
-        for(int i = 0; i < NUM_OF_COLLUMNS; i++){   // TODO: NUM_OF_COLLUMNS only works for square boards (i think thats fine tho)
-            
+        for(int i = 0; i < NUM_OF_COLLUMNS; i++){   
+
             // prevent moving of the board
             if(next & edges_horizontal[direction] || next & edges_vertical[direction]) break;
                 
@@ -535,7 +540,7 @@ uint64_t generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, i
 }
 
 uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int player){
-    // TODO initialize  possible_moves = 0; and remove the need to return possible_moves & ~position;
+    // TODO Idea: initialize  possible_moves = 0; and remove the need to return possible_moves & ~position;
     // Also in the other functions
     uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
@@ -580,6 +585,8 @@ uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, in
         }
     }
 
+
+
     // removes original position from possibles squares to move to
     return possible_moves & ~position;
 
@@ -588,6 +595,7 @@ uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, in
 
 // TODO Refactor and improve ALL move generation: 
 // replace if-clause with clever bit operations
+//#BUG pawns can capture forwards when moving 2 squares 
 uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player){
     uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
@@ -615,7 +623,8 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
     if(position & start_row){
         if(shift_direction == LEFT) next <<= 8;
         if(shift_direction == RIGHT) next >>= 8;
-        if(~(next & own_pieces) | ~(next & opponent_pieces)) possible_moves |= next;
+        if(!((next & own_pieces) | (next & opponent_pieces)) ) possible_moves |= next;
+        
     }
 
 

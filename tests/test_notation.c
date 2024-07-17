@@ -64,9 +64,10 @@ void test_get_notation_from_bitmap() {
 
     // Bitmaps with multiple set bits #TODO Those tests dont work. get_notation_from_bitmap should return int and place the calculated notation in a parameter
     /*
-    assert(strcmp(get_notation_from_bitmap(1111ULL), "a1") == 0);  
-    assert(strcmp(get_notation_from_bitmap(100001ULL), "h1") == 0);   
-    assert(strcmp(get_notation_from_bitmap(01010ULL), "a8") == 0);   
+    printf("%s\n",get_notation_from_bitmap(1111ULL));
+    assert(strcmp(get_notation_from_bitmap(1111ULL), NULL) == 0);  
+    assert(strcmp(get_notation_from_bitmap(100001ULL), NULL) == 0);   
+    assert(strcmp(get_notation_from_bitmap(01010ULL), NULL) == 0);   
     */
 
     // Free allocated memory: 
