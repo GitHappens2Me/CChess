@@ -9,6 +9,12 @@
 #include "../header_files/inout.h"
 
 
+
+/*----------------------------------------
+                Board creation 
+                & Initialzation
+------------------------------------------*/
+
 // Allocates and Initializes the necessary memory to a board
 void create_board(Board** board) {
     //printf("Creating Board\n");
@@ -38,7 +44,7 @@ void free_board(Board* board) {
 
 
 void copy_board(Board* copy, Board* source) {
-    if (copy == NULL) {
+    if (copy == NULL || source == NULL) {
         fprintf(stderr, "Must Allocate Memory in order to copy a board\n");
         exit(EXIT_FAILURE);
     }
@@ -120,43 +126,56 @@ void initialize_board_FEN(Board* board, char* fen_string){
 
     // Initialize secondary information (e.g: w KQkq - 0 1) 
     //                                  (player, castling, en passant, halvmove clock, fullmove clock     )
-
-    
-
 }
 
+/*----------------------------------------
+                        ???
+                This Function might
+                fit better elsewhere
+------------------------------------------*/
 
-// Returns bitmap of all Pieces on the Board 
-uint64_t get_all_pieces(Board* board){
-    uint64_t all_pieces = 0;
-    for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
-        all_pieces = all_pieces | board->pieces[i];
-        //printf("%d\n",board->pieces[i]);
+
+int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
+
+    int number_of_bits = NUM_OF_BITS; 
+    int counter = 0;
+    uint64_t indivdual_piece = 1ULL;
+
+    for (int i = 0; i < number_of_bits; i++) {
+        // Check if the current bit is set
+        if (pieces & indivdual_piece){
+            indivdual_pieces[counter] = indivdual_piece;
+            counter++;
+        }else{
+            // this resets the unused rest of indivdual_pieces to all zeroes
+            indivdual_pieces[i] = 0ULL;
+        }
+        indivdual_piece <<= 1;
     }
-    return all_pieces; 
+    return counter;
 }
 
 
-int results_in_check(Board* board, Move move){
-    //printf("Checking if move results in Check\n");
-    Board* board_copy;
-    create_board(&board_copy);
-    copy_board(board_copy, board);
+/*----------------------------------------
+                Apply Moves
+------------------------------------------*/
 
-    int player_color = board_copy->current_Player;
 
-    apply_move_forced(board_copy, move);
 
-    if(is_in_check(board_copy, player_color)){
-        printf("player %d is in check after that move\n", player_color );
+
+int apply_move(Board* board, Move move){
+
+    if (is_legal_move(board, move)){
+
+        apply_move_forced(board, move);
+        return 1;
+
+    }else{
+        printf("Move not valid. Please choose a different Move\n");
+        return 0;
     }
-
-    int results_in_check = is_in_check(board_copy, player_color);
-
-    free_board(board_copy);
-
-    return results_in_check;
 }
+
 
 // applies the move without checks for validity
 void apply_move_forced(Board* board, Move move){
@@ -180,17 +199,19 @@ void apply_move_forced(Board* board, Move move){
     board->current_Player = get_opponent(board->current_Player);
 }
 
-int apply_move(Board* board, Move move){
+/*----------------------------------------
+                Board Information
+------------------------------------------*/
 
-    if (is_legal_move(board, move)){
 
-        apply_move_forced(board, move);
-        return 1;
-
-    }else{
-        printf("Move not valid. Please choose a different Move\n");
-        return 0;
+// Returns bitmap of all Pieces on the Board 
+uint64_t get_all_pieces(Board* board){
+    uint64_t all_pieces = 0;
+    for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
+        all_pieces = all_pieces | board->pieces[i];
+        //printf("%d\n",board->pieces[i]);
     }
+    return all_pieces; 
 }
 
 
@@ -208,24 +229,9 @@ uint64_t get_pieces_of_player(Board* board, int player){
     return all_pieces; 
 }
 
-
-
-
-int get_opponent(int player){
-    if(player == PLAYER_BLACK) return PLAYER_WHITE;
-    if(player == PLAYER_WHITE) return PLAYER_BLACK;
+uint64_t get_all_pieces_of_type(Board* board, int piece_type){
+    return board->pieces[piece_type];
 }
-
-int get_piece_color(Board *board, uint64_t position){
-    if(get_piece_type_at(board, position) <= 5) return PLAYER_WHITE;
-    else return PLAYER_BLACK;
-}
-
-int get_current_player(Board *board){
-    return board->current_Player;
-}
-
-
 
 int get_piece_type_at(Board* board, uint64_t position){
     for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
@@ -237,29 +243,25 @@ int get_piece_type_at(Board* board, uint64_t position){
     return -1;
 }
 
-uint64_t get_all_pieces_of_type(Board* board, int piece_type){
-    return board->pieces[piece_type];
+int get_piece_color(Board *board, uint64_t position){
+    if(get_piece_type_at(board, position) <= 5) return PLAYER_WHITE;
+    else return PLAYER_BLACK;
 }
 
-int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
-
-    int number_of_bits = NUM_OF_BITS; 
-    int counter = 0;
-    uint64_t indivdual_piece = 1ULL;
-
-    for (int i = 0; i < number_of_bits; i++) {
-        // Check if the current bit is set
-        if (pieces & indivdual_piece){
-            indivdual_pieces[counter] = indivdual_piece;
-            counter++;
-        }else{
-            // this resets the unused rest of indivdual_pieces to all zeroes
-            indivdual_pieces[i] = 0ULL;
-        }
-        indivdual_piece <<= 1;
-    }
-    return counter;
+int get_current_player(Board *board){
+    return board->current_Player;
 }
+
+int get_opponent(int player){
+    if(player == PLAYER_BLACK) return PLAYER_WHITE;
+    if(player == PLAYER_WHITE) return PLAYER_BLACK;
+}
+
+
+
+/*----------------------------------------
+                Checks
+------------------------------------------*/
 
 
 int is_in_check(Board* board, int king_color){
@@ -271,6 +273,28 @@ int is_in_check(Board* board, int king_color){
     }
 
     return is_attacked(board, board->pieces[king_piece_index], get_opponent(king_color));
+}
+
+
+int results_in_check(Board* board, Move move){
+    //printf("Checking if move results in Check\n");
+    Board* board_copy;
+    create_board(&board_copy);
+    copy_board(board_copy, board);
+
+    int player_color = board_copy->current_Player;
+
+    apply_move_forced(board_copy, move);
+
+    if(is_in_check(board_copy, player_color)){
+        printf("player %d is in check after that move\n", player_color );
+    }
+
+    int results_in_check = is_in_check(board_copy, player_color);
+
+    free_board(board_copy);
+
+    return results_in_check;
 }
 
 /*
@@ -307,8 +331,9 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
 
 }
 
-// ---------- MOVE GENERATION ----------------
-
+/*----------------------------------------
+                Move Generation
+------------------------------------------*/
 
 int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_moves){
     printf("PLAYER %d", player);
@@ -595,7 +620,6 @@ uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, in
 
 // TODO Refactor and improve ALL move generation: 
 // replace if-clause with clever bit operations
-//#BUG pawns can capture forwards when moving 2 squares 
 uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player){
     uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));

@@ -61,17 +61,80 @@ struct Board {
     int current_Player;
 };
 
+/*----------------------------------------
+                Board creation 
+                & Initialzation
+------------------------------------------*/
 
+/*
+ *  allocates Memory for the board Pointer
+ *
+ *  board: the board, which the allocated memory belongs to
+ *
+ *  returns: void
+ * 
+ *  notes: 
+ *          The Pieces get initialized to 0x0UUL (Empty Board)
+ *          The First Player to move is PLAYER_WHITE (0)
+ */
 void create_board(Board** board);
 
+/*
+ *  frees the Memory of a board
+ *
+ *  board: the board, which memory is freed
+ *
+ *  returns: void
+ * 
+ *  notes: 
+ */
 void free_board(Board* board);
 
+/*
+ *  creates a deep copy of a board 
+ *
+ *  copy: Board-Pointer holding the copy
+ *  source: Board, which gets copied
+ *
+ *  returns: void
+ * 
+ *  notes:  copy_board does not allocate memory for the copy
+ *          create_board has to be called first
+ */
 void copy_board(Board* copy, Board* source);
 
-// initializes board to start position
+/*
+ *  Initialized Board to Starting Position
+ *
+ *  board: Board which gets initialized
+ *
+ *  returns: void
+ */
 void initialize_board(Board* board);
 
+/*
+ *  Initalizes Board to a position given by FEN String
+ *
+ *  board: Board which gets initialized
+ *  fen_string: FEN-position
+ *
+ *  returns: void
+ * 
+ *  notes: 
+ * 
+ *  #TODO: ATM only the pieces and the active player gets initialized
+ */
+
 void initialize_board_FEN(Board* board, char* fen_string);
+
+
+
+/*----------------------------------------
+                        ???
+                This Function might
+                fit better elsewhere
+------------------------------------------*/
+
 
 /*
  *  splits the a bitmap into an array of bitmaps with only one bit set
@@ -84,36 +147,12 @@ void initialize_board_FEN(Board* board, char* fen_string);
 int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces);
 
 
-int is_in_check(Board* board, int king_color);
 
 
-/*
- *  tests if a specified square is attacked by the specified player
- *  
- *  b: board, on which is being tested
- *  position: square, which is tested
- *  attacking_color: color of the (potentially) attacking player
- *
- *  returns: 
- *           1, if square is attacked
- *           0, if square is not attacked
- * 
- *  notes: 
- */
-int is_attacked(Board* board, uint64_t position, int attacking_color);
 
-/*
- *  changes the boardstate according to the provided move without any checks
- *
- *  board: board on which the move is made
- *  move: move which is made
- *  
- *  returns: void
- *  
- *  notes: 
- * 
- */ 
-void apply_move_forced(Board* board, Move move);
+/*----------------------------------------
+                Apply Moves
+------------------------------------------*/
 
 /*
  *  changes the boardstate according to the provided move if the move is valid
@@ -130,10 +169,29 @@ void apply_move_forced(Board* board, Move move);
  */ 
 int apply_move(Board* board, Move move);
 
+/*
+ *  changes the boardstate according to the provided move without any checks
+ *
+ *  board: board on which the move is made
+ *  move: move which is made
+ *  
+ *  returns: void
+ *  
+ *  notes: 
+ * 
+ */ 
+void apply_move_forced(Board* board, Move move);
+
+
+/*----------------------------------------
+                Board Information
+------------------------------------------*/
+
 // returns integer that represents the position of all pieces (white and black)
 uint64_t get_all_pieces(Board* board);
 uint64_t get_pieces_of_player(Board* board, int player);
 uint64_t get_all_pieces_of_type(Board* board, int piece_type);
+
 
 /*
  *  returns the piece_type of piece at the specified square
@@ -203,7 +261,36 @@ int get_current_player(Board *board);
 int get_opponent(int player);
 
 
+
+
+/*----------------------------------------
+                Checks
+------------------------------------------*/
+
+int is_in_check(Board* board, int king_color);
+
 int results_in_check(Board* board, Move move);
+
+/*
+ *  tests if a specified square is attacked by the specified player
+ *  
+ *  b: board, on which is being tested
+ *  position: square, which is tested
+ *  attacking_color: color of the (potentially) attacking player
+ *
+ *  returns: 
+ *           1, if square is attacked
+ *           0, if square is not attacked
+ * 
+ *  notes: 
+ */
+int is_attacked(Board* board, uint64_t position, int attacking_color);
+
+
+
+/*----------------------------------------
+                Move Generation
+------------------------------------------*/
 
 /*
  *  generates all legal moves (Array of type Move) for the specified player at the current boardstate
