@@ -134,7 +134,7 @@ Move get_move_from_user(){
     char input[100];
     printf("Enter a Move: ");
     scanf("%s", &input);
-    printf("String is %d chars long.\n", strlen(input));
+    //printf("String is %d chars long.\n", strlen(input));
     
     // #TODO Optimise 100 character limit 
     char origin[100];
@@ -147,16 +147,16 @@ Move get_move_from_user(){
         strncpy(destination, input + 2, 2);
         destination[2] = '\0';
 
-        printf("Origin: %s\n", origin);
-        printf("Destination: %s\n", destination);
+        //printf("Origin: %s\n", origin);
+        //printf("Destination: %s\n", destination);
     } else if(strlen(input) == 2){
         strncpy(origin, input, 2);
         origin[2] = '\0';
         
         printf("Enter a Destination square: ");
         scanf("%s", &destination);
-        printf("Origin: %s\n", origin);
-        printf("Destination: %s\n", destination);
+        //printf("Origin: %s\n", origin);
+        //printf("Destination: %s\n", destination);
    
     }else{
         printf("Please enter a Move in the form of 'e2e4' or a select a piece with 'e2'\n   ");

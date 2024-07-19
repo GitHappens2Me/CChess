@@ -7,6 +7,8 @@
 #include "../header_files/inout.h"
 #include "../header_files/move.h"
 #include "../header_files/notation.h"
+#include "../header_files/engine.h"
+
 
 
 //TODO: use github Issues to track Progress
@@ -107,44 +109,60 @@ int main(int argc, char *argv[]) {
  
 
 
-
+    
     Move* legal_moves = malloc(sizeof(Move) * 200);
 
     int num_legal_moves = generate_all_legal_moves_for_player(board, PLAYER_WHITE, legal_moves);
-
+    /*
     printf("Legal Moves = %d\n", num_legal_moves);
     for(int i = 0; i < num_legal_moves; i++){
         print_move(legal_moves[i]);
-    }
+    }*/
 
 
     // Test by Playing: 
 
+    printf("\n\n\n\nStarting Game\n");
     num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
     printf("Legal Moves = %d\n", num_legal_moves);
     
-    print_board(board);
+    printf("Simple Evaluation: %d\n", evaluate(board));
+    printf("Best Move: ");
+    Move best_move;
+    printf("%d: ",get_best_move(board, &best_move, 0, 1));
+    print_move(best_move);
+
+    int engine_move = 1;
+    Move move;
+
+
     while (1) {
-        Move move = get_move_from_user();
-        
-        /*
-        Fools Mate:
-        f2f3
-        e7e6
-        g2g4
-        d8h4    
-            
-            
-        */
-        
+        if(engine_move){
+            if(board->current_Player == 1){
+                get_best_move(board, &best_move, 0, 4);
+                move = best_move;
+                printf("Engine Move: ");
+                print_move(move);
+            }else{
+                move = get_move_from_user();
+            }
+        }else{
+            move = get_move_from_user();
+        }
         if(apply_move(board, move) == 1){
+            printf("Applied: ");
             print_move(move);
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
+            printf("Simple Evaluation: %d\n", evaluate(board));
+
+            printf("Best Move: ");
+            printf("%d: ",get_best_move(board, &best_move, 0, 3));
+            print_move(best_move);
+
             if(num_legal_moves == 0){
                 printf("Player %d is Checkmate\n", board->current_Player);
             }else{
                 printf("Player %d has %d Legal Moves.\n", board->current_Player, num_legal_moves);
-                print_move(legal_moves[0]);
             }
 
             print_board(board);

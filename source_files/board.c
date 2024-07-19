@@ -144,6 +144,7 @@ int split_bitmap(uint64_t pieces, uint64_t* indivdual_pieces){
     for (int i = 0; i < number_of_bits; i++) {
         // Check if the current bit is set
         if (pieces & indivdual_piece){
+            // # TODO if(indivdual_pieces){...} <- That way NULL can be passed if you just care about the return value
             indivdual_pieces[counter] = indivdual_piece;
             counter++;
         }else{
@@ -186,7 +187,7 @@ void apply_move_forced(Board* board, Move move){
 
     // For Captures
     if(move.destination & get_all_pieces(board)){
-        printf("Capture!");
+        //printf("Capture!");
         int captured_piece_type = get_piece_type_at(board, move.destination);
         // remove captured piece
         board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~move.destination;
@@ -287,7 +288,7 @@ int results_in_check(Board* board, Move move){
     apply_move_forced(board_copy, move);
 
     if(is_in_check(board_copy, player_color)){
-        printf("player %d is in check after that move\n", player_color );
+        //printf("player %d is in check after that move\n", player_color );
     }
 
     int results_in_check = is_in_check(board_copy, player_color);
@@ -336,7 +337,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
 ------------------------------------------*/
 
 int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_moves){
-    printf("PLAYER %d", player);
+    //printf("PLAYER %d", player);
     if(legal_moves == NULL){
         fprintf(stderr, "Must Allocate Memory for all legal Moves\n");
         exit(EXIT_FAILURE);
@@ -358,7 +359,7 @@ int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_mo
         uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
 
         int num_of_pieces = split_bitmap(board->pieces[piece_type], indivdual_pieces);
-        printf("\nFor piecetype %c, there are %d pieces\n", get_symbol_for_piecetype(piece_type), num_of_pieces);
+        //printf("\nFor piecetype %c, there are %d pieces\n", get_symbol_for_piecetype(piece_type), num_of_pieces);
 
         // Looping trough all the pieces of that type
         for(int piece = 0; piece < num_of_pieces; piece++){
@@ -366,7 +367,7 @@ int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_mo
 
             Move* legal_moves_by_piece = malloc(sizeof(uint64_t) * 30);
             int num_of_moves_by_piece = generate_legal_moves_for_piece(board, piece_position,legal_moves_by_piece);
-            printf("For piece %d of piece_type %c, there are %d moves\n", piece, get_symbol_for_piecetype(piece_type), num_of_moves_by_piece);
+            //printf("For piece %d of piece_type %c, there are %d moves\n", piece, get_symbol_for_piecetype(piece_type), num_of_moves_by_piece);
             
             // Append all moves by the piece to legal_moves
             for(int i = move_counter; i < move_counter + num_of_moves_by_piece; i++){

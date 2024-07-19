@@ -319,6 +319,16 @@ int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_mo
  */
 int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves);
 
+/*
+ *  generates all pseudolegal moves (Array of type Move) for a given piece
+ *  
+ *  board: current board state
+ *  position: position of piece
+ *  legal_moves: pointer to Move-array, where the legal moves are stored
+ *
+ *  returns: uint64 bitmap of pseudolegal destinations
+ *         
+ */
 uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position);
 
 uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player);
