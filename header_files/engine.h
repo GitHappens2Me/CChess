@@ -11,4 +11,11 @@ int get_best_move(Board* board, Move* best_move, int depth, int max_depth);
 
 int evaluate(Board* board);
 
+int get_best_move_minimax(Board* board, Move* best_move, int max_depth);
+int negaMax(Board* board, int depth);
+
+
+int maxi(Board* board, int depth);
+    
+int mini(Board* board, int depth);
 

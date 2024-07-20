@@ -64,7 +64,7 @@ void print_board(Board* board){
         }
     }
     printf("\n");
-    for(int i = 0; i < strlen(str_board); i++){
+    for(size_t i = 0; i < strlen(str_board); i++){
         printf("%c", str_board[i]);
         if((i+1) % NUM_OF_COLLUMNS == 0) printf("\n");
     }
@@ -91,7 +91,7 @@ char get_symbol_for_piecetype(int piece_type){
     }
 }
 
-char get_piecetype_for_symbol(char symbol){
+int get_piecetype_for_symbol(char symbol){
     switch (symbol) {
         case 'P':  return 0;
         case 'R':  return 1;
@@ -106,7 +106,7 @@ char get_piecetype_for_symbol(char symbol){
         case 'q': return 10;
         case 'k': return 11;
         default:
-            printf("No symbol for %s", symbol);
+            printf("No symbol for %c", symbol);
             exit(EXIT_FAILURE);
     }
 }
@@ -131,14 +131,14 @@ void print_position(uint64_t position){
 }
 
 Move get_move_from_user(){
-    char input[100];
+    char* input = malloc(sizeof(char)* 100);
     printf("Enter a Move: ");
-    scanf("%s", &input);
+    scanf("%s", input);
     //printf("String is %d chars long.\n", strlen(input));
     
     // #TODO Optimise 100 character limit 
-    char origin[100];
-    char destination[100];
+    char* origin = malloc(sizeof(char)* 100);
+    char* destination = malloc(sizeof(char)* 100);
     
     if (strlen(input) == 4) {
         strncpy(origin, input, 2);
@@ -154,7 +154,7 @@ Move get_move_from_user(){
         origin[2] = '\0';
         
         printf("Enter a Destination square: ");
-        scanf("%s", &destination);
+        scanf("%s", destination);
         //printf("Origin: %s\n", origin);
         //printf("Destination: %s\n", destination);
    

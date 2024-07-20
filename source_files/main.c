@@ -15,7 +15,7 @@
 
 //#TODO rename Pseudo-legal / legal (maybe valid, allowed etc?)
 
-int main(int argc, char *argv[]) {
+int main() {
 
     printf("Hello World!\n");
 
@@ -79,6 +79,7 @@ int main(int argc, char *argv[]) {
     //for(int i = 0; i < count; i++){
     //    print_position(indivdual_pieces[i]);
     //}
+    free(indivdual_pieces);
     
     // Test initializing from FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     Board* fen_board;
@@ -91,6 +92,7 @@ int main(int argc, char *argv[]) {
 
     printf("Fenboard:\n");
     print_board(fen_board);
+    free_board(fen_board);    
 
     // Test copying Board:
 
@@ -106,41 +108,40 @@ int main(int argc, char *argv[]) {
     print_board(board);
     printf("Copy\n:");
     print_board(board_copy);
+
+    free_board(board_copy);
  
 
 
     
     Move* legal_moves = malloc(sizeof(Move) * 200);
 
-    int num_legal_moves = generate_all_legal_moves_for_player(board, PLAYER_WHITE, legal_moves);
-    /*
-    printf("Legal Moves = %d\n", num_legal_moves);
-    for(int i = 0; i < num_legal_moves; i++){
-        print_move(legal_moves[i]);
-    }*/
-
-
     // Test by Playing: 
 
     printf("\n\n\n\nStarting Game\n");
-    num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
+    int num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
     printf("Legal Moves = %d\n", num_legal_moves);
     
     printf("Simple Evaluation: %d\n", evaluate(board));
     printf("Best Move: ");
-    Move best_move;
-    printf("%d: ",get_best_move(board, &best_move, 0, 1));
-    print_move(best_move);
+    free(legal_moves);
 
-    int engine_move = 1;
+    
     Move move;
 
+/*
+    printf("%d: ",get_best_move(board, &move, 0, 1));
+    print_move(move);
+*/
+    int engine_move = 1;
+    
+    print_board(board);
 
     while (1) {
         if(engine_move){
             if(board->current_Player == 1){
-                get_best_move(board, &best_move, 0, 4);
-                move = best_move;
+                //get_best_move(board, &move, 0, 3);
+                get_best_move_minimax(board, &move, 5);
                 printf("Engine Move: ");
                 print_move(move);
             }else{
@@ -149,16 +150,22 @@ int main(int argc, char *argv[]) {
         }else{
             move = get_move_from_user();
         }
+
         if(apply_move(board, move) == 1){
             printf("Applied: ");
             print_move(move);
+            Move* legal_moves = malloc(sizeof(Move) * 200);
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
             printf("Simple Evaluation: %d\n", evaluate(board));
+            free(legal_moves);
 
+            /*
             printf("Best Move: ");
-            printf("%d: ",get_best_move(board, &best_move, 0, 3));
-            print_move(best_move);
+            
+            printf("%d: ",get_best_move(board, &move, 0,2));
 
+            print_move(move);
+*/
             if(num_legal_moves == 0){
                 printf("Player %d is Checkmate\n", board->current_Player);
             }else{
@@ -187,9 +194,9 @@ int main(int argc, char *argv[]) {
 
     // Test by showing posible Moves for specified Piece
     while (1) {
-        char input[100];
+        char* input = malloc(sizeof(char) * 100);
         printf("Enter a position ");
-        scanf("%s", &input);
+        scanf("%s", input);
         
 
         print_position(generate_pseudolegal_moves_for_piece(board, get_bitmap_from_notation(input)));

@@ -20,12 +20,12 @@ void create_board(Board** board) {
     //printf("Creating Board\n");
     *board = malloc(sizeof(Board));
     if (*board == NULL) {
-        fprintf(stderr, "Failed to allocate memory for board\n");
+        printf("Failed to allocate memory for board\n");
         exit(EXIT_FAILURE);
     }
     (*board)->pieces = malloc(NUM_OF_PIECE_TYPES * sizeof(uint64_t));
     if ((*board)->pieces == NULL) {
-        fprintf(stderr, "Failed to allocate memory for pieces array\n");
+        printf("Failed to allocate memory for pieces array\n");
         free(*board);
         exit(EXIT_FAILURE);
     }
@@ -48,7 +48,9 @@ void copy_board(Board* copy, Board* source) {
         fprintf(stderr, "Must Allocate Memory in order to copy a board\n");
         exit(EXIT_FAILURE);
     }
-    //printf("Copying Board\n");
+    if (copy->pieces != NULL) {
+        free(copy->pieces);
+    }
     copy->pieces = malloc(NUM_OF_PIECE_TYPES * sizeof(uint64_t));
     if (copy->pieces == NULL) {
         fprintf(stderr, "Failed to allocate memory for pieces array\n");
@@ -255,7 +257,7 @@ int get_current_player(Board *board){
 
 int get_opponent(int player){
     if(player == PLAYER_BLACK) return PLAYER_WHITE;
-    if(player == PLAYER_WHITE) return PLAYER_BLACK;
+    else return PLAYER_BLACK;
 }
 
 
@@ -278,9 +280,12 @@ int is_in_check(Board* board, int king_color){
 
 
 int results_in_check(Board* board, Move move){
+
+    return 0;
     //printf("Checking if move results in Check\n");
     Board* board_copy;
-    create_board(&board_copy);
+    create_board(&board_copy); // #TODO this causes: #9  0x00007ff9e84cfde6 in ucrtbase!_malloc_base () from C:\Windows\System32\ucrtbase.dll
+                                                 //  #10 0x00007ff748bb1aa9 in create_board (board=0x5ffa60) at .\source_files\board.c:21
     copy_board(board_copy, board);
 
     int player_color = board_copy->current_Player;
@@ -329,6 +334,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
         if((rook_attack_path & get_all_pieces_of_type(board, BLACK_ROOKS)) || (rook_attack_path & get_all_pieces_of_type(board, BLACK_QUEENS))) return 1;
         if((knight_attack_path & get_all_pieces_of_type(board, BLACK_KNIGHTS))) return 1;
     }
+    return 0;
 
 }
 
@@ -339,7 +345,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
 int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_moves){
     //printf("PLAYER %d", player);
     if(legal_moves == NULL){
-        fprintf(stderr, "Must Allocate Memory for all legal Moves\n");
+        printf("Must Allocate Memory for all legal Moves\n");
         exit(EXIT_FAILURE);
     }
 
@@ -357,26 +363,48 @@ int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_mo
     for(int piece_type = pawn_index; piece_type <= king_index; piece_type++){
         // This array holds the position of all individual pieces of the piece_type
         uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
-
+        if (indivdual_pieces == NULL) {
+            printf("Could not Allocate Memory for indivdual_pieces\n");
+            exit(EXIT_FAILURE);
+        }
         int num_of_pieces = split_bitmap(board->pieces[piece_type], indivdual_pieces);
         //printf("\nFor piecetype %c, there are %d pieces\n", get_symbol_for_piecetype(piece_type), num_of_pieces);
 
         // Looping trough all the pieces of that type
         for(int piece = 0; piece < num_of_pieces; piece++){
             uint64_t piece_position = indivdual_pieces[piece];
-
-            Move* legal_moves_by_piece = malloc(sizeof(uint64_t) * 30);
-            int num_of_moves_by_piece = generate_legal_moves_for_piece(board, piece_position,legal_moves_by_piece);
+        
+            //#TODO remove magic number 64 -> more efficiant to just allocate the needed memory
+            Move* legal_moves_by_piece = malloc(sizeof(Move) * 64);
+            if (legal_moves_by_piece == NULL) {
+                printf("Could not Allocate Memory for legal_moves_by_piece\n");
+                free(indivdual_pieces);
+                exit(EXIT_FAILURE);
+            }
+            int num_of_moves_by_piece = generate_legal_moves_for_piece(board, piece_position, legal_moves_by_piece);
             //printf("For piece %d of piece_type %c, there are %d moves\n", piece, get_symbol_for_piecetype(piece_type), num_of_moves_by_piece);
-            
+
+            if (move_counter + num_of_moves_by_piece >= 150) { // Adjust this limit as needed
+                printf("Memory not sufficient: Moves: %d\n", move_counter);
+                exit(EXIT_FAILURE);
+            }    
+
+
             // Append all moves by the piece to legal_moves
             for(int i = move_counter; i < move_counter + num_of_moves_by_piece; i++){
                 legal_moves[i] = legal_moves_by_piece[i - move_counter];
             }
+
+
             move_counter += num_of_moves_by_piece;
+
+            free(legal_moves_by_piece);
+
         }
+        free(indivdual_pieces);     
+
     }
-    
+
     return move_counter;
 }
 
@@ -392,7 +420,8 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
 
     uint64_t pseudolegal_destinations = generate_pseudolegal_moves_for_piece(board, position);
 
-    Move* pseudolegal_moves = malloc(sizeof(uint64_t) * 30);
+    //#TODO remove magic number 64 -> more efficiant to just allocate the needed memory
+    Move* pseudolegal_moves = malloc(sizeof(uint64_t) * 64);
     int num_of_pseudolegal_moves = get_moves_from_destination_bitmap(position, pseudolegal_destinations, pseudolegal_moves);
     
     for(int i = 0; i < num_of_pseudolegal_moves; i++){
@@ -628,8 +657,7 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
     uint64_t next = position;
 
     uint64_t start_row;
-    int shift_direction;
-    int shift_amount_diagonal[] = {7,9};  
+    int shift_direction; 
 
     if(player == PLAYER_WHITE){
         start_row = ROW_2;

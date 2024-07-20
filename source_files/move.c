@@ -53,7 +53,9 @@ int get_moves_from_destination_bitmap(uint64_t piece_position, uint64_t legal_de
             legal_moves_by_piece[counter] = new_move;
 
             // Increment the counter
+            
             counter++;
+            if(counter >= 28) printf("Allocated memory not sufficiant: Counter %d\n", counter);
         }
         current_destination <<= 1;
     }
