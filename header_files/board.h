@@ -189,6 +189,21 @@ void apply_move_forced(Board* board, Move move);
 
 // returns integer that represents the position of all pieces (white and black)
 uint64_t get_all_pieces(Board* board);
+
+
+/*
+ *  returns a bitmap containing all pieces of the specified player
+ *
+ *  board: board, on which the pieces stand
+ *  player: player, whose pieces will be returned
+ *
+ *  returns: 
+ *          uint64_t bitmap, where a 1 signifies a piece of the given player
+ *  
+ *  notes: This Function gets called extremly often, therfore it is optimized more than others.
+ *         #TODO It might be even useful, to store the players pieces in the Board struct for faster access 
+ 
+ */
 uint64_t get_pieces_of_player(Board* board, int player);
 uint64_t get_all_pieces_of_type(Board* board, int piece_type);
 

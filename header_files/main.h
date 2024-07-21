@@ -2,10 +2,25 @@
 
 
 /*
- Compile with: 
-    gcc -g -Wall -Wextra -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c
+ Compile with (Optimizations): 
+    gcc -O3 -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c
  Run with:
-    ./CChess
+    ./CChess 
+ Profile with:
+    gcc -g -pg  -Wall -Wextra -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c -no-pie
+    & 
+    -Run the executable- 
+    &
+    gprof ./CChess.exe gmon.out > analysis.txt 
+ Check for MemLeaks (In Linux WSL)
+    valgrind --leak-check=full ./CChess
+ Debug with:
+    gcc -g -pg  -Wall -Wextra -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c
+    &
+    gdb ./CChess
+
+
+    
 */
 
 // Example Function Comment:

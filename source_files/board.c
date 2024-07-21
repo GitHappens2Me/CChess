@@ -218,18 +218,16 @@ uint64_t get_all_pieces(Board* board){
 }
 
 
-uint64_t get_pieces_of_player(Board* board, int player){
-    uint64_t all_pieces = 0;
-    if(player == PLAYER_WHITE){
-        for(int i = 0; i < 6; i++){
-            all_pieces = all_pieces | board->pieces[i];
-        }
-    }else if(player == PLAYER_BLACK){
-        for(int i = 6; i < 12; i++){
-            all_pieces = all_pieces | board->pieces[i];
-        }
+
+uint64_t get_pieces_of_player(Board* board, int player) {
+    uint64_t all_pieces = 0ULL;
+
+    int start_index = (player == PLAYER_WHITE) ? 0 : 6;
+
+    for (int i = 0; i < 6; i++) {
+        all_pieces |= board->pieces[start_index + i];
     }
-    return all_pieces; 
+    return all_pieces;
 }
 
 uint64_t get_all_pieces_of_type(Board* board, int piece_type){
@@ -538,8 +536,8 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
 }
 
 uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player){
-    uint64_t possible_moves = position;
-    uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
+    uint64_t possible_moves = 0ULL;
+    //uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player)); // Not needed in the current implementation
     uint64_t own_pieces = get_pieces_of_player(board, player);
     uint64_t next = position;
 
@@ -560,32 +558,25 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
 
     // move in all direction
     for(int direction = 0; direction < 8; direction++){
+        //#TODO Optmization idea: defining edges_vertical[direction] etc. as their own variables in the loop to reduce array accesses
         next = position;
 
         // Prevent knight from moving over the edge of the board
-        if(next & edges_vertical[direction]  || next & edges_horizontal[direction] || next & edges_spacer[direction]){
+        if(next & ( edges_vertical[direction] | edges_horizontal[direction] | edges_spacer[direction])){
             continue;
         }
-        if     (shift_direction[direction] == LEFT ) next <<= shift_amount[direction];
-        else if(shift_direction[direction] == RIGHT) next >>= shift_amount[direction];
-        // Collision with own piece
-
-        if(next & own_pieces){
-            continue;
+        if     (shift_direction[direction] == LEFT)     next <<= shift_amount[direction];
+        else /*(shift_direction[direction] == RIGHT)*/  next >>= shift_amount[direction];
         
-        // Collision with opponent piece
-
-        }else if(next & opponent_pieces){       
-            possible_moves |= next;
-            continue;
-        // No Collision
-        }else{
-            possible_moves |= next;
-        }
+        // Collision with own piece
+        if(next & own_pieces) continue;
+    
+        // No Collision or Collision with opponent piece 
+        possible_moves |= next;
     }
 
     // removes original position from possibles squares to move to 
-    return possible_moves & ~position;
+    return possible_moves;
 
 }
 

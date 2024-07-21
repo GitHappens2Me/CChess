@@ -72,10 +72,11 @@ void print_board(Board* board) {
     }
     printf("\n");
 
+
     for (int row = 0; row < NUM_OF_COLLUMNS; row++) {
         printf("%d ", NUM_OF_COLLUMNS - row); // Row labels 8 to 1
         for (int col = 0; col < NUM_OF_COLLUMNS; col++) {
-            int index = (NUM_OF_COLLUMNS - 1 - row) * NUM_OF_COLLUMNS + col;
+            int index = row * NUM_OF_COLLUMNS + col;
             printf("| %c ", str_board[index]);
         }
         printf("|\n");

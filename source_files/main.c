@@ -44,7 +44,8 @@ int main() {
     }*/
     printf("Black's Pieces:\n");
     print_position(get_pieces_of_player(board, PLAYER_BLACK));
-
+    printf("White's Pieces:\n");
+    print_position(get_pieces_of_player(board, PLAYER_WHITE));
     printf("Piecetypeindex: %d\n\n", get_piece_type_at(board, get_bitmap_from_notation("a8")));
 
     //print_position(COLLUMN_a);
@@ -54,8 +55,11 @@ int main() {
     print_position(generate_pseudolegal_moves_for_bishop(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
 
     printf("a5\n");
-    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
     
+    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
+    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("e3"), PLAYER_WHITE));
+    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("h8"), PLAYER_WHITE));
+    //exit(1);
 
 /*
     uint64_t pos = 1;    
@@ -123,7 +127,7 @@ int main() {
     printf("Legal Moves = %d\n", num_legal_moves);
     
     printf("Simple Evaluation: %f\n", evaluate(board));
-    printf("Best Move: ");
+
     free(legal_moves);
 
     
@@ -144,11 +148,15 @@ int main() {
                 get_best_move_minimax(board, &move, 4);
                 printf("Engine Move: ");
                 print_move(move);
+               //exit(EXIT_SUCCESS);
             }else{
                 move = get_move_from_user();
+                //move = e2e4;
             }
         }else{
             move = get_move_from_user();
+
+            
         }
 
         if(apply_move(board, move) == 1){
