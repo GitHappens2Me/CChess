@@ -141,7 +141,7 @@ int main() {
         if(engine_move){
             if(board->current_Player == 1){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 5);
+                get_best_move_minimax(board, &move, 4);
                 printf("Engine Move: ");
                 print_move(move);
             }else{

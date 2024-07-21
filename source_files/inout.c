@@ -50,25 +50,41 @@ void print_pieces(Board* board, int piecetype){
  * 
  *  returns: void
  */
-void print_board(Board* board){
+void print_board(Board* board) {
     char str_board[NUM_OF_BITS + 1];
-    memset(str_board, '.', NUM_OF_BITS); // Initialize the board with spaces
+    memset(str_board, '.', NUM_OF_BITS); // Initialize the board with dots
     str_board[NUM_OF_BITS] = '\0'; // Null terminate the string
-    
-    for(int piece_type = 0; piece_type < NUM_OF_PIECE_TYPES; piece_type++){
+
+    printf("\n");
+    // Place pieces on the board
+    for (int piece_type = 0; piece_type < NUM_OF_PIECE_TYPES; piece_type++) {
         uint64_t current_pieces = board->pieces[piece_type];
-        for (int i = NUM_OF_BITS - 1; i >= 0; i--) {   
-            if (current_pieces & ((uint64_t)1 << i)){
+        for (int i = NUM_OF_BITS - 1; i >= 0; i--) {
+            if (current_pieces & ((uint64_t)1 << i)) {
                 str_board[NUM_OF_BITS - 1 - i] = get_symbol_for_piecetype(piece_type);
-            }  
+            }
         }
     }
-    printf("\n");
-    for(size_t i = 0; i < strlen(str_board); i++){
-        printf("%c", str_board[i]);
-        if((i+1) % NUM_OF_COLLUMNS == 0) printf("\n");
+
+    printf("   ");
+    for (int col = 0; col < NUM_OF_COLLUMNS; col++) {
+        printf(" %c  ", 'a' + col); // Column labels 'a' to 'h'
     }
     printf("\n");
+
+    for (int row = 0; row < NUM_OF_COLLUMNS; row++) {
+        printf("%d ", NUM_OF_COLLUMNS - row); // Row labels 8 to 1
+        for (int col = 0; col < NUM_OF_COLLUMNS; col++) {
+            int index = (NUM_OF_COLLUMNS - 1 - row) * NUM_OF_COLLUMNS + col;
+            printf("| %c ", str_board[index]);
+        }
+        printf("|\n");
+        printf("  ");
+        for (int col = 0; col < NUM_OF_COLLUMNS; col++) {
+            printf("+---");
+        }
+        printf("+\n");
+    }
 }
 
 char get_symbol_for_piecetype(int piece_type){

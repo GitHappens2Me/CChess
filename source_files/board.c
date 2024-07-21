@@ -281,11 +281,9 @@ int is_in_check(Board* board, int king_color){
 
 int results_in_check(Board* board, Move move){
 
-    return 0;
     //printf("Checking if move results in Check\n");
     Board* board_copy;
-    create_board(&board_copy); // #TODO this causes: #9  0x00007ff9e84cfde6 in ucrtbase!_malloc_base () from C:\Windows\System32\ucrtbase.dll
-                                                 //  #10 0x00007ff748bb1aa9 in create_board (board=0x5ffa60) at .\source_files\board.c:21
+    create_board(&board_copy); 
     copy_board(board_copy, board);
 
     int player_color = board_copy->current_Player;
