@@ -122,7 +122,7 @@ int main() {
     int num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
     printf("Legal Moves = %d\n", num_legal_moves);
     
-    printf("Simple Evaluation: %d\n", evaluate(board));
+    printf("Simple Evaluation: %f\n", evaluate(board));
     printf("Best Move: ");
     free(legal_moves);
 
@@ -141,7 +141,7 @@ int main() {
         if(engine_move){
             if(board->current_Player == 1){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 5);
+                get_best_move_minimax(board, &move, 4);
                 printf("Engine Move: ");
                 print_move(move);
             }else{
@@ -156,7 +156,7 @@ int main() {
             print_move(move);
             Move* legal_moves = malloc(sizeof(Move) * 200);
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
-            printf("Simple Evaluation: %d\n", evaluate(board));
+            printf("Simple Evaluation: %f\n", evaluate(board));
             free(legal_moves);
 
             /*

@@ -7,15 +7,14 @@
 #include "../header_files/move.h"
 #include "../header_files/inout.h"
 
-int get_best_move(Board* board, Move* best_move, int depth, int max_depth);
+float get_best_move_minimax(Board* board, Move* best_move, int max_depth);
+float maxi(Board* board, int depth);
+float mini(Board* board, int depth);
 
-int evaluate(Board* board);
+float evaluate(Board* board);
 
-int get_best_move_minimax(Board* board, Move* best_move, int max_depth);
-int negaMax(Board* board, int depth);
+float calculate_material_score(Board* board);
+float get_piece_value(int piece_type);
 
-
-int maxi(Board* board, int depth);
-    
-int mini(Board* board, int depth);
+float calculate_movement_score(Board* board);
 

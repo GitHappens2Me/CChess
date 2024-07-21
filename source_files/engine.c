@@ -2,9 +2,10 @@
 
 #include "../header_files/engine.h"
 #include <limits.h>
+#include <float.h>
 
 
-int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
+float get_best_move_minimax(Board* board, Move* best_move, int max_depth){
     
     printf("Starting MiniMax Calculation with Depth %d\n", max_depth);
 
@@ -22,7 +23,7 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
     }
     printf("Testing all %d rootmoves.\n",num_possible_moves);
 
-    int best_score = (get_current_player(board) == PLAYER_WHITE) ? INT_MIN : INT_MAX;
+    float best_score = (get_current_player(board) == PLAYER_WHITE) ? -FLT_MAX : FLT_MAX;
 
     Board* board_copy;
     create_board(&board_copy);
@@ -31,7 +32,7 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
         copy_board(board_copy, board);
         apply_move_forced(board_copy, possible_moves[i]);
 
-        int current_score;
+        float current_score;
         if (get_current_player(board) == PLAYER_WHITE) {
 
             current_score = mini(board_copy, max_depth - 1);
@@ -47,7 +48,9 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
                 *best_move = possible_moves[i];
             }
         }
-        
+        printf("Score %.2f for Move: ", current_score);
+        print_move(possible_moves[i]);
+
     }
 
     free_board(board_copy);
@@ -55,12 +58,11 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
     return best_score;
 }
 
-int maxi(Board* board, int depth) {
+float maxi(Board* board, int depth) {
     //print_board(board);
     //printf("Depth: %d",depth);
     if ( depth == 0 ) return evaluate(board);
-    int max = INT_MIN;
-
+    float max = -FLT_MAX;
         //#TODO remove magic number 64 -> more efficiant to just allocate the needed memory
     Move* possible_moves = malloc(sizeof(Move) * 200);
     if (!possible_moves) {
@@ -83,7 +85,7 @@ int maxi(Board* board, int depth) {
         //printf("copied board - ");
         apply_move_forced(board_copy, possible_moves[i]);
         //printf("call recursivle\n");
-        int score = mini(board_copy, depth - 1);
+        float score = mini(board_copy, depth - 1);
         if( score > max ){
             max = score;
         }
@@ -93,12 +95,11 @@ int maxi(Board* board, int depth) {
     return max;
 }
 
-int mini(Board* board, int depth) {
+float mini(Board* board, int depth) {
     //print_board(board);
     //printf("Depth: %d",depth);
     if ( depth == 0 ) return evaluate(board);
-    int min = INT_MAX;
-
+    float min = FLT_MAX;
         //#TODO remove magic number 64 -> more efficiant to just allocate the needed memory
     Move* possible_moves = malloc(sizeof(Move) * 200);
     if (!possible_moves) {
@@ -121,7 +122,7 @@ int mini(Board* board, int depth) {
         //printf("copied board - ");
         apply_move_forced(board_copy, possible_moves[i]);
         //printf("call recursivle\n");
-        int score = maxi(board_copy, depth - 1);
+        float score = maxi(board_copy, depth - 1);
         if( score < min){
             min = score;
         }
@@ -132,52 +133,66 @@ int mini(Board* board, int depth) {
     return min;
 }
 
+float evaluate(Board* board){
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int evaluate(Board* board){
-    uint64_t temp_array[NUM_OF_BITS];
-    return (split_bitmap(get_pieces_of_player(board, PLAYER_WHITE) ,temp_array) - split_bitmap(get_pieces_of_player(board, PLAYER_BLACK), temp_array));
+    float material_score = calculate_material_score(board);
+    float movement_score = calculate_movement_score(board);
+    //printf("%f ", movement_score);
+    return material_score + movement_score;
 }
 
+
+float calculate_material_score(Board* board){
+    float score = 0.0; 
+
+    uint64_t temp_array[NUM_OF_BITS];
+
+    for(int piece_type = 0; piece_type < NUM_OF_PIECE_TYPES; piece_type++){
+        score += (get_piece_value(piece_type) * split_bitmap(get_all_pieces_of_type(board, piece_type), temp_array));
+    }
+
+    return score;
+}
+
+float get_piece_value(int piece_type){
+    switch (piece_type) {
+        case 0: return 1.0;
+        case 1: return 5.0;
+        case 2: return 3.0;
+        case 3: return 3.0;
+        case 4: return 9.0;
+        case 5: return 1.0;
+        case 6: return -1.0;
+        case 7: return -5.0;
+        case 8: return -3.0;
+        case 9: return -3.0;
+        case 10: return -9.0;
+        case 11: return -1.0;
+        default:
+            printf("No Value for %i", piece_type);
+            exit(EXIT_FAILURE);
+    }
+}
+
+
+float calculate_movement_score(Board* board){
+    float score = 0.0; 
+    int original_player = board->current_Player;
+    Move temp_array[200];
+                                    // # TODO generate_all_legal_moves_for_player calls is_pseudo_legal_move
+                                    // which checks if it is the players turn. 
+                                    // Workaround: change the active player (inefficiant)
+    board->current_Player = PLAYER_WHITE;
+    int num_possible_moves_white = generate_all_legal_moves_for_player(board, PLAYER_WHITE, temp_array);
+    board->current_Player = PLAYER_BLACK;
+    int num_possible_moves_black = generate_all_legal_moves_for_player(board, PLAYER_BLACK, temp_array);
+
+    board->current_Player = original_player;
+    
+    score = ((float) num_possible_moves_white) - ((float) num_possible_moves_black); 
+    
+    // 10 extra moves are worth a pawn (?)
+    score = score * 0.1;
+
+    return score;
+}
