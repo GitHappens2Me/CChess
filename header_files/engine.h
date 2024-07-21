@@ -8,8 +8,8 @@
 #include "../header_files/inout.h"
 
 float get_best_move_minimax(Board* board, Move* best_move, int max_depth);
-float maxi(Board* board, int depth);
-float mini(Board* board, int depth);
+float maxi(Board* board, int depth, float alpha, float beta);
+float mini(Board* board, int depth, float alpha, float beta);
 
 float evaluate(Board* board);
 

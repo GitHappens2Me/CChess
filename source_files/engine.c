@@ -35,14 +35,14 @@ float get_best_move_minimax(Board* board, Move* best_move, int max_depth){
         float current_score;
         if (get_current_player(board) == PLAYER_WHITE) {
 
-            current_score = mini(board_copy, max_depth - 1);
+            current_score = mini(board_copy, max_depth - 1, -FLT_MAX, FLT_MAX);
             if (current_score > best_score) {
                 best_score = current_score;
                 *best_move = possible_moves[i];
             }
         } else {
 
-            current_score = maxi(board_copy, max_depth - 1);
+            current_score = maxi(board_copy, max_depth - 1, -FLT_MAX, FLT_MAX);
             if (current_score < best_score) {
                 best_score = current_score;
                 *best_move = possible_moves[i];
@@ -58,7 +58,7 @@ float get_best_move_minimax(Board* board, Move* best_move, int max_depth){
     return best_score;
 }
 
-float maxi(Board* board, int depth) {
+float maxi(Board* board, int depth, float alpha, float beta) {
     //print_board(board);
     //printf("Depth: %d",depth);
     if ( depth == 0 ) return evaluate(board);
@@ -85,9 +85,15 @@ float maxi(Board* board, int depth) {
         //printf("copied board - ");
         apply_move_forced(board_copy, possible_moves[i]);
         //printf("call recursivle\n");
-        float score = mini(board_copy, depth - 1);
+        float score = mini(board_copy, depth - 1, alpha, beta);
         if( score > max ){
             max = score;
+        }
+        if (max >= beta) {
+            break; // Beta cutoff
+        }
+        if (max > alpha) {
+            alpha = max;
         }
     }
     free_board(board_copy);
@@ -95,7 +101,7 @@ float maxi(Board* board, int depth) {
     return max;
 }
 
-float mini(Board* board, int depth) {
+float mini(Board* board, int depth, float alpha, float beta) {
     //print_board(board);
     //printf("Depth: %d",depth);
     if ( depth == 0 ) return evaluate(board);
@@ -122,9 +128,15 @@ float mini(Board* board, int depth) {
         //printf("copied board - ");
         apply_move_forced(board_copy, possible_moves[i]);
         //printf("call recursivle\n");
-        float score = maxi(board_copy, depth - 1);
+        float score = maxi(board_copy, depth - 1, alpha, beta);
         if( score < min){
             min = score;
+        }
+        if (min <= alpha) {
+            break; // Alpha cutoff
+        }
+        if (min < beta) {
+            beta = min;
         }
     }
 
