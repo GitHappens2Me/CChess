@@ -31,7 +31,13 @@ int is_pseudo_legal_move(Board *board, Move move){
 }
 
 void print_move(Move move){
-    printf("%s -> %s\n", get_notation_from_bitmap(move.origin), get_notation_from_bitmap(move.destination));
+    char* origin = get_notation_from_bitmap(move.origin);
+    char* destination = get_notation_from_bitmap(move.destination);
+    
+    printf("%s -> %s\n", origin, destination);
+
+    free(origin);
+    free(destination);
 }
 
 int get_moves_from_destination_bitmap(uint64_t piece_position, uint64_t legal_destinations, Move* legal_moves_by_piece){

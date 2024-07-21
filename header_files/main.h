@@ -3,8 +3,7 @@
 
 /*
  Compile with: 
-    gcc -o CChess .\source_files\main.c .\source_files\board.c .\source_files\inout.c .\source_files\move.c .\source_files\notation.c .\source_files\engine.c
-
+    gcc -g -Wall -Wextra -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c
  Run with:
     ./CChess
 */

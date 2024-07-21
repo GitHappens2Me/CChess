@@ -48,7 +48,7 @@ float get_best_move_minimax(Board* board, Move* best_move, int max_depth){
                 *best_move = possible_moves[i];
             }
         }
-        printf("Score %.2f for Move: ", current_score);
+        printf("Score %+4.2f for Move %d/%d: ", current_score, i, num_possible_moves);
         print_move(possible_moves[i]);
 
     }
@@ -71,6 +71,15 @@ float maxi(Board* board, int depth, float alpha, float beta) {
     }
 
     int num_possible_moves = generate_all_legal_moves_for_player(board, get_current_player(board), possible_moves);
+    
+    //##TODO  DOes that do anything?
+    // Reallocate Memory to not waste it
+    possible_moves = realloc(possible_moves, sizeof(Move) * num_possible_moves);
+    if (!possible_moves) {
+        printf("Failed to reallocate memory for possible_moves\n");
+        exit(EXIT_FAILURE);
+    }
+    
     //printf("%d possible Moves - ", num_possible_moves);
     if(num_possible_moves == 0){
         free(possible_moves);
@@ -114,6 +123,14 @@ float mini(Board* board, int depth, float alpha, float beta) {
     }
 
     int num_possible_moves = generate_all_legal_moves_for_player(board, get_current_player(board), possible_moves);
+    
+    // Reallocate Memory to not waste it
+    possible_moves = realloc(possible_moves, sizeof(Move) * num_possible_moves);
+    if (!possible_moves) {
+        printf("Failed to reallocate memory for possible_moves\n");
+        exit(EXIT_FAILURE);
+    }
+
     //printf("%d possible Moves - ", num_possible_moves);
     if(num_possible_moves == 0){
         free(possible_moves);

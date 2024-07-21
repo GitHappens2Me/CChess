@@ -161,7 +161,13 @@ Move get_move_from_user(){
     }else{
         printf("Please enter a Move in the form of 'e2e4' or a select a piece with 'e2'\n   ");
     }
-    return create_move(get_bitmap_from_notation(origin), get_bitmap_from_notation(destination)); 
-        
+
+    Move user_move = create_move(get_bitmap_from_notation(origin), get_bitmap_from_notation(destination)); 
+
+    free(origin);
+    free(input);
+    free(destination);
+
+    return user_move;
     
 }

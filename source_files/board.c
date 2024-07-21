@@ -430,6 +430,7 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
             move_counter++;
         }
     }
+    free(pseudolegal_moves);
     //printf("From %d pseudolegal moves, %d are legal.\n", num_of_pseudolegal_moves, move_counter);
     return move_counter;
 }
