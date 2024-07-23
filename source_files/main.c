@@ -114,8 +114,13 @@ int main() {
     print_board(board_copy);
 
     free_board(board_copy);
- 
-
+    
+/*
+    printf("%d\n", get_position_index_from_position(get_bitmap_from_notation("h1")));
+    printf("%d\n", get_position_index_from_position(get_bitmap_from_notation("a8")));
+    printf("%d\n", get_position_value(0, get_bitmap_from_notation("e2")));
+    exit(1);
+*/
 
     
     Move* legal_moves = malloc(sizeof(Move) * 200);
@@ -145,7 +150,7 @@ int main() {
         if(engine_move){
             if(board->current_Player == PLAYER_BLACK){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 3);
+                get_best_move_minimax(board, &move, 4);
                 printf("Engine Move: ");
                 print_move(move);
                //exit(EXIT_SUCCESS);

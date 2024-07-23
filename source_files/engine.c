@@ -1,8 +1,6 @@
 
-
 #include "../header_files/engine.h"
 #include <limits.h>
-
 
 
 int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
@@ -48,7 +46,7 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
                 *best_move = possible_moves[i];
             }
         }
-        printf("Scoreasdsa %4.2f for Move %d/%d: ", ((float)current_score / 100), i + 1, num_possible_moves);
+        printf("Score %4.2f for Move %d/%d: ", ((float)current_score / 100), i + 1, num_possible_moves);
         print_move(possible_moves[i]);
 
     }
@@ -180,36 +178,83 @@ int evaluate(Board* board){
 int calculate_material_score(Board* board){
     int score = 0; 
 
-    uint64_t temp_array[NUM_OF_BITS];
+    uint64_t pieces[NUM_OF_BITS];
 
     for(int piece_type = 0; piece_type < NUM_OF_PIECE_TYPES; piece_type++){
-        score += (get_piece_value(piece_type) * split_bitmap(get_all_pieces_of_type(board, piece_type), temp_array));
+        int num_of_pieces = split_bitmap(get_all_pieces_of_type(board, piece_type), pieces);
+        for(int i = 0; i < num_of_pieces; i++){
+            score += (get_piece_value(piece_type) + get_position_value(piece_type, pieces[i]));
+        }
     }
-
     return score;
 }
 
 int get_piece_value(int piece_type){
     switch (piece_type) {
         // Values by Tomasz Michniewski
-        case WHITE_PAWNS: return 100;
-        case WHITE_ROOKS: return 500;
+        case WHITE_PAWNS:   return 100;
+        case WHITE_ROOKS:   return 500;
         case WHITE_KNIGHTS: return 320;
         case WHITE_BISHOPS: return 330;
-        case WHITE_QUEENS: return 900;
-        case WHITE_KING: return 100;
-        case BLACK_PAWNS: return -100;
-        case BLACK_ROOKS: return -500;
+        case WHITE_QUEENS:  return 900;
+        case WHITE_KING:    return 100;
+        case BLACK_PAWNS:   return -100;
+        case BLACK_ROOKS:   return -500;
         case BLACK_KNIGHTS: return -320;
         case BLACK_BISHOPS: return -330;
-        case BLACK_QUEENS: return -900;
-        case BLACK_KING: return -100;
+        case BLACK_QUEENS:  return -900;
+        case BLACK_KING:    return -100;
         default:
             printf("No Value for %i", piece_type);
             exit(EXIT_FAILURE);
     }
 }
 
+
+// #TODO VARIFY
+int get_position_value(int piece_type, uint64_t position){
+
+    int piece_position_tables[12][64] = {
+        //WHITE_PAWNS
+    {0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 10, 10, 20, 30, 30, 20, 10, 10, 5, 5, 10, 25, 25, 10, 5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, -5, -10, 0, 0, -10, -5, 5, 5, 10, 10, -20, -20, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0},
+        //WHITE_ROOKS
+    {0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0,  0, -5,-5,  0,  0,  0,  0,  0,  0, -5,-5,  0,  0,  0,  0,  0,  0, -5,-5,  0,  0,  0,  0,  0,  0, -5, 0,  0,  0,  5,  5,  0,  0, 0},
+        //WHITE_KNIGHTS
+    {0 -50,-40,-30,-30,-30,-30,-40,-50, -40,-20,  0,  0,  0,  0,-20,-40, -30,  0, 10, 15, 15, 10,  0,-30, -30,  5, 15, 20, 20, 15,  5,-30, -30,  0, 15, 20, 20, 15,  0,-30, -30,  5, 10, 15, 15, 10,  5,-30, -40,-20,  0,  5,  5,  0,-20,-40, -50,-40,-30,-30,-30,-30,-40,-50},
+        //WHITE_BISHOPS
+    { -20,-10,-10,-10,-10,-10,-10,-20, -10,  0,  0,  0,  0,  0,  0,-10, -10,  0,  5, 10, 10,  5,  0,-10, -10,  5,  5, 10, 10,  5,  5,-10, -10,  0, 10, 10, 10, 10,  0,-10, -10, 10, 10, 10, 10, 10, 10,-10, -10,  5,  0,  0,  0,  0,  5,-10, -20,-10,-10,-10,-10,-10,-10,-20},
+        //WHITE_QUEENS
+    {-20,-10,-10, -5, -5,-10,-10,-20, -10,  0,  0,  0,  0,  0,  0,-10, -10,  0,  5,  5,  5,  5,  0,-10,  -5,  0,  5,  5,  5,  5,  0, -5,   0,  0,  5,  5,  5,  5,  0, -5, -10,  5,  5,  5,  5,  5,  0,-10, -10,  0,  5,  0,  0,  0,  0,-10, -20,-10,-10, -5, -5,-10,-10,-20},
+        //WHITE_KING
+    {-30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -20,-30,-30,-40,-40,-30,-30,-20, -10,-20,-20,-20,-20,-20,-20,-10,  20, 20,  0,  0,  0,  0, 20, 20,  20, 30, 10,  0,  0, 10, 30, 20},
+        
+        //BLACK_PAWNS
+    { 0,   0,   0,   0,   0,   0,   0,   0 -5, -10, -10,  20,  20, -10, -10,  -5 -5,   5,  10,   0,   0,  10,   5,  -5,  0,   0,   0, -20, -20,   0,   0,   0 -5,  -5, -10, -25, -25, -10,  -5,  -5 -10, -10, -20, -30, -30, -20, -10, -10 -50, -50, -50, -50, -50, -50, -50, -50,  0,   0,   0,   0,   0,   0,   0,   0},
+        //BLACK_ROOKS
+    { 0, 0, 0, -5, -5, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 5, -5, -10, -10, -10, -10, -10, -10, -5, 0, 0, 0, 0, 0, 0, 0, 0},
+        //BLACK_KNIGHTS
+    { 50,  40,  30,  30,  30,  30,  40,  50, 40,  20,   0,  -5,  -5,   0,  20,  40, 30,  -5, -10, -15, -15, -10,  -5,  30, 30,   0, -15, -20, -20, -15,   0,  30, 30,  -5, -15, -20, -20, -15,  -5,  30, 30,   0, -10, -15, -15, -10,   0,  30, 40,  20,   0,   0,   0,   0,  20,  40, 50,  40,  30,  30,  30,  30,  40,  50},
+        //BLACK_BISHOPS
+    { 20,  10,  10,  10,  10,  10,  10,  20, 10,  -5,   0,   0,   0,   0,  -5,  10, 10,  -10, -10, -10, -10, -10, -10,  10, 10,   0, -10, -10, -10, -10,   0,  10, 10,  -5,  -5, -10, -10,  -5,  -5,  10, 10,   0,  -5, -10, -10,  -5,   0,  10, 10,   0,   0,   0,   0,   0,   0,  10, 20,  10,  10,  10,  10,  10,  10,  20},
+        //BLACK_QUEENS
+    { 20,  10,  10,   5,   5,  10,  10,  20, 10,   0,  -5,   0,   0,   0,   0,  10, 10,  -5,  -5,  -5,  -5,  -5,   0,  10,  0,   0,  -5,  -5,  -5,  -5,   0,   5,  5,   0,  -5,  -5,  -5,  -5,   0,   5, 10,   0,  -5,  -5,  -5,  -5,   0,  10, 10,   0,   0,   0,   0,   0,   0,  10, 20,  10,  10,   5,   5,  10,  10,  20},
+        //BLACK_KING
+    { -20, -30, -10,   0,   0, -10, -30, -20, -20, -20,   0,   0,   0,   0, -20, -20, 10,  20,  20,  20,  20,  20,  20,  10, 20,  30,  30,  40,  40,  30,  30,  20, 30,  40,  40,  50,  50,  40,  40,  30, 30,  40,  40,  50,  50,  40,  40,  30, 30,  40,  40,  50,  50,  40,  40,  30, 30,  40,  40,  50,  50,  40,  40,  30} };
+
+
+    return piece_position_tables[piece_type][get_position_index_from_position(position)];
+
+}
+
+int get_position_index_from_position(uint64_t position){
+    for (int i = 0; i < 64; i++) {
+        if (position & (1ULL << i)) {
+            return (63 - i);
+        }
+    }
+    
+    return 0;
+}
 
 int calculate_movement_score(Board* board){
 
@@ -225,3 +270,4 @@ int calculate_movement_score(Board* board){
     return (score * 10);
 
 }
+

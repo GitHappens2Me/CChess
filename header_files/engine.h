@@ -14,6 +14,9 @@ int mini(Board* board, int depth, int alpha, int beta);
 int evaluate(Board* board);
 
 int calculate_material_score(Board* board);
+int get_position_value(int piece_type, uint64_t position);
+int get_position_value(int piece_type, uint64_t position);
+int get_position_index_from_position(uint64_t position);
 int get_piece_value(int piece_type);
 
 int calculate_movement_score(Board* board);
