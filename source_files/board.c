@@ -264,16 +264,24 @@ int get_opponent(int player){
                 Checks
 ------------------------------------------*/
 
+int is_in_checkmate(Board* board, int player){
+    Move possible_moves[200];
+    int num_legal_moves = generate_all_legal_moves_for_player(board, player, possible_moves);
+    
+    if(num_legal_moves == 0 && is_in_check(board, player)) return 1;
+    
+    return 0;
+}
 
-int is_in_check(Board* board, int king_color){
+int is_in_check(Board* board, int player){
     int king_piece_index = -1;
-    if(king_color == PLAYER_WHITE){
+    if(player == PLAYER_WHITE){
          king_piece_index = WHITE_KING;
     }else{ 
         king_piece_index = BLACK_KING;
     }
 
-    return is_attacked(board, board->pieces[king_piece_index], get_opponent(king_color));
+    return is_attacked(board, board->pieces[king_piece_index], get_opponent(player));
 }
 
 

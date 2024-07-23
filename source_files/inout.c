@@ -65,13 +65,13 @@ void print_board(Board* board) {
             }
         }
     }
-
+/*
     printf("   ");
     for (int col = 0; col < NUM_OF_COLLUMNS; col++) {
         printf(" %c  ", 'a' + col); // Column labels 'a' to 'h'
     }
     printf("\n");
-
+*/
 
     for (int row = 0; row < NUM_OF_COLLUMNS; row++) {
         printf("%d ", NUM_OF_COLLUMNS - row); // Row labels 8 to 1
@@ -86,6 +86,12 @@ void print_board(Board* board) {
         }
         printf("+\n");
     }
+    printf("   ");
+    for (int col = 0; col < NUM_OF_COLLUMNS; col++) {
+        printf(" %c  ", 'a' + col); // Column labels 'a' to 'h'
+    }
+    printf("\n");
+
 }
 
 char get_symbol_for_piecetype(int piece_type){

@@ -284,6 +284,8 @@ int get_opponent(int player);
 
 int is_in_check(Board* board, int king_color);
 
+int is_in_checkmate(Board* board, int player);
+
 int results_in_check(Board* board, Move move);
 
 /*

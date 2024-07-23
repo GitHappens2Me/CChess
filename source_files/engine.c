@@ -21,7 +21,7 @@ float get_best_move_minimax(Board* board, Move* best_move, int max_depth){
         free(possible_moves);
         return 0;
     }
-    printf("Testing all %d rootmoves.\n",num_possible_moves);
+    printf("Testing all %d root moves.\n", num_possible_moves);
 
     float best_score = (get_current_player(board) == PLAYER_WHITE) ? -FLT_MAX : FLT_MAX;
 
@@ -74,11 +74,12 @@ float maxi(Board* board, int depth, float alpha, float beta) {
     
     //##TODO  DOes that do anything?
     // Reallocate Memory to not waste it
+    /*
     possible_moves = realloc(possible_moves, sizeof(Move) * num_possible_moves);
     if (!possible_moves) {
         printf("Failed to reallocate memory for possible_moves\n");
         exit(EXIT_FAILURE);
-    }
+    }*/
     
     //printf("%d possible Moves - ", num_possible_moves);
     if(num_possible_moves == 0){
@@ -115,7 +116,7 @@ float mini(Board* board, int depth, float alpha, float beta) {
     //printf("Depth: %d",depth);
     if ( depth == 0 ) return evaluate(board);
     float min = FLT_MAX;
-        //#TODO remove magic number 64 -> more efficiant to just allocate the needed memory
+        //#TODO remove magic number 200 -> more efficiant to just allocate the needed memory
     Move* possible_moves = malloc(sizeof(Move) * 200);
     if (!possible_moves) {
         fprintf(stderr, "Failed to allocate memory for possible_moves\n");
@@ -125,11 +126,12 @@ float mini(Board* board, int depth, float alpha, float beta) {
     int num_possible_moves = generate_all_legal_moves_for_player(board, get_current_player(board), possible_moves);
     
     // Reallocate Memory to not waste it
+    /*   
     possible_moves = realloc(possible_moves, sizeof(Move) * num_possible_moves);
     if (!possible_moves) {
         printf("Failed to reallocate memory for possible_moves\n");
         exit(EXIT_FAILURE);
-    }
+    }*/
 
     //printf("%d possible Moves - ", num_possible_moves);
     if(num_possible_moves == 0){
@@ -164,8 +166,12 @@ float mini(Board* board, int depth, float alpha, float beta) {
 
 float evaluate(Board* board){
 
-    float material_score = calculate_material_score(board);
+    if(is_in_checkmate(board, PLAYER_WHITE)) return -FLT_MAX;
+    if(is_in_checkmate(board, PLAYER_BLACK)) return FLT_MAX;
+
     float movement_score = calculate_movement_score(board);
+
+    float material_score = calculate_material_score(board);
     //printf("%f ", movement_score);
     return material_score + movement_score;
 }
@@ -205,23 +211,16 @@ float get_piece_value(int piece_type){
 
 
 float calculate_movement_score(Board* board){
+
     float score = 0.0; 
-    int original_player = board->current_Player;
+    
     Move temp_array[200];
-                                    // # TODO generate_all_legal_moves_for_player calls is_pseudo_legal_move
-                                    // which checks if it is the players turn. 
-                                    // Workaround: change the active player (inefficiant)
-    board->current_Player = PLAYER_WHITE;
     int num_possible_moves_white = generate_all_legal_moves_for_player(board, PLAYER_WHITE, temp_array);
-    board->current_Player = PLAYER_BLACK;
     int num_possible_moves_black = generate_all_legal_moves_for_player(board, PLAYER_BLACK, temp_array);
 
-    board->current_Player = original_player;
-    
     score = ((float) num_possible_moves_white) - ((float) num_possible_moves_black); 
     
     // 10 extra moves are worth a pawn (?)
-    score = score * 0.1;
+    return score * 0.1;
 
-    return score;
 }
