@@ -145,12 +145,12 @@ int main() {
     int engine_move = 1;
     
     print_board(board);
-
+    // #TODO Clean Up main function (Move tests to test files, remove uneccesarry tests.)
     while (1) {
         if(engine_move){
             if(board->current_Player == PLAYER_BLACK){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 4);
+                get_best_move_minimax(board, &move, 3);
                 printf("Engine Move: ");
                 print_move(move);
                //exit(EXIT_SUCCESS);
@@ -204,11 +204,6 @@ int main() {
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check");
             
         }
-
-
-
-
-
     }
 
 
