@@ -126,7 +126,7 @@ int main() {
     int num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
     printf("Legal Moves = %d\n", num_legal_moves);
     
-    printf("Simple Evaluation: %f\n", evaluate(board));
+    printf("Simple Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
 
     free(legal_moves);
 
@@ -171,7 +171,7 @@ int main() {
             print_move(move);
             Move* legal_moves = malloc(sizeof(Move) * 200);
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
-            printf("Simple Evaluation: %f\n", evaluate(board));
+            printf("Simple Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
             free(legal_moves);
 
             /*
