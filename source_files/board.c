@@ -649,7 +649,7 @@ uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, in
 // TODO Refactor and improve ALL move generation: 
 // replace if-clause with clever bit operations
 uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player){
-    uint64_t possible_moves = position;
+    uint64_t possible_moves = 0ULL;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
     uint64_t own_pieces = get_pieces_of_player(board, player);
     uint64_t next = position;
@@ -665,37 +665,35 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
         shift_direction = RIGHT;
     }
 
-    if(shift_direction == LEFT) next <<= 8;
-    if(shift_direction == RIGHT) next >>= 8;
+    // Move forward one square
+    if(shift_direction == LEFT)           next <<= 8;
+    else /*if(shift_direction == RIGHT)*/ next >>= 8;
+
 
     if(!(next & (opponent_pieces | own_pieces))) possible_moves |= next;
 
     // double move if not moved yet
     if(position & start_row){
-        if(shift_direction == LEFT) next <<= 8;
-        if(shift_direction == RIGHT) next >>= 8;
-        if(!((next & own_pieces) | (next & opponent_pieces)) ) possible_moves |= next;
-        
+        if(shift_direction == LEFT)           next <<= 8;
+        else /*if(shift_direction == RIGHT)*/ next >>= 8;
+        if (!(next & (opponent_pieces | own_pieces))) {
+            possible_moves |= next;
+        }
     }
-
 
     // Captures 
-    if(shift_direction == LEFT){
-        // to the right
-        next = position << 7;
-        if((next & opponent_pieces) && !(position & COLLUMN_h)) possible_moves |= next;
-        // to the left
-        next = position << 9;
-        if((next & opponent_pieces) && !(position & COLLUMN_a)) possible_moves |= next;
-    }else if(shift_direction == RIGHT){
-        // to the left
-        next = position >> 7;
-        if((next & opponent_pieces) && !(position & COLLUMN_a)) possible_moves |= next;
-        // to the right
-        next = position >> 9;
-        if((next & opponent_pieces) && !(position & COLLUMN_h)) possible_moves |= next;
+    uint64_t captures[2] = {
+        (shift_direction == LEFT) ? (position << 7) : (position >> 7),  // Capture to the right
+        (shift_direction == LEFT) ? (position << 9) : (position >> 9)   // Capture to the left
+    };
+    
+    if ((captures[0] & opponent_pieces) && !(position & COLLUMN_h)) {
+        possible_moves |= captures[0];
+    }
+    if ((captures[1] & opponent_pieces) && !(position & COLLUMN_a)) {
+        possible_moves |= captures[1];
     }
     
-    return possible_moves & ~position;
+    return possible_moves;
 }
 
