@@ -30,5 +30,6 @@ int main(int argc, char *argv[]) {
     // board.c
     test_split_bitmap();
     test_initialize_board_FEN();
+    test_get_pieces_of_player();
 
 }

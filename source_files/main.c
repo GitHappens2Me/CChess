@@ -150,13 +150,13 @@ int main() {
         if(engine_move){
             if(board->current_Player == PLAYER_BLACK){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 3);
+                get_best_move_minimax(board, &move, 5);
                 printf("Engine Move: ");
                 print_move(move);
-               //exit(EXIT_SUCCESS);
+                //exit(EXIT_SUCCESS); //Profiling
             }else{
                 move = get_move_from_user();
-                //move = e2e4;
+                //move = e2e4; //Profiling
                 if(get_piece_color(board, move.origin) != PLAYER_WHITE){
                     printf("Not your Piece. Choose a different Move\n");
                     continue;

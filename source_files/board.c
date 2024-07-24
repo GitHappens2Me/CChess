@@ -32,7 +32,11 @@ void create_board(Board** board) {
     for (int i = 0; i < NUM_OF_PIECE_TYPES; i++) {
         (*board)->pieces[i] = 0x0;
     }
-    (*board)->current_Player = PLAYER_WHITE;
+    // Current Player
+    (*board)->current_Player = PLAYER_WHITE;  
+
+    // En-Passant Square
+    (*board)->en_passant_square = 0ULL;
 }
 
 void free_board(Board* board) {
@@ -64,7 +68,6 @@ void copy_board(Board* copy, Board* source) {
 
 // Initialize board to start position
 void initialize_board(Board* board){
-    printf("Initializing Board\n");
     board->pieces[WHITE_PAWNS] = 0x000000000000FF00;
     board->pieces[WHITE_ROOKS] = 0x0000000000000081;
     board->pieces[WHITE_KNIGHTS] = 0x0000000000000042;
@@ -209,25 +212,24 @@ void apply_move_forced(Board* board, Move move){
 
 // Returns bitmap of all Pieces on the Board 
 uint64_t get_all_pieces(Board* board){
-    uint64_t all_pieces = 0;
-    for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
-        all_pieces = all_pieces | board->pieces[i];
-        //printf("%d\n",board->pieces[i]);
-    }
-    return all_pieces; 
+
+    return (board->pieces[0] | board->pieces[1] | board->pieces[2] |
+            board->pieces[3] | board->pieces[4] | board->pieces[5] |
+            board->pieces[6] | board->pieces[7] | board->pieces[8] |
+            board->pieces[9] | board->pieces[10] | board->pieces[11]);
 }
 
 
 
 uint64_t get_pieces_of_player(Board* board, int player) {
-    uint64_t all_pieces = 0ULL;
 
-    int start_index = (player == PLAYER_WHITE) ? 0 : 6;
-
-    for (int i = 0; i < 6; i++) {
-        all_pieces |= board->pieces[start_index + i];
+    if(player == PLAYER_WHITE){
+        return (board->pieces[0] | board->pieces[1] | board->pieces[2] |
+                board->pieces[3] | board->pieces[4] | board->pieces[5] );
+    }else{
+        return (board->pieces[6] | board->pieces[7] | board->pieces[8] |
+                board->pieces[9] | board->pieces[10] | board->pieces[11]);
     }
-    return all_pieces;
 }
 
 uint64_t get_all_pieces_of_type(Board* board, int piece_type){

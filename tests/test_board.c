@@ -48,3 +48,22 @@ void test_initialize_board_FEN(){
 
 
 }
+
+void test_get_pieces_of_player(){
+    Board* board;
+    create_board(&board);
+    initialize_board(board);
+
+    assert(get_pieces_of_player(board, PLAYER_WHITE) == 0x000000000000FFFF);
+    assert(get_pieces_of_player(board, PLAYER_BLACK) == 0xFFFF000000000000);
+
+    char ruy_lopez[] = "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4";
+    initialize_board_FEN(board, ruy_lopez);
+
+    assert(get_pieces_of_player(board, PLAYER_WHITE) == 0x000000400804F7F9);
+    assert(get_pieces_of_player(board, PLAYER_BLACK) == 0xBDF7240800000000);
+
+
+    printf("Function 'test_initialize_board_FEN' PASSED all tests.\n");
+
+}

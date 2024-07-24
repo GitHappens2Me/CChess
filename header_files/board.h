@@ -55,7 +55,9 @@ struct Board {
     // via 12 64Bit integers
     uint64_t* pieces;
     // TODO: Castling Rights
+
     // TODO: en Passant
+    uint64_t* en_passant_square;
     
     // Defines whose turn is is
     int current_Player;
@@ -201,8 +203,6 @@ uint64_t get_all_pieces(Board* board);
  *          uint64_t bitmap, where a 1 signifies a piece of the given player
  *  
  *  notes: This Function gets called extremly often, therfore it is optimized more than others.
- *         #TODO It might be even useful, to store the players pieces in the Board struct for faster access 
- 
  */
 uint64_t get_pieces_of_player(Board* board, int player);
 uint64_t get_all_pieces_of_type(Board* board, int piece_type);
