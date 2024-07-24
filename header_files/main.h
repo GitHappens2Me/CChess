@@ -18,6 +18,8 @@
     gcc -g -pg  -Wall -Wextra -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c
     &
     gdb ./CChess
+ Static Code Analyser:
+    gcc -g -pg  -Wall -Wextra -Wpedantic -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c -no-pie -fanalyzer
 
 
     

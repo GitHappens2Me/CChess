@@ -660,7 +660,7 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
     if(player == PLAYER_WHITE){
         start_row = ROW_2;
         shift_direction = LEFT;
-    }else if(player == PLAYER_BLACK){
+    }else{  // if(player == PLAYER_BLACK){
         start_row = ROW_7;
         shift_direction = RIGHT;
     }

@@ -61,6 +61,10 @@ uint64_t get_bitmap_from_notation(char* notation){
  */
 char* get_notation_from_bitmap(uint64_t bitmap) {
     char* notation = (char*)malloc(3 * sizeof(char));
+    if(!notation){
+        printf("Could not allocate Memory for notation (in get_notation_from_bitmap)\n");
+        exit(EXIT_FAILURE);
+    }
     int row = 0, column = 0;
 
     // Find the row and column of the set bit (1)
@@ -79,3 +83,8 @@ char* get_notation_from_bitmap(uint64_t bitmap) {
 
     return notation;
 }
+
+/*
+Move get_move_from_algebraic_notation(Board* board, char* notation){
+    //#TODO
+}*/

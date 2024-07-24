@@ -154,14 +154,19 @@ void print_position(uint64_t position){
 }
 
 Move get_move_from_user(){
+    // #TODO Optimise 100 character limit 
     char* input = malloc(sizeof(char)* 100);
+    char* origin = malloc(sizeof(char)* 100);
+    char* destination = malloc(sizeof(char)* 100);
+    if(!input || !origin || !destination){
+        printf("Could not allocate Memory for User Input\n");
+        exit(EXIT_FAILURE);
+    }
     printf("Enter a Move: ");
     scanf("%s", input);
     //printf("String is %d chars long.\n", strlen(input));
     
-    // #TODO Optimise 100 character limit 
-    char* origin = malloc(sizeof(char)* 100);
-    char* destination = malloc(sizeof(char)* 100);
+    
     
     if (strlen(input) == 4) {
         strncpy(origin, input, 2);

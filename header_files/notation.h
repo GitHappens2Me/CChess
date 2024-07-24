@@ -31,3 +31,5 @@ uint64_t get_bitmap_from_notation(char* notation);
 char* get_notation_from_bitmap(uint64_t position);
 
 
+
+//Move get_move_from_algebraic_notation(Board* board, char* notation);

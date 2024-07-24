@@ -46,17 +46,11 @@ int get_moves_from_destination_bitmap(uint64_t piece_position, uint64_t legal_de
     for (int i = 0; i < number_of_bits; i++) {
         // Check if the current bit is set
         if (legal_destinations & current_destination){
-            Move new_move;
-            new_move.origin = piece_position;
-            new_move.destination = current_destination;
-
-            // Assign the new Move object to the array
-            legal_moves_by_piece[counter] = new_move;
-
+            
+            legal_moves_by_piece[counter] = create_move(piece_position, current_destination);
             // Increment the counter
             
             counter++;
-            if(counter >= 28) printf("Allocated memory not sufficiant: Counter %d\n", counter);
         }
         current_destination <<= 1;
     }
