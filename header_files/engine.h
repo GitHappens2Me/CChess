@@ -36,6 +36,8 @@ int mini(Board* board, int depth, int alpha, int beta);
  */
 int evaluate(Board* board);
 
+int compare_moves(const void *a, const void *b);
+
 int calculate_material_score(Board* board);
 int get_position_value(int piece_type, uint64_t position);
 int get_position_value(int piece_type, uint64_t position);

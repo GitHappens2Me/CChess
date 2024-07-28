@@ -19,6 +19,9 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
         free(possible_moves);
         return 0;
     }
+
+    qsort(possible_moves, num_possible_moves, sizeof(Move), compare_moves);
+
     printf("Testing all %d root moves.\n", num_possible_moves);
 
     int best_score = (get_current_player(board) == PLAYER_WHITE) ? INT_MIN : INT_MAX;
@@ -84,6 +87,9 @@ int maxi(Board* board, int depth, int alpha, int beta) {
         free(possible_moves);
         return evaluate(board);
     }
+
+    qsort(possible_moves, num_possible_moves, sizeof(Move), compare_moves);
+
     
     Board* board_copy;
     create_board(&board_copy);
@@ -136,6 +142,9 @@ int mini(Board* board, int depth, int alpha, int beta) {
         free(possible_moves);
         return evaluate(board);
     }
+
+    qsort(possible_moves, num_possible_moves, sizeof(Move), compare_moves);
+
     
     Board* board_copy;
     create_board(&board_copy);
@@ -160,6 +169,12 @@ int mini(Board* board, int depth, int alpha, int beta) {
     free_board(board_copy);
     free(possible_moves);
     return min;
+}
+
+int compare_moves(const void *a, const void *b) {
+    Move *moveA = (Move *)a;
+    Move *moveB = (Move *)b;
+    return (moveB->captured_piece_type - moveA->captured_piece_type);
 }
 
 int evaluate(Board* board){
