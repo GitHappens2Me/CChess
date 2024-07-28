@@ -346,12 +346,12 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
  *  returns: uint64 bitmap of pseudolegal destinations
  *         
  */
-uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position);
+int generate_pseudolegal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves);
 
-uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player);
-uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player);
-uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player);
-uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player);
-uint64_t generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player);
-uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int player);
+int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player, Move* legal_moves);
+int generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player, Move* legal_moves);
+int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player, Move* legal_moves);
+int generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player, Move* legal_moves);
+int generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player, Move* legal_moves);
+int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int player, Move* legal_moves);
 

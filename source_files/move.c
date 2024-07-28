@@ -4,10 +4,26 @@
 
 #include "../header_files/move.h"
 
-Move create_move(uint64_t origin, uint64_t destination) {
+Move create_move(int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
+                 int captured_piece_type, uint64_t captured_piece_position, 
+                 uint64_t castling_rook_position, int promotion_to_type) {
     Move move;
-    move.origin = origin;
-    move.destination = destination;
+
+    // Quit Moves
+    move.moving_piece_type = moving_piece_type;
+    move.moving_piece_origin = moving_piece_origin;
+    move.moving_piece_destination = moving_piece_destination;
+
+    // Captures
+    move.captured_piece_type = captured_piece_type;
+    move.captured_piece_position = captured_piece_position;
+
+    // Castling
+    move.castling_rook_position = castling_rook_position;
+
+    // Pawn-Promotion
+    move.promotion_to_type = promotion_to_type; 
+
     return move;
 }
 
@@ -19,15 +35,15 @@ int is_legal_move(Board *board, Move move){
 int is_pseudo_legal_move(Board *board, Move move){
 
 
-    uint64_t ps_legal_destinations = generate_pseudolegal_moves_for_piece(board, move.origin);
+    uint64_t ps_legal_destinations = generate_pseudolegal_moves_for_piece(board, move.moving_piece_origin);
     //print_position(ps_legal_destinations);
     //print_position(move.destination);
-    return (ps_legal_destinations & move.destination) > 0;
+    return (ps_legal_destinations & move.moving_piece_destination) > 0;
 }
 
 void print_move(Move move){
-    char* origin = get_notation_from_bitmap(move.origin);
-    char* destination = get_notation_from_bitmap(move.destination);
+    char* origin = get_notation_from_bitmap(move.moving_piece_origin);
+    char* destination = get_notation_from_bitmap(move.moving_piece_destination);
     
     printf("%s -> %s\n", origin, destination);
 

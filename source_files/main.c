@@ -157,14 +157,14 @@ int main() {
             }else{
                 move = get_move_from_user();
                 //move = e2e4; //Profiling
-                if(get_piece_color(board, move.origin) != PLAYER_WHITE){
+                if(get_piece_color(board, move.moving_piece_origin) != PLAYER_WHITE){
                     printf("Not your Piece. Choose a different Move\n");
                     continue;
                 }
             }
         }else{
             move = get_move_from_user();
-            if(get_piece_color(board, move.origin) != PLAYER_WHITE){
+            if(get_piece_color(board, move.moving_piece_origin) != PLAYER_WHITE){
                 printf("Not your Piece. Choose a different Move\n");
                 continue;
             }
@@ -195,7 +195,7 @@ int main() {
             print_board(board);
             printf("Current Player: %d\n", board->current_Player);
 
-            if(is_attacked(board, move.destination, board->current_Player)){
+            if(is_attacked(board, move.moving_piece_destination, board->current_Player)){
                 printf("The Destination Square is attacked\n");
             }else{
                 printf("Not Attacked\n");

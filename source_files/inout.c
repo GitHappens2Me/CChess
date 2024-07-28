@@ -153,7 +153,7 @@ void print_position(uint64_t position){
     printf("\n");
 }
 
-Move get_move_from_user(){
+Move get_move_from_user(Board* board){
     // #TODO Optimise 100 character limit 
     char* input = malloc(sizeof(char)* 100);
     char* origin = malloc(sizeof(char)* 100);
@@ -190,7 +190,18 @@ Move get_move_from_user(){
         printf("Please enter a Move in the form of 'e2e4' or a select a piece with 'e2'\n   ");
     }
 
-    Move user_move = create_move(get_bitmap_from_notation(origin), get_bitmap_from_notation(destination)); 
+    uint64_t move_origin = get_bitmap_from_notation(origin);
+    uint64_t move_destination = get_bitmap_from_notation(destination);
+
+    // get_piece_type_at() returns -1 if no piece there (no capture)
+    int captured_piece_type = get_piece_type_at(board, move_destination);
+
+    // #TODO this does not work with en passant
+    uint64_t captured_piece_position = move_destination;
+
+
+    Move user_move = create_move(get_piece_type_at(board, move_origin), move_origin, move_destination, captured_piece_type, captured_piece_position, 0ULL, -1 ); 
+
 
     free(origin);
     free(input);

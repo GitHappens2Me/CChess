@@ -185,24 +185,30 @@ int apply_move(Board* board, Move move){
 
 // applies the move without checks for validity
 void apply_move_forced(Board* board, Move move){
-    int piece_type = get_piece_type_at(board, move.origin);
+    int piece_type = move.moving_piece_type;
     //printf("Piecetype moved: %d\n", piece_type);
     //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
 
 
     // For Captures
-    if(move.destination & get_all_pieces(board)){
+    if(move.captured_piece_type != -1){
         //printf("Capture!");
-        int captured_piece_type = get_piece_type_at(board, move.destination);
+        int captured_piece_type = move.captured_piece_type;
+        int captured_piece_position = move.captured_piece_type;
         // remove captured piece
-        board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~move.destination;
+        board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~captured_piece_position;
     }
      // remove piece from origin
-    board->pieces[piece_type] = board->pieces[piece_type] & ~move.origin;
+    board->pieces[piece_type] = board->pieces[piece_type] & ~move.moving_piece_origin;
     // add piece to destination
-    board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
+    board->pieces[piece_type] = board->pieces[piece_type] | move.moving_piece_destination;
     // Changes whose turn it is:
     board->current_Player = get_opponent(board->current_Player);
+
+    // #TODO Promotion:
+
+    // #TODO Castling
+
 }
 
 /*----------------------------------------
@@ -325,7 +331,8 @@ int results_in_check(Board* board, Move move){
  *  #TODO: Include Pawns (and the Opponent King) in the test
  */
 int is_attacked(Board* board, uint64_t position, int attacking_color){
-    
+    return 0;
+    /*
     uint64_t bishop_attack_path = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color));
     uint64_t rook_attack_path = generate_pseudolegal_moves_for_rook(board, position, get_opponent(attacking_color));
     uint64_t knight_attack_path = generate_pseudolegal_moves_for_knight(board, position, get_opponent(attacking_color));
@@ -341,7 +348,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
         if((knight_attack_path & get_all_pieces_of_type(board, BLACK_KNIGHTS))) return 1;
     }
     return 0;
-
+*/
 }
 
 /*----------------------------------------
@@ -424,43 +431,39 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
         fprintf(stderr, "Must Allocate Memory for legal_moves\n");
         exit(EXIT_FAILURE);
     }
+    Move* pseudo_legal_moves = malloc(sizeof(uint64_t) * 64);
+    int num_pseudo_legal_moves = generate_pseudolegal_moves_for_piece(board, position, pseudo_legal_moves);
 
-    uint64_t pseudolegal_destinations = generate_pseudolegal_moves_for_piece(board, position);
-
-    //#TODO remove magic number 64 -> more efficiant to just allocate the needed memory
-    Move* pseudolegal_moves = malloc(sizeof(uint64_t) * 64);
-    int num_of_pseudolegal_moves = get_moves_from_destination_bitmap(position, pseudolegal_destinations, pseudolegal_moves);
-    
-    for(int i = 0; i < num_of_pseudolegal_moves; i++){
-        if(is_legal_move(board, pseudolegal_moves[i])){
-            legal_moves_by_piece[move_counter] = pseudolegal_moves[i];
+    for(int i = 0; i < num_pseudo_legal_moves; i++){
+        if(is_legal_move(board, pseudo_legal_moves[i])){
+            legal_moves_by_piece[move_counter] = pseudo_legal_moves[i];
             move_counter++;
         }
     }
-    free(pseudolegal_moves);
+    free(pseudo_legal_moves);
     //printf("From %d pseudolegal moves, %d are legal.\n", num_of_pseudolegal_moves, move_counter);
     return move_counter;
 }
 
-uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position){
+int generate_pseudolegal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves){
     switch(get_piece_type_at(board, position)){
-        case WHITE_PAWNS: return generate_pseudolegal_moves_for_pawn(board, position, PLAYER_WHITE);
-        case BLACK_PAWNS: return generate_pseudolegal_moves_for_pawn(board, position, PLAYER_BLACK);
+        case WHITE_PAWNS: return generate_pseudolegal_moves_for_pawn(board, position, PLAYER_WHITE, legal_moves);
+        case BLACK_PAWNS: return generate_pseudolegal_moves_for_pawn(board, position, PLAYER_BLACK, legal_moves);
 
-        case WHITE_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_WHITE);
-        case BLACK_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_BLACK);
+        case WHITE_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_WHITE, legal_moves);
+        case BLACK_ROOKS: return generate_pseudolegal_moves_for_rook(board, position, PLAYER_BLACK, legal_moves);
 
-        case WHITE_KNIGHTS: return generate_pseudolegal_moves_for_knight(board, position, PLAYER_WHITE);
-        case BLACK_KNIGHTS: return generate_pseudolegal_moves_for_knight(board, position, PLAYER_BLACK);
+        case WHITE_KNIGHTS: return generate_pseudolegal_moves_for_knight(board, position, PLAYER_WHITE, legal_moves);
+        case BLACK_KNIGHTS: return generate_pseudolegal_moves_for_knight(board, position, PLAYER_BLACK, legal_moves);
 
-        case WHITE_BISHOPS: return generate_pseudolegal_moves_for_bishop(board, position, PLAYER_WHITE);
-        case BLACK_BISHOPS: return generate_pseudolegal_moves_for_bishop(board, position, PLAYER_BLACK);
+        case WHITE_BISHOPS: return generate_pseudolegal_moves_for_bishop(board, position, PLAYER_WHITE, legal_moves);
+        case BLACK_BISHOPS: return generate_pseudolegal_moves_for_bishop(board, position, PLAYER_BLACK, legal_moves);
 
-        case WHITE_QUEENS: return generate_pseudolegal_moves_for_queen(board, position, PLAYER_WHITE);
-        case BLACK_QUEENS: return generate_pseudolegal_moves_for_queen(board, position, PLAYER_BLACK);
+        case WHITE_QUEENS: return generate_pseudolegal_moves_for_queen(board, position, PLAYER_WHITE, legal_moves);
+        case BLACK_QUEENS: return generate_pseudolegal_moves_for_queen(board, position, PLAYER_BLACK, legal_moves);
 
-        case WHITE_KING: return generate_pseudolegal_moves_for_king(board, position, PLAYER_WHITE);
-        case BLACK_KING: return generate_pseudolegal_moves_for_king(board, position, PLAYER_BLACK);
+        case WHITE_KING: return generate_pseudolegal_moves_for_king(board, position, PLAYER_WHITE, legal_moves);
+        case BLACK_KING: return generate_pseudolegal_moves_for_king(board, position, PLAYER_BLACK, legal_moves);
 
         default:    //printf("No piece at position\n"); 
                     return 0ULL;
@@ -468,7 +471,7 @@ uint64_t generate_pseudolegal_moves_for_piece(Board* board, uint64_t position){
 }
 
 
-uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player){
+int generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int player, Move* legal_moves){
     uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
     uint64_t own_pieces = get_pieces_of_player(board, player);
@@ -478,6 +481,8 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
     int shift_direction[] = {RIGHT, LEFT, RIGHT, LEFT};
     int shift_amount[] = {1, 1, 8, 8};
     uint64_t edges[] = {COLLUMN_h, COLLUMN_a, ROW_1, ROW_8};
+    int move_counter = 0;
+    int moving_piece_type = player == PLAYER_WHITE ? WHITE_ROOKS : BLACK_ROOKS;
 
     // move in all direction
     for(int direction = 0; direction < 4; direction++){
@@ -493,21 +498,24 @@ uint64_t generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, in
                 break;
             // Collision with opponent piece
             }else if(next & opponent_pieces){
-                possible_moves |= next;
+                int captured_piece_type = get_piece_type_at(board, next);
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+                move_counter++;
                 break;
             // No Collision
             }else{
-                possible_moves |= next;
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+                move_counter++;
             }
         }
         next = position;
     }
 
     // removes original position from possibles squares to move to
-    return possible_moves & ~position;
+    return move_counter;
 }
 
-uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player){
+int generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int player, Move* legal_moves){
     uint64_t possible_moves = position;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
     uint64_t own_pieces = get_pieces_of_player(board, player);
@@ -518,6 +526,10 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
     int shift_amount[] = {9, 7, 9, 7};
     uint64_t edges_vertical[] = {ROW_1, ROW_1, ROW_8, ROW_8};
     uint64_t edges_horizontal[] = {COLLUMN_h, COLLUMN_a, COLLUMN_a, COLLUMN_h};
+
+    int move_counter = 0;
+    int moving_piece_type = player == PLAYER_WHITE ? WHITE_BISHOPS : BLACK_BISHOPS;
+
 
     // move in all direction
     for(int direction = 0; direction < 4; direction++){
@@ -533,22 +545,26 @@ uint64_t generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, 
                 break;
             // Collision with opponent piece
             }else if(next & opponent_pieces ){
-                possible_moves |= next;
+                int captured_piece_type = get_piece_type_at(board, next);
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+                move_counter++;
                 break;
             // No Collision
             }else{
-                possible_moves |= next;
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+                move_counter++;
+
             }
         }
         next = position;
     }
     // removes original position from possibles squares to move to
-    return possible_moves & ~position;
+    return move_counter;
 }
 
-uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player){
+int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player, Move* legal_moves){
     uint64_t possible_moves = 0ULL;
-    //uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player)); // Not needed in the current implementation
+    uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player)); // Not needed in the current implementation
     uint64_t own_pieces = get_pieces_of_player(board, player);
     uint64_t next = position;
 
@@ -566,6 +582,9 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
     uint64_t edges_horizontal[] = {COLLUMN_a, COLLUMN_a, COLLUMN_h, COLLUMN_h, COLLUMN_h, COLLUMN_h, COLLUMN_a, COLLUMN_a};
     uint64_t edges_spacer[] =     {COLLUMN_b, ROW_7,     ROW_7,     COLLUMN_g, COLLUMN_g, ROW_2,     ROW_2,     COLLUMN_b}; // the knight moves 2 squares in a given direction so we need to check if it can move off the board
     
+    int move_counter = 0;
+    int moving_piece_type = player == PLAYER_WHITE ? WHITE_KNIGHTS : BLACK_KNIGHTS;
+
 
     // move in all direction
     for(int direction = 0; direction < 8; direction++){
@@ -580,22 +599,50 @@ uint64_t generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, 
         else /*(shift_direction[direction] == RIGHT)*/  next >>= shift_amount[direction];
         
         // Collision with own piece
-        if(next & own_pieces) continue;
+        if(next & own_pieces){
+            continue;
+        }
+        else if(next & opponent_pieces ){
+                int captured_piece_type = get_piece_type_at(board, next);
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+                move_counter++;
+                break;
+            // No Collision
+        }else{
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+            move_counter++;
+        }
     
         // No Collision or Collision with opponent piece 
         possible_moves |= next;
     }
 
-    // removes original position from possibles squares to move to 
-    return possible_moves;
 
+    return move_counter;
 }
 
-uint64_t generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player){
-    return generate_pseudolegal_moves_for_bishop(board, position, player) | generate_pseudolegal_moves_for_rook(board, position, player);
+int generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player, Move* legal_moves){
+
+    Move* bishop_moves = malloc(sizeof(uint64_t) * 64);
+    Move* rook_moves = malloc(sizeof(uint64_t) * 64);
+
+    int num_bishop_moves = generate_pseudolegal_moves_for_bishop(board, position, player, bishop_moves);
+    int num_rook_moves = generate_pseudolegal_moves_for_rook(board, position, player, rook_moves);
+
+    for(int i = 0; i < num_bishop_moves; i++){
+        legal_moves[i] = bishop_moves[i];
+    }
+    for(int i = 0; i < num_rook_moves; i++){
+        legal_moves[i + num_bishop_moves] = rook_moves[i];
+    }
+
+    free(rook_moves);
+    free(bishop_moves);
+
+    return (num_bishop_moves + num_rook_moves);
 }
 
-uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int player){
+int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int player, Move* legal_moves){
     // TODO Idea: initialize  possible_moves = 0; and remove the need to return possible_moves & ~position;
     // Also in the other functions
     uint64_t possible_moves = position;
@@ -613,6 +660,9 @@ uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, in
     int shift_amount[] =          {1,         9,         8,         7,         1,         9,         8,         7};
     uint64_t edges_vertical[] =   {0,         ROW_8,     ROW_8,     ROW_8,     0,         ROW_1,     ROW_1,     ROW_1};
     uint64_t edges_horizontal[] = {COLLUMN_a, COLLUMN_a, 0,         COLLUMN_h, COLLUMN_h, COLLUMN_h, 0,         COLLUMN_a};
+
+    int move_counter = 0;
+    int moving_piece_type = player == PLAYER_WHITE ? WHITE_KING : BLACK_KING;
 
 
     // move in all direction
@@ -632,26 +682,24 @@ uint64_t generate_pseudolegal_moves_for_king(Board* board, uint64_t position, in
         
         // Collision with opponent piece
 
-        }else if(next & opponent_pieces){       
-            possible_moves |= next;
-            continue;
+        }else if(next & opponent_pieces){        
+            int captured_piece_type = get_piece_type_at(board, next);
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+            move_counter++;
         // No Collision
-        }else{
-            possible_moves |= next;
+        }else{   
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+            move_counter++;
         }
     }
-
-
-
     // removes original position from possibles squares to move to
-    return possible_moves & ~position;
-
+    return move_counter;
 }
 
 
 // TODO Refactor and improve ALL move generation: 
 // replace if-clause with clever bit operations
-uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player){
+int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int player, Move* legal_moves){
     uint64_t possible_moves = 0ULL;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player));
     uint64_t own_pieces = get_pieces_of_player(board, player);
@@ -659,6 +707,10 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
 
     uint64_t start_row;
     int shift_direction; 
+
+    int move_counter = 0;
+    int moving_piece_type = player == PLAYER_WHITE ? WHITE_PAWNS : BLACK_PAWNS;
+
 
     if(player == PLAYER_WHITE){
         start_row = ROW_2;
@@ -673,14 +725,18 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
     else /*if(shift_direction == RIGHT)*/ next >>= 8;
 
 
-    if(!(next & (opponent_pieces | own_pieces))) possible_moves |= next;
+    if(!(next & (opponent_pieces | own_pieces))){
+        legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+        move_counter++;
+    } 
 
     // double move if not moved yet
     if(position & start_row){
         if(shift_direction == LEFT)           next <<= 8;
         else /*if(shift_direction == RIGHT)*/ next >>= 8;
         if (!(next & (opponent_pieces | own_pieces))) {
-            possible_moves |= next;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+            move_counter++;
         }
     }
 
@@ -691,12 +747,16 @@ uint64_t generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, in
     };
     
     if ((captures[0] & opponent_pieces) && !(position & COLLUMN_h)) {
-        possible_moves |= captures[0];
+        int captured_piece_type = get_piece_type_at(board, captures[0]);
+        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, -1);
+        move_counter++;
     }
     if ((captures[1] & opponent_pieces) && !(position & COLLUMN_a)) {
-        possible_moves |= captures[1];
+        int captured_piece_type = get_piece_type_at(board, captures[0]);
+        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, -1);
+        move_counter++;
     }
     
-    return possible_moves;
+    return legal_moves;
 }
 

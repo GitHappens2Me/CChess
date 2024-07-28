@@ -11,18 +11,34 @@
 typedef struct Board Board;
 
 typedef struct {
-    uint64_t origin;
-    uint64_t destination;
+
+    // Quit Moves
+    int moving_piece_type;
+    uint64_t moving_piece_origin;
+    uint64_t moving_piece_destination;
+
+    // Captures
+    int captured_piece_type;
+    uint64_t captured_piece_position;
+
+    // Castling
+    uint64_t castling_rook_position;
+
+    // Pawn-Promotion
+    int promotion_to_type;
+
 } Move;
 
 // External declaration of the function to avoid cyclical dependency
-extern uint64_t generate_pseudolegal_moves_for_piece(Board *board, uint64_t origin);
+extern int generate_pseudolegal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves);
 extern void print_position(uint64_t position);
 extern int get_piece_color(Board *board, uint64_t position);
 extern int get_current_player(Board *board); // this is needed for checking whose turn it is but it is convoluted
 extern int results_in_check(Board* board, Move move);
 
-Move create_move(uint64_t origin, uint64_t destination);
+Move create_move(int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
+                 int captured_piece_type, uint64_t captured_piece_position, 
+                 uint64_t castling_rook_position, int promotion_to_type);
 
 void print_move(Move move);
 
