@@ -192,16 +192,17 @@ int calculate_material_score(Board* board){
 int get_piece_value(int piece_type){
     switch (piece_type) {
         // Values by Tomasz Michniewski
+        case NO_PIECES: return 0;
         case WHITE_PAWNS:   return 100;
-        case WHITE_ROOKS:   return 500;
         case WHITE_KNIGHTS: return 320;
         case WHITE_BISHOPS: return 330;
+        case WHITE_ROOKS:   return 500;
         case WHITE_QUEENS:  return 900;
         case WHITE_KING:    return 100;
         case BLACK_PAWNS:   return -100;
-        case BLACK_ROOKS:   return -500;
         case BLACK_KNIGHTS: return -320;
         case BLACK_BISHOPS: return -330;
+        case BLACK_ROOKS:   return -500;
         case BLACK_QUEENS:  return -900;
         case BLACK_KING:    return -100;
         default:
@@ -240,8 +241,20 @@ int calculate_movement_score(Board* board){
 
 int get_position_value(int piece_type, uint64_t position){
 
-    int piece_position_tables[12][64] = {
-    
+    // #TODO use costants (WHITE PAWNS etc.) to make this function more flexible
+
+    int piece_position_tables[NUM_OF_PIECE_TYPES][64] = {
+
+    //NO_PIECES
+    { 0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0,
+      0,  0,  0,  0,  0,  0,  0,  0},
+      
     //WHITE_PAWNS
     { 0,  0,  0,  0,  0,  0,  0,  0, 
      50, 50, 50, 50, 50, 50, 50, 50, 

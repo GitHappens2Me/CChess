@@ -96,18 +96,19 @@ void print_board(Board* board) {
 
 char get_symbol_for_piecetype(int piece_type){
     switch (piece_type) {
-        case 0: return 'P';
-        case 1: return 'R';
-        case 2: return 'N';
-        case 3: return 'B';
-        case 4: return 'Q';
-        case 5: return 'K';
-        case 6: return 'p';
-        case 7: return 'r';
-        case 8: return 'n';
-        case 9: return 'b';
-        case 10: return 'q';
-        case 11: return 'k';
+        case NO_PIECES: return ' ';
+        case WHITE_PAWNS: return 'P';
+        case WHITE_KNIGHTS: return 'N';
+        case WHITE_BISHOPS: return 'B';
+        case WHITE_ROOKS: return 'R';
+        case WHITE_QUEENS: return 'Q';
+        case WHITE_KING: return 'K';
+        case BLACK_PAWNS: return 'p';
+        case BLACK_KNIGHTS: return 'n';
+        case BLACK_BISHOPS: return 'b';
+        case BLACK_ROOKS: return 'r';
+        case BLACK_QUEENS: return 'q';
+        case BLACK_KING: return 'k';
         default:
             printf("No piece-symbol for %i", piece_type);
             exit(EXIT_FAILURE);
@@ -116,18 +117,19 @@ char get_symbol_for_piecetype(int piece_type){
 
 int get_piecetype_for_symbol(char symbol){
     switch (symbol) {
-        case 'P':  return 0;
-        case 'R':  return 1;
-        case 'N':  return 2;
-        case 'B':  return 3;
-        case 'Q':  return 4;
-        case 'K':  return 5;
-        case 'p':  return 6;
-        case 'r':  return 7;
-        case 'n':  return 8;
-        case 'b':  return 9;
-        case 'q': return 10;
-        case 'k': return 11;
+        case ' ':  return NO_PIECES;
+        case 'P':  return WHITE_PAWNS;
+        case 'N':  return WHITE_KNIGHTS;
+        case 'B':  return WHITE_BISHOPS;
+        case 'R':  return WHITE_ROOKS;
+        case 'Q':  return WHITE_QUEENS;
+        case 'K':  return WHITE_KING;
+        case 'p':  return BLACK_PAWNS;
+        case 'n':  return BLACK_KNIGHTS;
+        case 'b':  return BLACK_BISHOPS;
+        case 'r':  return BLACK_ROOKS;
+        case 'q': return BLACK_QUEENS;
+        case 'k': return BLACK_KING;
         default:
             printf("No symbol for %c", symbol);
             exit(EXIT_FAILURE);

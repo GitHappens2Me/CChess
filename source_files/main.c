@@ -51,14 +51,14 @@ int main() {
     //print_position(COLLUMN_a);
     //print_position(ROW_1);
 
-    print_position(generate_pseudolegal_moves_for_rook(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
-    print_position(generate_pseudolegal_moves_for_bishop(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
+    //print_position(generate_pseudolegal_moves_for_rook(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
+    //print_position(generate_pseudolegal_moves_for_bishop(board, get_bitmap_from_notation("g4"), PLAYER_BLACK));
 
     printf("a5\n");
     
-    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
-    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("e3"), PLAYER_WHITE));
-    print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("h8"), PLAYER_WHITE));
+    //print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("a6"), PLAYER_WHITE));
+    //print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("e3"), PLAYER_WHITE));
+    //print_position(generate_pseudolegal_moves_for_knight(board, get_bitmap_from_notation("h8"), PLAYER_WHITE));
     //exit(1);
 
 /*
@@ -143,14 +143,13 @@ int main() {
     print_move(move);
 */
     int engine_move = 1;
-    
     print_board(board);
     // #TODO Clean Up main function (Move tests to test files, remove uneccesarry tests.)
     while (1) {
         if(engine_move){
             if(board->current_Player == PLAYER_BLACK){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 4);
+                get_best_move_minimax(board, &move, 2);
                 printf("Engine Move: ");
                 print_move(move);
                 //exit(EXIT_SUCCESS); //Profiling
@@ -190,6 +189,7 @@ int main() {
                 printf("Player %d is Checkmate\n", board->current_Player);
             }else{
                 printf("Player %d has %d Legal Moves.\n", board->current_Player, num_legal_moves);
+
             }
 
             print_board(board);
@@ -201,8 +201,15 @@ int main() {
                 printf("Not Attacked\n");
             }
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
-            if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check");
-            
+            if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
+            /*
+            printf("WHITE\n");
+            print_position(get_pieces_of_player(board, PLAYER_WHITE));
+            printf("BLACK\n");
+            print_position(get_pieces_of_player(board, PLAYER_BLACK));
+            printf("EMPTY\n");
+            print_position(board->pieces[0]);
+            */
         }
     }
 
@@ -214,7 +221,7 @@ int main() {
         scanf("%s", input);
         
 
-        print_position(generate_pseudolegal_moves_for_piece(board, get_bitmap_from_notation(input)));
+        //print_position(generate_pseudolegal_moves_for_piece(board, get_bitmap_from_notation(input)));
 
     }
     printf("Bye Bye\n");
