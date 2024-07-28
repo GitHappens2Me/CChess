@@ -119,8 +119,9 @@ void initialize_board_FEN(Board* board, char* fen_string){
                 collumn_mask >>= 1; // moves current collumn (/file) right one
 
             }else if(isdigit(rank[piece])){
-                //#TODO #BUG NO_PIECES: correctly set up from FEN
-                board->pieces[NO_PIECES] |= (rank_mask & collumn_mask); 
+                for(int i = 0; i < rank[piece] - '0'; i++){
+                    board->pieces[NO_PIECES] |= (rank_mask & (collumn_mask >> i)); 
+                }
                 collumn_mask >>= (rank[piece] - '0'); // moves current collumn (/file) right the specified number of squares 
 
             }

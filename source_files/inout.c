@@ -117,18 +117,19 @@ char get_symbol_for_piecetype(int piece_type){
 
 int get_piecetype_for_symbol(char symbol){
     switch (symbol) {
-        case 'P':  return 0;
-        case 'R':  return 1;
-        case 'N':  return 2;
-        case 'B':  return 3;
-        case 'Q':  return 4;
-        case 'K':  return 5;
-        case 'p':  return 6;
-        case 'r':  return 7;
-        case 'n':  return 8;
-        case 'b':  return 9;
-        case 'q': return 10;
-        case 'k': return 11;
+        case ' ':  return NO_PIECES;
+        case 'P':  return WHITE_PAWNS;
+        case 'N':  return WHITE_KNIGHTS;
+        case 'B':  return WHITE_BISHOPS;
+        case 'R':  return WHITE_ROOKS;
+        case 'Q':  return WHITE_QUEENS;
+        case 'K':  return WHITE_KING;
+        case 'p':  return BLACK_PAWNS;
+        case 'n':  return BLACK_KNIGHTS;
+        case 'b':  return BLACK_BISHOPS;
+        case 'r':  return BLACK_ROOKS;
+        case 'q': return BLACK_QUEENS;
+        case 'k': return BLACK_KING;
         default:
             printf("No symbol for %c", symbol);
             exit(EXIT_FAILURE);
