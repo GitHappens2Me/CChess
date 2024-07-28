@@ -151,9 +151,10 @@ int main() {
         if(engine_move){
             if(board->current_Player == PLAYER_BLACK){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 2);
+                get_best_move_minimax(board, &move, 4);
                 printf("Engine Move: ");
                 print_move(move);
+
                 //exit(EXIT_SUCCESS); //Profiling
             }else{
                 move = get_move_from_user(board);
@@ -194,6 +195,13 @@ int main() {
 
             }
 
+            printf("WHITE\n");
+            print_position(get_pieces_of_player(board, PLAYER_WHITE));
+            printf("BLACK\n");
+            print_position(get_pieces_of_player(board, PLAYER_BLACK));
+            printf("EMPTY\n");
+            print_position(board->pieces[0]);
+
             print_board(board);
             printf("Current Player: %d\n", board->current_Player);
 
@@ -205,14 +213,9 @@ int main() {
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
             
-            /*
-            printf("WHITE\n");
-            print_position(get_pieces_of_player(board, PLAYER_WHITE));
-            printf("BLACK\n");
-            print_position(get_pieces_of_player(board, PLAYER_BLACK));
-            printf("EMPTY\n");
-            print_position(board->pieces[0]);
-            */
+            
+            
+            
         }
     }
 

@@ -195,14 +195,16 @@ Move get_move_from_user(Board* board){
     uint64_t move_origin = get_bitmap_from_notation(origin);
     uint64_t move_destination = get_bitmap_from_notation(destination);
 
-    // get_piece_type_at() returns -1 if no piece there (no capture)
+    // get_piece_type_at() returns 0 if no piece there (no capture)
     int captured_piece_type = get_piece_type_at(board, move_destination);
 
     // #TODO this does not work with en passant
     uint64_t captured_piece_position = move_destination;
 
+    printf("Caputed Type: %d, Captured position:", captured_piece_type);
+    print_position(captured_piece_position);
 
-    Move user_move = create_move(get_piece_type_at(board, move_origin), move_origin, move_destination, captured_piece_type, captured_piece_position, 0ULL, -1 ); 
+    Move user_move = create_move(get_piece_type_at(board, move_origin), move_origin, move_destination, captured_piece_type, captured_piece_position, 0, 0 ); 
 
 
     free(origin);

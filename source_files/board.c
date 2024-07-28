@@ -197,13 +197,12 @@ void apply_move_forced(Board* board, Move move){
     //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
     
 
+    //printf("%d, ", move.captured_piece_type);
     // For Captures
-    if(move.captured_piece_type != -1){
+    if(move.captured_piece_type != 0){
         //printf("Capture!");
-        int captured_piece_type = move.captured_piece_type;
-        int captured_piece_position = move.captured_piece_type;
         // remove captured piece
-        board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~captured_piece_position;
+        board->pieces[move.captured_piece_type] &= ~move.captured_piece_position;
     }
      // remove piece from origin
     board->pieces[piece_type] &= ~move.moving_piece_origin;
@@ -519,12 +518,12 @@ int generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int pla
             // Collision with opponent piece
             }else if(next & opponent_pieces){
                 int captured_piece_type = get_piece_type_at(board, next);
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0);
                 move_counter++;
                 break;
             // No Collision
             }else{
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0);
                 move_counter++;
             }
         }
@@ -628,12 +627,12 @@ int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int p
         }
         else if(next & opponent_pieces ){
                 int captured_piece_type = get_piece_type_at(board, next);
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0);
                 move_counter++;
                 break;
             // No Collision
         }else{
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0);
             move_counter++;
         }
     
@@ -655,9 +654,13 @@ int generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int pl
 
     for(int i = 0; i < num_bishop_moves; i++){
         legal_moves[i] = bishop_moves[i];
+        // Changing the type of the moving piece to Queen
+        legal_moves[i].moving_piece_type = (player == PLAYER_WHITE) ? WHITE_QUEENS : BLACK_QUEENS;
     }
     for(int i = 0; i < num_rook_moves; i++){
         legal_moves[i + num_bishop_moves] = rook_moves[i];
+        // Changing the type of the moving piece to Queen
+        legal_moves[i + num_bishop_moves].moving_piece_type = (player == PLAYER_WHITE) ? WHITE_QUEENS : BLACK_QUEENS;
     }
 
     free(rook_moves);
@@ -750,7 +753,7 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
 
 
     if(!(next & (opponent_pieces | own_pieces))){
-        legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+        legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0);
         move_counter++;
     } 
 
@@ -759,7 +762,7 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         if(shift_direction == LEFT)           next <<= 8;
         else /*if(shift_direction == RIGHT)*/ next >>= 8;
         if (!(next & (opponent_pieces | own_pieces))) {
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0);
             move_counter++;
         }
     }
@@ -772,12 +775,12 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
     
     if ((captures[0] & opponent_pieces) && !(position & COLLUMN_h)) {
         int captured_piece_type = get_piece_type_at(board, captures[0]);
-        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, -1);
+        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, 0);
         move_counter++;
     }
     if ((captures[1] & opponent_pieces) && !(position & COLLUMN_a)) {
-        int captured_piece_type = get_piece_type_at(board, captures[0]);
-        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, -1);
+        int captured_piece_type = get_piece_type_at(board, captures[1]);
+        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, 0);
         move_counter++;
     }
     
