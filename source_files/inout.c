@@ -201,9 +201,6 @@ Move get_move_from_user(Board* board){
     // #TODO this does not work with en passant
     uint64_t captured_piece_position = move_destination;
 
-    printf("Caputed Type: %d, Captured position:", captured_piece_type);
-    print_position(captured_piece_position);
-
     Move user_move = create_move(get_piece_type_at(board, move_origin), move_origin, move_destination, captured_piece_type, captured_piece_position, 0, 0 ); 
 
 
