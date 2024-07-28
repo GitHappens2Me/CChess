@@ -68,17 +68,20 @@ void copy_board(Board* copy, Board* source) {
 
 // Initialize board to start position
 void initialize_board(Board* board){
+
+    board->pieces[NO_PIECES] = 0x0000FFFFFFFF0000;
+
     board->pieces[WHITE_PAWNS] = 0x000000000000FF00;
-    board->pieces[WHITE_ROOKS] = 0x0000000000000081;
     board->pieces[WHITE_KNIGHTS] = 0x0000000000000042;
     board->pieces[WHITE_BISHOPS] = 0x0000000000000024;
+    board->pieces[WHITE_ROOKS] = 0x0000000000000081;
     board->pieces[WHITE_QUEENS] = 0x0000000000000010;
     board->pieces[WHITE_KING] = 0x0000000000000008;
 
     board->pieces[BLACK_PAWNS] = 0x00FF000000000000;
-    board->pieces[BLACK_ROOKS] = 0x8100000000000000;
     board->pieces[BLACK_KNIGHTS] = 0x4200000000000000;
     board->pieces[BLACK_BISHOPS] = 0x2400000000000000;
+    board->pieces[BLACK_ROOKS] = 0x8100000000000000;
     board->pieces[BLACK_QUEENS] = 0x1000000000000000;
     board->pieces[BLACK_KING] = 0x0800000000000000;
 }
@@ -116,6 +119,8 @@ void initialize_board_FEN(Board* board, char* fen_string){
                 collumn_mask >>= 1; // moves current collumn (/file) right one
 
             }else if(isdigit(rank[piece])){
+                //#TODO #BUG NO_PIECES: correctly set up from FEN
+                board->pieces[NO_PIECES] |= (rank_mask & collumn_mask); 
                 collumn_mask >>= (rank[piece] - '0'); // moves current collumn (/file) right the specified number of squares 
 
             }
@@ -188,7 +193,7 @@ void apply_move_forced(Board* board, Move move){
     int piece_type = get_piece_type_at(board, move.origin);
     //printf("Piecetype moved: %d\n", piece_type);
     //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
-
+    
 
     // For Captures
     if(move.destination & get_all_pieces(board)){
@@ -198,9 +203,11 @@ void apply_move_forced(Board* board, Move move){
         board->pieces[captured_piece_type] = board->pieces[captured_piece_type] & ~move.destination;
     }
      // remove piece from origin
-    board->pieces[piece_type] = board->pieces[piece_type] & ~move.origin;
+    board->pieces[piece_type] &= ~move.origin;
+    board->pieces[NO_PIECES] |= move.origin;
     // add piece to destination
-    board->pieces[piece_type] = board->pieces[piece_type] | move.destination;
+    board->pieces[piece_type] |= move.destination;
+    board->pieces[NO_PIECES] &= ~move.destination;
     // Changes whose turn it is:
     board->current_Player = get_opponent(board->current_Player);
 }
@@ -213,10 +220,10 @@ void apply_move_forced(Board* board, Move move){
 // Returns bitmap of all Pieces on the Board 
 uint64_t get_all_pieces(Board* board){
 
-    return (board->pieces[0] | board->pieces[1] | board->pieces[2] |
-            board->pieces[3] | board->pieces[4] | board->pieces[5] |
-            board->pieces[6] | board->pieces[7] | board->pieces[8] |
-            board->pieces[9] | board->pieces[10] | board->pieces[11]);
+    return (board->pieces[WHITE_PAWNS] | board->pieces[WHITE_KNIGHTS] | board->pieces[WHITE_BISHOPS] |
+            board->pieces[WHITE_ROOKS] | board->pieces[WHITE_QUEENS] | board->pieces[WHITE_KING] |
+            board->pieces[BLACK_PAWNS] | board->pieces[BLACK_KNIGHTS] | board->pieces[BLACK_BISHOPS] |
+            board->pieces[BLACK_ROOKS] | board->pieces[BLACK_QUEENS] | board->pieces[BLACK_KING]);
 }
 
 
@@ -224,11 +231,11 @@ uint64_t get_all_pieces(Board* board){
 uint64_t get_pieces_of_player(Board* board, int player) {
 
     if(player == PLAYER_WHITE){
-        return (board->pieces[0] | board->pieces[1] | board->pieces[2] |
-                board->pieces[3] | board->pieces[4] | board->pieces[5] );
+        return (board->pieces[WHITE_PAWNS] | board->pieces[WHITE_KNIGHTS] | board->pieces[WHITE_BISHOPS] |
+                board->pieces[WHITE_ROOKS] | board->pieces[WHITE_QUEENS] | board->pieces[WHITE_KING] );
     }else{
-        return (board->pieces[6] | board->pieces[7] | board->pieces[8] |
-                board->pieces[9] | board->pieces[10] | board->pieces[11]);
+        return (board->pieces[BLACK_PAWNS] | board->pieces[BLACK_KNIGHTS] | board->pieces[BLACK_BISHOPS] |
+                board->pieces[BLACK_ROOKS] | board->pieces[BLACK_QUEENS] | board->pieces[BLACK_KING] );
     }
 }
 
@@ -243,11 +250,13 @@ int get_piece_type_at(Board* board, uint64_t position){
             return i;
         }
     }
-    return -1;
+    return 0;
 }
 
 int get_piece_color(Board *board, uint64_t position){
-    if(get_piece_type_at(board, position) <= 5) return PLAYER_WHITE;
+    int piece_type = get_piece_type_at(board, position);
+
+    if(piece_type > NO_PIECES && piece_type <= WHITE_KING) return PLAYER_WHITE;
     else return PLAYER_BLACK;
 }
 
@@ -358,11 +367,11 @@ int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_mo
     int move_counter = 0;
 
 
-    int pawn_index = 0;
-    int king_index = 5;
+    int pawn_index = WHITE_PAWNS;
+    int king_index = WHITE_KING;
     if(player == PLAYER_BLACK){
-        pawn_index = 6;
-        king_index = 11;
+        pawn_index = BLACK_PAWNS;
+        king_index = BLACK_KING;
     }
 
     // Looping through all the piece_types of the player

@@ -96,18 +96,19 @@ void print_board(Board* board) {
 
 char get_symbol_for_piecetype(int piece_type){
     switch (piece_type) {
-        case 0: return 'P';
-        case 1: return 'R';
-        case 2: return 'N';
-        case 3: return 'B';
-        case 4: return 'Q';
-        case 5: return 'K';
-        case 6: return 'p';
-        case 7: return 'r';
-        case 8: return 'n';
-        case 9: return 'b';
-        case 10: return 'q';
-        case 11: return 'k';
+        case NO_PIECES: return ' ';
+        case WHITE_PAWNS: return 'P';
+        case WHITE_KNIGHTS: return 'N';
+        case WHITE_BISHOPS: return 'B';
+        case WHITE_ROOKS: return 'R';
+        case WHITE_QUEENS: return 'Q';
+        case WHITE_KING: return 'K';
+        case BLACK_PAWNS: return 'p';
+        case BLACK_KNIGHTS: return 'n';
+        case BLACK_BISHOPS: return 'b';
+        case BLACK_ROOKS: return 'r';
+        case BLACK_QUEENS: return 'q';
+        case BLACK_KING: return 'k';
         default:
             printf("No piece-symbol for %i", piece_type);
             exit(EXIT_FAILURE);

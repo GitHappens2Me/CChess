@@ -143,14 +143,13 @@ int main() {
     print_move(move);
 */
     int engine_move = 1;
-    
     print_board(board);
     // #TODO Clean Up main function (Move tests to test files, remove uneccesarry tests.)
     while (1) {
         if(engine_move){
             if(board->current_Player == PLAYER_BLACK){
                 //get_best_move(board, &move, 0, 3);
-                get_best_move_minimax(board, &move, 4);
+                get_best_move_minimax(board, &move, 2);
                 printf("Engine Move: ");
                 print_move(move);
                 //exit(EXIT_SUCCESS); //Profiling
@@ -190,6 +189,7 @@ int main() {
                 printf("Player %d is Checkmate\n", board->current_Player);
             }else{
                 printf("Player %d has %d Legal Moves.\n", board->current_Player, num_legal_moves);
+
             }
 
             print_board(board);
@@ -201,8 +201,15 @@ int main() {
                 printf("Not Attacked\n");
             }
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
-            if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check");
-            
+            if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
+            /*
+            printf("WHITE\n");
+            print_position(get_pieces_of_player(board, PLAYER_WHITE));
+            printf("BLACK\n");
+            print_position(get_pieces_of_player(board, PLAYER_BLACK));
+            printf("EMPTY\n");
+            print_position(board->pieces[0]);
+            */
         }
     }
 
