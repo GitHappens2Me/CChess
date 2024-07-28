@@ -366,7 +366,8 @@ int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_mo
     }
 
     // Looping through all the piece_types of the player
-    for(int piece_type = pawn_index; piece_type <= king_index; piece_type++){
+    // from king to pawns as pawns.
+    for(int piece_type = king_index; piece_type >= pawn_index; piece_type--){
         // This array holds the position of all individual pieces of the piece_type
         uint64_t* indivdual_pieces = malloc(sizeof(uint64_t) * 64);
         if (indivdual_pieces == NULL) {
