@@ -97,7 +97,6 @@ int main() {
     printf("Fenboard:\n");
     print_board(fen_board);
     free_board(fen_board);    
-    exit(1);
 
     // Test copying Board:
 
