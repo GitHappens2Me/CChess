@@ -100,6 +100,7 @@ int main() {
 
     // Test copying Board:
 
+/*
     Board* board_copy;
     create_board(&board_copy);
     copy_board(board_copy, board);
@@ -114,6 +115,7 @@ int main() {
     print_board(board_copy);
 
     free_board(board_copy);
+    */
     
 /*
     printf("%d\n", get_position_index_from_position(get_bitmap_from_notation("h1")));
@@ -154,7 +156,7 @@ int main() {
                 print_move(move);
                 //exit(EXIT_SUCCESS); //Profiling
             }else{
-                move = get_move_from_user();
+                move = get_move_from_user(board);
                 //move = e2e4; //Profiling
                 if(get_piece_color(board, move.moving_piece_origin) != PLAYER_WHITE){
                     printf("Not your Piece. Choose a different Move\n");
@@ -162,7 +164,7 @@ int main() {
                 }
             }
         }else{
-            move = get_move_from_user();
+            move = get_move_from_user(board);
             if(get_piece_color(board, move.moving_piece_origin) != PLAYER_WHITE){
                 printf("Not your Piece. Choose a different Move\n");
                 continue;
@@ -202,6 +204,7 @@ int main() {
             }
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
+            
             /*
             printf("WHITE\n");
             print_position(get_pieces_of_player(board, PLAYER_WHITE));

@@ -62,6 +62,7 @@ void copy_board(Board* copy, Board* source) {
     }
     memcpy(copy->pieces, source->pieces, NUM_OF_PIECE_TYPES * sizeof(uint64_t));
     copy->current_Player = source->current_Player;
+    copy->en_passant_square = source->en_passant_square;
 }
 
 
@@ -251,6 +252,11 @@ uint64_t get_all_pieces_of_type(Board* board, int piece_type){
 }
 
 int get_piece_type_at(Board* board, uint64_t position){
+    if (board == NULL) {
+        printf("Board not allocated in 'get_piece_type_at'\n");
+        exit(EXIT_FAILURE);
+    }
+
     for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
         if((board->pieces[i] & position) != 0){
             //print_position(board->pieces[i] & position);
@@ -283,11 +289,15 @@ int get_opponent(int player){
 ------------------------------------------*/
 
 int is_in_checkmate(Board* board, int player){
-    Move possible_moves[200];
+    Move* possible_moves = malloc(sizeof(Move) * 200);
     int num_legal_moves = generate_all_legal_moves_for_player(board, player, possible_moves);
     
-    if(num_legal_moves == 0 && is_in_check(board, player)) return 1;
-    
+
+    if(num_legal_moves == 0 && is_in_check(board, player)){
+        free(possible_moves);
+        return 1;
+    } 
+    free(possible_moves);
     return 0;
 }
 
@@ -441,7 +451,7 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
         fprintf(stderr, "Must Allocate Memory for legal_moves\n");
         exit(EXIT_FAILURE);
     }
-    Move* pseudo_legal_moves = malloc(sizeof(uint64_t) * 64);
+    Move* pseudo_legal_moves = malloc(sizeof(Move) * 64);
     int num_pseudo_legal_moves = generate_pseudolegal_moves_for_piece(board, position, pseudo_legal_moves);
 
     for(int i = 0; i < num_pseudo_legal_moves; i++){
@@ -556,15 +566,19 @@ int generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int p
             // Collision with opponent piece
             }else if(next & opponent_pieces ){
                 int captured_piece_type = get_piece_type_at(board, next);
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+                if(move_counter > 100){
+                    printf("%d, ",move_counter);
+                }
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0);
                 move_counter++;
                 break;
             // No Collision
             }else{
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+                legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0);
                 move_counter++;
 
             }
+            //printf("%d, ", move_counter);
         }
         next = position;
     }
@@ -633,8 +647,8 @@ int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int p
 
 int generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int player, Move* legal_moves){
 
-    Move* bishop_moves = malloc(sizeof(uint64_t) * 64);
-    Move* rook_moves = malloc(sizeof(uint64_t) * 64);
+    Move* bishop_moves = malloc(sizeof(Move) * 200);
+    Move* rook_moves = malloc(sizeof(Move) * 200);
 
     int num_bishop_moves = generate_pseudolegal_moves_for_bishop(board, position, player, bishop_moves);
     int num_rook_moves = generate_pseudolegal_moves_for_rook(board, position, player, rook_moves);
@@ -694,11 +708,11 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
 
         }else if(next & opponent_pieces){        
             int captured_piece_type = get_piece_type_at(board, next);
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, -1);
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0);
             move_counter++;
         // No Collision
         }else{   
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, -1, 0, 0, -1);
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0);
             move_counter++;
         }
     }
@@ -767,6 +781,6 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         move_counter++;
     }
     
-    return legal_moves;
+    return move_counter;
 }
 

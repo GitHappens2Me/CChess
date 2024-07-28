@@ -35,10 +35,18 @@ int is_legal_move(Board *board, Move move){
 int is_pseudo_legal_move(Board *board, Move move){
 
 
-    uint64_t ps_legal_destinations = generate_pseudolegal_moves_for_piece(board, move.moving_piece_origin);
-    //print_position(ps_legal_destinations);
-    //print_position(move.destination);
-    return (ps_legal_destinations & move.moving_piece_destination) > 0;
+    Move* pseudo_legal_moves = malloc(sizeof(uint64_t) * 200);
+    int move_counter = generate_pseudolegal_moves_for_piece(board, move.moving_piece_origin, pseudo_legal_moves);
+    for(int i = 0; i < move_counter; i++){
+        if(move.moving_piece_origin == pseudo_legal_moves[i].moving_piece_origin && 
+           move.moving_piece_destination == pseudo_legal_moves[i].moving_piece_destination){
+                free(pseudo_legal_moves);
+                return 1;
+        }
+    }
+    free(pseudo_legal_moves);
+    return 0;
+
 }
 
 void print_move(Move move){
@@ -51,6 +59,7 @@ void print_move(Move move){
     free(destination);
 }
 
+/*
 int get_moves_from_destination_bitmap(uint64_t piece_position, uint64_t legal_destinations, Move* legal_moves_by_piece){
    
     int number_of_bits = 64; // NUM_OF_BITS is not reachable from move.c (maybe move it to main.h?) 
@@ -73,3 +82,4 @@ int get_moves_from_destination_bitmap(uint64_t piece_position, uint64_t legal_de
     return counter;
 
 }
+*/
