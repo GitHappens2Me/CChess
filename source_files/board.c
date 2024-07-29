@@ -213,6 +213,7 @@ int apply_move(Board* board, Move move){
 
 // applies the move without checks for validity
 void apply_move_forced(Board* board, Move move){
+
     int piece_type = move.moving_piece_type;
     //printf("Piecetype moved: %d\n", piece_type);
     //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
@@ -855,12 +856,12 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, 0, 0);
         move_counter++;
     }
-
-    // en-passant
+    // en-passant Capture
     uint64_t en_passant_square = board->en_passant_square;
     if ((captures[0] & en_passant_square) || (captures[1] & en_passant_square)) {
         int captured_piece_type = (player == PLAYER_WHITE)? BLACK_PAWNS : WHITE_PAWNS;
         uint64_t captured_piece_position = (player == PLAYER_WHITE) ? (en_passant_square >> 8) : (en_passant_square << 8);
+        //print_position(captured_piece_position);
         legal_moves[move_counter] = create_move(moving_piece_type, position, en_passant_square, captured_piece_type, captured_piece_position, 0, 0, 0);
         move_counter++;
     }

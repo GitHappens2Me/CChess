@@ -200,7 +200,7 @@ Move get_move_from_user(Board* board){
 
     int moving_piece_type = get_piece_type_at(board, move_origin);
 
-    //Check for enpassant:
+    //Set en-passant square if pawn made a double move:
     uint64_t en_passant_square = 0;
     if(moving_piece_type == WHITE_PAWNS && (move_origin & ROW_2) && (move_destination & (ROW_2 << 16))){
         printf("User Move: Pawn double move\n");
@@ -215,10 +215,12 @@ Move get_move_from_user(Board* board){
     if(moving_piece_type == WHITE_PAWNS && (move_destination & board->en_passant_square)){
         printf("User Move: En-Passant Capture\n");
         captured_piece_position = move_destination >> 8;
+        captured_piece_type = BLACK_PAWNS;
     }
     if(moving_piece_type == BLACK_PAWNS && (move_destination & board->en_passant_square)){
         printf("User Move: En-Passant Capture\n");
         captured_piece_position = move_destination << 8;
+        captured_piece_type = WHITE_PAWNS;
     }
 
 
