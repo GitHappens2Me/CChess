@@ -20,10 +20,13 @@ int main() {
 
     Board* board;
     create_board(&board);
-    //initialize_board(board);
-    //char en_passant_setup[] = "1nbqkbn1/r2ppppr/pp5p/7Q/2p1P3/2P3P1/PP1P1PBP/RNB1K1NR w KQ - 3 8";
-    char fen[] = "8/8/3r1r2/2r3r1/4N3/2R3R1/3R1R2/8 w - - 0 1";
-    initialize_board_FEN(board, fen);
+    initialize_board(board);
+
+    char en_passant_setup[] = "k7/8/8/8/3p4/8/4P3/K7 w - - 0 1";
+    initialize_board_FEN(board, en_passant_setup);
+
+    //char fen[] = "8/8/3r1r2/2r3r1/4N3/2R3R1/3R1R2/8 w - - 0 1";
+    //initialize_board_FEN(board, fen);
 
     // Test by Playing: 
     printf("Starting Game :)\n");

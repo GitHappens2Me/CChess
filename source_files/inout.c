@@ -198,10 +198,31 @@ Move get_move_from_user(Board* board){
     // get_piece_type_at() returns 0 if no piece there (no capture)
     int captured_piece_type = get_piece_type_at(board, move_destination);
 
-    // #TODO this does not work with en passant
-    uint64_t captured_piece_position = move_destination;
+    int moving_piece_type = get_piece_type_at(board, move_origin);
 
-    Move user_move = create_move(get_piece_type_at(board, move_origin), move_origin, move_destination, captured_piece_type, captured_piece_position, 0, 0 ); 
+    //Check for enpassant:
+    uint64_t en_passant_square = 0;
+    if(moving_piece_type == WHITE_PAWNS && (move_origin & ROW_2) && (move_destination & (ROW_2 << 16))){
+        printf("User Move: Pawn double move\n");
+        en_passant_square = (move_destination >> 8);
+    } else if(moving_piece_type == BLACK_PAWNS && (move_origin & ROW_7) && (move_destination & (ROW_7 >> 16))){
+        printf("User Move: Pawn double move\n");
+        en_passant_square = (move_destination << 8);
+    }
+
+    uint64_t captured_piece_position = move_destination;
+    // Change captured_piece_position in case of en-passant capture:
+    if(moving_piece_type == WHITE_PAWNS && (move_destination & board->en_passant_square)){
+        printf("User Move: En-Passant Capture\n");
+        captured_piece_position = move_destination >> 8;
+    }
+    if(moving_piece_type == BLACK_PAWNS && (move_destination & board->en_passant_square)){
+        printf("User Move: En-Passant Capture\n");
+        captured_piece_position = move_destination << 8;
+    }
+
+
+    Move user_move = create_move(moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, 0, 0, en_passant_square); 
 
 
     free(origin);
