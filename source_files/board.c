@@ -350,6 +350,52 @@ int results_in_check(Board* board, Move move){
  *  #TODO: Include Pawns (and the Opponent King) in the test
  */
 int is_attacked(Board* board, uint64_t position, int attacking_color){
+
+    Move* bishop_moves = malloc(sizeof(Move) * 64);
+    Move* rook_moves = malloc(sizeof(Move) * 64);
+    Move* knight_moves = malloc(sizeof(Move) * 64);
+
+    int num_bishop_moves = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color), bishop_moves);
+    int num_rook_moves = generate_pseudolegal_moves_for_rook(board, position, get_opponent(attacking_color), rook_moves);
+    int num_knight_moves = generate_pseudolegal_moves_for_knight(board, position, get_opponent(attacking_color), knight_moves);
+
+    int queen = (attacking_color == PLAYER_WHITE) ? WHITE_QUEENS : BLACK_QUEENS;
+    int rook = (attacking_color == PLAYER_WHITE) ? WHITE_ROOKS : BLACK_ROOKS;
+    int bishop = (attacking_color == PLAYER_WHITE) ? WHITE_BISHOPS : BLACK_BISHOPS;
+    int knight = (attacking_color == PLAYER_WHITE) ? WHITE_KNIGHTS : BLACK_KNIGHTS;
+
+    
+
+    for(int i = 0; i < num_bishop_moves; i++){
+        if(get_piece_type_at(board, bishop_moves[i].moving_piece_destination) == bishop || 
+           get_piece_type_at(board, bishop_moves[i].moving_piece_destination) == queen){
+            free(bishop_moves);
+            free(rook_moves);
+            free(knight_moves);
+            return 1;
+        }
+    }
+    for(int i = 0; i < num_rook_moves; i++){
+        if(get_piece_type_at(board, rook_moves[i].moving_piece_destination) == rook || 
+           get_piece_type_at(board, rook_moves[i].moving_piece_destination) == queen){
+            free(bishop_moves);
+            free(rook_moves);
+            free(knight_moves);
+            return 1;
+        }
+    }
+    for(int i = 0; i < num_knight_moves; i++){
+        if(get_piece_type_at(board, knight_moves[i].moving_piece_destination) == knight){
+            free(bishop_moves);
+            free(rook_moves);
+            free(knight_moves);
+            return 1;
+        }
+    }
+
+    free(bishop_moves);
+    free(rook_moves);
+    free(knight_moves);
     return 0;
     /*
     uint64_t bishop_attack_path = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color));

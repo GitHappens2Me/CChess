@@ -58,6 +58,7 @@ int main() {
 
             if(num_legal_moves == 0){
                 printf("Player %d is Checkmate\n", board->current_Player);
+                exit(EXIT_SUCCESS);
             }else{
                 printf("Player %d has %d Legal Moves.\n", board->current_Player, num_legal_moves);
             }
@@ -65,14 +66,14 @@ int main() {
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
             
 
-            /*
+            
             printf("WHITE\n");
             print_position(get_pieces_of_player(board, PLAYER_WHITE));
             printf("BLACK\n");
             print_position(get_pieces_of_player(board, PLAYER_BLACK));
             printf("EMPTY\n");
             print_position(board->pieces[0]);
-            */
+            
 
             print_board(board);
             printf("Current Player: %d\n", board->current_Player);
