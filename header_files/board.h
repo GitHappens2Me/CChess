@@ -58,7 +58,7 @@ struct Board {
     // TODO: Castling Rights
 
     // TODO: en Passant
-    uint64_t* en_passant_square;
+    uint64_t en_passant_square;
     
     // Defines whose turn is is
     int current_Player;
@@ -114,6 +114,15 @@ void copy_board(Board* copy, Board* source);
  *  returns: void
  */
 void initialize_board(Board* board);
+
+/*
+ *  Initialized Board to empty Board
+ *
+ *  board: Board which gets initialized
+ *
+ *  returns: void
+ */
+void initialize_board_empty(Board* board);
 
 /*
  *  Initalizes Board to a position given by FEN String

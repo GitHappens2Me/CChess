@@ -29,7 +29,8 @@ void create_board(Board** board) {
         free(*board);
         exit(EXIT_FAILURE);
     }
-    for (int i = 0; i < NUM_OF_PIECE_TYPES; i++) {
+    (*board)->pieces[NO_PIECES] = 0xFFFFFFFFFFFFFFFF;
+    for (int i = 1; i < NUM_OF_PIECE_TYPES; i++) {
         (*board)->pieces[i] = 0x0;
     }
     // Current Player
@@ -85,7 +86,25 @@ void initialize_board(Board* board){
     board->pieces[BLACK_ROOKS] = 0x8100000000000000;
     board->pieces[BLACK_QUEENS] = 0x1000000000000000;
     board->pieces[BLACK_KING] = 0x0800000000000000;
+
+    board->current_Player = PLAYER_WHITE;
+
+    board->en_passant_square = 0x0;
 }
+
+// Initialize board to empty position
+void initialize_board_empty(Board* board){
+
+    board->pieces[NO_PIECES] = 0xFFFFFFFFFFFFFFFF;
+
+    for(int i = 1; i < NUM_OF_PIECE_TYPES; i++){
+        board->pieces[i] = 0x0;
+    }
+
+    board->current_Player = PLAYER_WHITE;
+    board->en_passant_square = 0x0;
+}
+
 
 void initialize_board_FEN(Board* board, char* fen_string){
     //printf("Initializing Board to %s\n", fen_string);
@@ -97,9 +116,11 @@ void initialize_board_FEN(Board* board, char* fen_string){
 
     // Elements of a FEN String [Pieces, active player, castling rights, en passant square, halvemove clock, fullmove clock]
     char* element = strtok(fen_string, " ");
+    //printf("%s ", element);
 
     // Iterates through all 8 ranks (8 -> 1)
     char* rank = strtok(element, "/");
+    //printf("%s ", rank);
 
     uint64_t rank_mask = ROW_8; 
 
@@ -212,6 +233,11 @@ void apply_move_forced(Board* board, Move move){
     board->pieces[NO_PIECES] &= ~move.moving_piece_destination;
     // Changes whose turn it is:
     board->current_Player = get_opponent(board->current_Player);
+
+    // #TODO Promotion:Set En-Passant Square
+    // Checking if pawn moved 2 squares is slow. a Special field in 'Move' might be better
+    //if(piece_type == WHITE_PAWNS || piece_type == BLACK_PAWNS){
+    //}
 
     // #TODO Promotion:
 
@@ -350,7 +376,6 @@ int results_in_check(Board* board, Move move){
  *  #TODO: Include Pawns (and the Opponent King) in the test
  */
 int is_attacked(Board* board, uint64_t position, int attacking_color){
-
     Move* bishop_moves = malloc(sizeof(Move) * 64);
     Move* rook_moves = malloc(sizeof(Move) * 64);
     Move* knight_moves = malloc(sizeof(Move) * 64);
@@ -631,6 +656,7 @@ int generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int p
     return move_counter;
 }
 
+// #BUG: Some KNIGHT moves are not possible. No idea why!   
 int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player, Move* legal_moves){
     uint64_t possible_moves = 0ULL;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player)); // Not needed in the current implementation
@@ -664,8 +690,8 @@ int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int p
         if(next & ( edges_vertical[direction] | edges_horizontal[direction] | edges_spacer[direction])){
             continue;
         }
-        if     (shift_direction[direction] == LEFT)     next <<= shift_amount[direction];
-        else /*(shift_direction[direction] == RIGHT)*/  next >>= shift_amount[direction];
+        if     (shift_direction[direction] == LEFT)   next <<= shift_amount[direction];
+        else if(shift_direction[direction] == RIGHT)  next >>= shift_amount[direction];
         
         // Collision with own piece
         if(next & own_pieces){
@@ -675,7 +701,7 @@ int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int p
                 int captured_piece_type = get_piece_type_at(board, next);
                 legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0);
                 move_counter++;
-                break;
+                continue;;
             // No Collision
         }else{
             legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0);
@@ -827,6 +853,15 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
     if ((captures[1] & opponent_pieces) && !(position & COLLUMN_a)) {
         int captured_piece_type = get_piece_type_at(board, captures[1]);
         legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, 0);
+        move_counter++;
+    }
+
+    // en-passant
+    uint64_t en_passant_square = board->en_passant_square;
+    if ((captures[0] & en_passant_square) || (captures[1] & en_passant_square)) {
+        int captured_piece_type = (player == PLAYER_WHITE)? BLACK_PAWNS : WHITE_PAWNS;
+        uint64_t captured_piece_position = (player == PLAYER_WHITE) ? (en_passant_square >> 8) : (en_passant_square << 8);
+        legal_moves[move_counter] = create_move(moving_piece_type, position, en_passant_square, captured_piece_type, captured_piece_position, 0, 0);
         move_counter++;
     }
     

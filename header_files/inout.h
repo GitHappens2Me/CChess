@@ -36,4 +36,4 @@ int get_piecetype_for_symbol(char symbol);
 
 void print_position(uint64_t position);
 
-Move get_move_from_user();
+Move get_move_from_user(Board* board);

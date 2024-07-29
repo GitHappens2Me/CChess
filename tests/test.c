@@ -31,5 +31,7 @@ int main(int argc, char *argv[]) {
     test_split_bitmap();
     test_initialize_board_FEN();
     test_get_pieces_of_player();
+    test_generate_pseudolegal_moves_for_knight();
+    test_generate_pseudolegal_moves_for_rook();
 
 }
