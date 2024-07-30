@@ -47,6 +47,8 @@
 #define COLLUMN_b 0x4040404040404040
 #define COLLUMN_g 0x202020202020202
 
+
+
 // Forward declaration of Board
 typedef struct Board Board;
 
@@ -340,9 +342,7 @@ int generate_all_legal_moves_for_player(Board* board, int player, Move* legal_mo
  *  legal_moves: pointer to Move-array, where the legal moves are stored
  *
  *  returns: number of legal_moves for that piece
- * 
- *  notes: This is the function where the Transition between Moves as a uint64 Bitmap to an array of Move-objects occur
- *         
+ *          
  */
 int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves);
 
@@ -353,7 +353,7 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
  *  position: position of piece
  *  legal_moves: pointer to Move-array, where the legal moves are stored
  *
- *  returns: uint64 bitmap of pseudolegal destinations
+ *  returns: int number of pseudolegal moves generated
  *         
  */
 int generate_pseudolegal_moves_for_piece(Board* board, uint64_t position, Move* legal_moves);

@@ -37,7 +37,7 @@ int is_legal_move(Board *board, Move move){
 int is_pseudo_legal_move(Board *board, Move move){
 
 
-    Move* pseudo_legal_moves = malloc(sizeof(uint64_t) * 200);
+    Move* pseudo_legal_moves = malloc(sizeof(Move) * 200);
     int move_counter = generate_pseudolegal_moves_for_piece(board, move.moving_piece_origin, pseudo_legal_moves);
     for(int i = 0; i < move_counter; i++){
         if(move.moving_piece_origin == pseudo_legal_moves[i].moving_piece_origin && 

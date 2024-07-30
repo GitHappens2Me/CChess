@@ -240,6 +240,10 @@ void apply_move_forced(Board* board, Move move){
     board->en_passant_square = move.en_passant_square;
 
     // #TODO Promotion:
+    if(move.promotion_to_type != 0){
+        board->pieces[move.moving_piece_type] &= ~move.moving_piece_destination;
+        board->pieces[move.promotion_to_type] |= move.moving_piece_destination;
+    }
 
     // #TODO Castling
 
@@ -720,6 +724,10 @@ int generate_pseudolegal_moves_for_queen(Board* board, uint64_t position, int pl
 
     Move* bishop_moves = malloc(sizeof(Move) * 200);
     Move* rook_moves = malloc(sizeof(Move) * 200);
+    if(!rook_moves){
+        printf("Could not allocate memory for rook moves\n");
+        exit(EXIT_FAILURE);
+    }
 
     int num_bishop_moves = generate_pseudolegal_moves_for_bishop(board, position, player, bishop_moves);
     int num_rook_moves = generate_pseudolegal_moves_for_rook(board, position, player, rook_moves);
@@ -805,6 +813,7 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
     uint64_t next = position;
 
     uint64_t start_row;
+    uint64_t promotion_rank;
     int shift_direction; 
 
     int move_counter = 0;
@@ -814,22 +823,46 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
     if(player == PLAYER_WHITE){
         start_row = ROW_2;
         shift_direction = LEFT;
+        promotion_rank =  ROW_8;
     }else{  // if(player == PLAYER_BLACK){
         start_row = ROW_7;
         shift_direction = RIGHT;
+        promotion_rank =  ROW_1;
     }
+
+    // For Promotion:
+    int bishop_type = (player == PLAYER_WHITE) ? WHITE_BISHOPS : BLACK_BISHOPS;
+    int knight_type = (player == PLAYER_WHITE) ? WHITE_KNIGHTS : BLACK_KNIGHTS;
+    int rook_type = (player == PLAYER_WHITE) ? WHITE_ROOKS : BLACK_ROOKS;
+    int queen_type = (player == PLAYER_WHITE) ? WHITE_QUEENS : BLACK_QUEENS;
 
     // Move forward one square
     if(shift_direction == LEFT)           next <<= 8;
     else /*if(shift_direction == RIGHT)*/ next >>= 8;
-
+    // Promotion #TODO reduce code duplication concerning promotion (here and for caputures)
 
     if(!(next & (opponent_pieces | own_pieces))){
-        legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);
-        move_counter++;
+        
+        if((next & promotion_rank)){
+            // Promotion
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, bishop_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, knight_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, rook_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, queen_type, 0);
+            move_counter++;
+        }else{
+            // No Promotion
+            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);
+            move_counter++;
+        }
+        
     } 
 
     // double move if not moved yet
+    //#BUG: testing the square which was skipped
     if(position & start_row){
         uint64_t en_passant_square = next;
         if(shift_direction == LEFT)           next <<= 8;
@@ -848,13 +881,37 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
     
     if ((captures[0] & opponent_pieces) && !(position & COLLUMN_h)) {
         int captured_piece_type = get_piece_type_at(board, captures[0]);
-        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, 0, 0);
-        move_counter++;
+        if((captures[0] & promotion_rank)){
+            // Promotion
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, bishop_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, knight_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, rook_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, queen_type, 0);
+            move_counter++;
+        }else{
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, 0, 0);
+            move_counter++;
+        }
     }
     if ((captures[1] & opponent_pieces) && !(position & COLLUMN_a)) {
         int captured_piece_type = get_piece_type_at(board, captures[1]);
-        legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, 0, 0);
-        move_counter++;
+        if((captures[1] & promotion_rank)){
+            // Promotion
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, bishop_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, knight_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, rook_type, 0);
+            move_counter++;
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, queen_type, 0);
+            move_counter++;
+        }else{
+            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, 0, 0);
+            move_counter++;
+        }
     }
     // en-passant Capture
     uint64_t en_passant_square = board->en_passant_square;
@@ -865,6 +922,8 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         legal_moves[move_counter] = create_move(moving_piece_type, position, en_passant_square, captured_piece_type, captured_piece_position, 0, 0, 0);
         move_counter++;
     }
+
+
     
     return move_counter;
 }
