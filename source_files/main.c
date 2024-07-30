@@ -33,8 +33,8 @@ int main() {
     //char fen[] = "8/8/3r1r2/2r3r1/4N3/2R3R1/3R1R2/8 w - - 0 1";
     //initialize_board_FEN(board, fen);
 
-    //char promotion_test1[] = "k1r5/3P4/8/8/8/8/PP1p4/K7 w - - 0 1";
-    //initialize_board_FEN(board, promotion_test1);
+    char promotion_test1[] = "k1r5/3P4/8/8/8/8/PP1p4/K7 w - - 0 1";
+    initialize_board_FEN(board, promotion_test1);
 
     //char promotion_test2[] = "k7/8/8/8/8/8/PP1p4/K4Q2 w - - 0 1";
     //initialize_board_FEN(board, promotion_test2);
@@ -74,14 +74,14 @@ int main() {
             printf("Simple Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
 
 
-            
+            /*
             printf("WHITE\n");
             print_position(get_pieces_of_player(board, PLAYER_WHITE));
             printf("BLACK\n");
             print_position(get_pieces_of_player(board, PLAYER_BLACK));
             printf("EMPTY\n");
             print_position(board->pieces[0]);
-            
+            */
             
             print_board(board);
 

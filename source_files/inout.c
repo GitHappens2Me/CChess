@@ -223,8 +223,31 @@ Move get_move_from_user(Board* board){
         captured_piece_type = WHITE_PAWNS;
     }
 
+    uint64_t promotion_rank = (board->current_Player == PLAYER_WHITE) ? ROW_8 : ROW_1;
+    int pawn_index = (board->current_Player == PLAYER_WHITE) ? WHITE_PAWNS : BLACK_PAWNS;
+    int piece_to_promote_to = 0;
+    if(moving_piece_type == pawn_index &&  (move_destination & promotion_rank)){
+        printf("-----------------------\n");
+        char promotion_input;
+        while(piece_to_promote_to == 0){
+            printf("Enter Piece to Promote to: ");
+            scanf(" %c", &promotion_input);
+            switch(promotion_input){
+                case 'q':    
+                case 'Q':   piece_to_promote_to = (board->current_Player == PLAYER_WHITE) ? WHITE_QUEENS : BLACK_QUEENS;
+                            break;
+                case 'n':    
+                case 'N':   piece_to_promote_to = (board->current_Player == PLAYER_WHITE) ? WHITE_KNIGHTS : BLACK_KNIGHTS;
+                            break;
+                case 'b':    
+                case 'B':   piece_to_promote_to = (board->current_Player == PLAYER_WHITE) ? WHITE_BISHOPS : BLACK_BISHOPS;
+                            break;
+            }  
+        }
+    }
 
-    Move user_move = create_move(moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, 0, 0, en_passant_square); 
+
+    Move user_move = create_move(moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, 0, piece_to_promote_to, en_passant_square); 
 
 
     free(origin);

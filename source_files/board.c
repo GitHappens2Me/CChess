@@ -861,9 +861,8 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         
     } 
 
-    // double move if not moved yet
-    //#BUG: testing the square which was skipped
-    if(position & start_row){
+    // double move if still on starting row
+    if(position & start_row && !(next & (opponent_pieces | own_pieces))){
         uint64_t en_passant_square = next;
         if(shift_direction == LEFT)           next <<= 8;
         else /*if(shift_direction == RIGHT)*/ next >>= 8;

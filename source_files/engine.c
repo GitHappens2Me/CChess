@@ -37,14 +37,14 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
         if (get_current_player(board) == PLAYER_WHITE) {
 
             current_score = mini(board_copy, max_depth - 1, INT_MIN, INT_MAX);
-            if (current_score > best_score) {
+            if (current_score >= best_score) {
                 best_score = current_score;
                 *best_move = possible_moves[i];
             }
         } else {
 
             current_score = maxi(board_copy, max_depth - 1, INT_MIN, INT_MAX);
-            if (current_score < best_score) {
+            if (current_score <= best_score) {
                 best_score = current_score;
                 *best_move = possible_moves[i];
             }
