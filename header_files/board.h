@@ -47,6 +47,12 @@
 #define COLLUMN_b 0x4040404040404040
 #define COLLUMN_g 0x202020202020202
 
+#define BLACK_QUEEN_SIDE_CASTLE_FLAG 0x8 // 1000
+#define BLACK_KING_SIDE_CASTLE_FLAG  0x4 // 0100
+
+#define WHITE_QUEEN_SIDE_CASTLE_FLAG 0x2 // 0010
+#define WHITE_KING_SIDE_CASTLE_FLAG  0x1 // 0001
+
 
 
 // Forward declaration of Board
@@ -57,9 +63,11 @@ struct Board {
     // Defines the current state of pieces on the board
     // via 12 64Bit integers
     uint64_t* pieces;
-    // TODO: Castling Rights
 
-    // TODO: en Passant
+    // TODO: Castling Rights
+    uint8_t castling_rights;
+    
+    // Square where an en-passant capture is possible this move
     uint64_t en_passant_square;
     
     // Defines whose turn is is

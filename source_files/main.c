@@ -33,8 +33,8 @@ int main() {
     //char fen[] = "8/8/3r1r2/2r3r1/4N3/2R3R1/3R1R2/8 w - - 0 1";
     //initialize_board_FEN(board, fen);
 
-    char promotion_test1[] = "k1r5/3P4/8/8/8/8/PP1p4/K7 w - - 0 1";
-    initialize_board_FEN(board, promotion_test1);
+    //char promotion_test1[] = "k1r5/3P4/8/8/8/8/PP1p4/K7 w - - 0 1";
+    //initialize_board_FEN(board, promotion_test1);
 
     //char promotion_test2[] = "k7/8/8/8/8/8/PP1p4/K4Q2 w - - 0 1";
     //initialize_board_FEN(board, promotion_test2);
@@ -73,6 +73,9 @@ int main() {
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
             printf("Simple Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
 
+            for(int i = 0; i < num_legal_moves; i++){
+                print_move(legal_moves[i]);
+            }
 
             /*
             printf("WHITE\n");
@@ -96,6 +99,8 @@ int main() {
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
             
+            printf("Castling-Rights:\n");
+            print_position(board->castling_rights);
 
 
             printf("Current Player: %d\n", board->current_Player);

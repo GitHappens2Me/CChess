@@ -36,6 +36,9 @@ void create_board(Board** board) {
     // Current Player
     (*board)->current_Player = PLAYER_WHITE;  
 
+    // Set Castling Rights  
+    (*board)->castling_rights = 0xF;  // 1111
+
     // En-Passant Square
     (*board)->en_passant_square = 0ULL;
 }
@@ -239,14 +242,57 @@ void apply_move_forced(Board* board, Move move){
     // Set En-Passant Square
     board->en_passant_square = move.en_passant_square;
 
-    // #TODO Promotion:
+    // Promotion:
     if(move.promotion_to_type != 0){
         board->pieces[move.moving_piece_type] &= ~move.moving_piece_destination;
         board->pieces[move.promotion_to_type] |= move.moving_piece_destination;
     }
 
     // #TODO Castling
+    // Disable castling when pieces move:
+    // Kings:
+    if(move.moving_piece_type == WHITE_KING) board->castling_rights &= ~(WHITE_KING_SIDE_CASTLE_FLAG | WHITE_QUEEN_SIDE_CASTLE_FLAG);
+    if(move.moving_piece_type == BLACK_KING) board->castling_rights &= ~(BLACK_KING_SIDE_CASTLE_FLAG | BLACK_QUEEN_SIDE_CASTLE_FLAG);
 
+    // Rooks:
+    if(move.moving_piece_type == WHITE_ROOKS && move.moving_piece_origin == 0x1) board->castling_rights &= ~WHITE_KING_SIDE_CASTLE_FLAG;
+    if(move.moving_piece_type == WHITE_ROOKS && move.moving_piece_origin == 0x80) board->castling_rights &= ~WHITE_QUEEN_SIDE_CASTLE_FLAG;
+    if(move.moving_piece_type == BLACK_ROOKS && move.moving_piece_origin == 0x100000000000000) board->castling_rights &= ~BLACK_KING_SIDE_CASTLE_FLAG;
+    if(move.moving_piece_type == BLACK_ROOKS && move.moving_piece_origin == 0x8000000000000000) board->castling_rights &= ~BLACK_QUEEN_SIDE_CASTLE_FLAG;
+
+    // Apply Castling Moves:
+    if(move.castling_rook_position != 0){
+
+        if(move.moving_piece_type == WHITE_KING){
+            if(move.castling_rook_position == 0x1){
+                board->pieces[WHITE_ROOKS] &= ~0x1;
+                board->pieces[NO_PIECES] |= 0x1;
+                // add piece to destination
+                board->pieces[WHITE_ROOKS] |= 0x4;
+                board->pieces[NO_PIECES] &= ~0x4;
+            }else if (move.castling_rook_position == 0x80){
+                board->pieces[WHITE_ROOKS] &= ~0x80;
+                board->pieces[NO_PIECES] |= 0x80;
+                // add piece to destination
+                board->pieces[WHITE_ROOKS] |= 0x10;
+                board->pieces[NO_PIECES] &= ~0x10;
+            }
+        }else{
+            if(move.castling_rook_position == 0x100000000000000){
+                board->pieces[BLACK_ROOKS] &= ~0x100000000000000;
+                board->pieces[NO_PIECES] |= 0x100000000000000;
+                // add piece to destination
+                board->pieces[BLACK_ROOKS] |= 0x400000000000000;
+                board->pieces[NO_PIECES] &= ~0x400000000000000;
+            }else if (move.castling_rook_position == 0x8000000000000000){
+                board->pieces[BLACK_ROOKS] &= ~0x8000000000000000;
+                board->pieces[NO_PIECES] |= 0x8000000000000000;
+                // add piece to destination
+                board->pieces[BLACK_ROOKS] |= 0x1000000000000000;
+                board->pieces[NO_PIECES] &= ~0x1000000000000000;
+            }
+        }
+    }
 }
 
 /*----------------------------------------
@@ -799,6 +845,41 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
             move_counter++;
         }
     }
+
+    //#TODO:  prevent casting trough / into check
+    // #TODO reduce Castling Magic numbers
+    // Generate Castling Moves:
+    if(player == PLAYER_WHITE){
+        // WHITE_KING_SIZE
+        if( board->castling_rights & WHITE_KING_SIDE_CASTLE_FLAG  && 
+            (0x2) & board->pieces[NO_PIECES] && (0x4) & board->pieces[NO_PIECES]){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x2), 0, 0, (0x1), 0, 0);
+                move_counter++;
+        }
+        // WHITE_QUEEN_SIZE
+        if( board->castling_rights & WHITE_QUEEN_SIDE_CASTLE_FLAG  && 
+            (0x40) & board->pieces[NO_PIECES] && (0x20) & board->pieces[NO_PIECES] && (0x10) & board->pieces[NO_PIECES]){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x20), 0, 0, (0x80), 0, 0);
+                move_counter++;
+        }
+    }else{
+        // BLACK_KING_SIZE
+        if( board->castling_rights & BLACK_KING_SIDE_CASTLE_FLAG  && 
+            (0x200000000000000) & board->pieces[NO_PIECES] && (0x400000000000000) & board->pieces[NO_PIECES]){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x200000000000000), 0, 0, (0x100000000000000), 0, 0);
+                move_counter++;
+        }
+        // BLACK_QUEEN_SIZE
+        if( board->castling_rights & BLACK_QUEEN_SIDE_CASTLE_FLAG  && 
+            (0x4000000000000000) & board->pieces[NO_PIECES] && (0x2000000000000000) & board->pieces[NO_PIECES] && (0x1000000000000000) & board->pieces[NO_PIECES]){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x2000000000000000), 0, 0, (0x8000000000000000), 0, 0);
+                move_counter++;
+        }
+
+    }
+
+
+
     // removes original position from possibles squares to move to
     return move_counter;
 }
