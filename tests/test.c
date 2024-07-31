@@ -34,4 +34,7 @@ int main(int argc, char *argv[]) {
     test_generate_pseudolegal_moves_for_knight();
     test_generate_pseudolegal_moves_for_rook();
 
+    
+    test_perft();
+
 }

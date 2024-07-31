@@ -141,3 +141,62 @@ void test_generate_pseudolegal_moves_for_rook(){
     printf("Function 'test_generate_pseudolegal_moves_for_rook' PASSED all tests.\n");
 
 }
+
+void test_perft(){
+
+    Board* board;
+    create_board(&board);
+    initialize_board(board);
+
+    int num_moves = 0;
+    for(int i = 0; i < 5; i++){
+        num_moves = perft(board, i);
+        printf("Perft(%d): %d\n", i, num_moves);
+        initialize_board(board);
+    }
+        
+    assert(perft(board, 1) == 20);
+    assert(perft(board, 2) == 400);
+    assert(perft(board, 3) == 8902);
+    assert(perft(board, 4) == 197281);
+
+    printf("Function 'test_perft' PASSED all tests.\n");
+
+    free_board(board);
+}
+
+int perft(Board* board, int depth){
+
+
+    Move move_list[256];
+    int n_moves, i;
+    uint64_t nodes = 0;
+
+    if (depth == 0) 
+        return 1ULL;
+
+    n_moves = generate_all_legal_moves_for_player(board, board->current_Player, move_list);
+    
+    Board* board_copy;
+    create_board(&board_copy);
+    for (i = 0; i < n_moves; i++) {
+        copy_board(board_copy, board);
+        apply_move_forced(board_copy, move_list[i]);
+        nodes += perft(board_copy, depth - 1);
+    }
+    return nodes;
+}
+
+/*
+(Tiefe): Mein Ergebnis : [Richtige Lösung]
+(0): 1                 : [1]                 ✓
+(1): 20                : [20]                ✓
+(2): 400               : [400]               ✓ 
+(3): 8,903             : [8,902]             X
+(4): 197,365           : [197,281]           X
+(5): 4,868,264         : [4,865,609]         X
+(6): 119,186,762       : [119,060,324]       X
+(7): 3,195,901,860     : [???]               X
+
+
+*/
