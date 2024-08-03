@@ -955,11 +955,16 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
 
     // Captures 
     uint64_t captures[2] = {
-        (shift_direction == LEFT) ? (position << 7) : (position >> 7),  // Capture to the right
-        (shift_direction == LEFT) ? (position << 9) : (position >> 9)   // Capture to the left
+        (player == PLAYER_WHITE) ? (position << 7) : (position >> 7),  // Capture to the right
+        (player == PLAYER_WHITE) ? (position << 9) : (position >> 9)   // Capture to the left
     };
+    uint64_t buffer_collumns[2] = {
+        (player == PLAYER_WHITE) ? COLLUMN_h : COLLUMN_a,  // Capture to the right
+        (player == PLAYER_WHITE) ? COLLUMN_a: COLLUMN_h   // Capture to the left
+    };
+
     
-    if ((captures[0] & opponent_pieces) && !(position & COLLUMN_h)) {
+    if ((captures[0] & opponent_pieces) && !(position & buffer_collumns[0])) {
         int captured_piece_type = get_piece_type_at(board, captures[0]);
         if((captures[0] & promotion_rank)){
             // Promotion
@@ -976,7 +981,7 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
             move_counter++;
         }
     }
-    if ((captures[1] & opponent_pieces) && !(position & COLLUMN_a)) {
+    if ((captures[1] & opponent_pieces) && !(position & buffer_collumns[1])) {
         int captured_piece_type = get_piece_type_at(board, captures[1]);
         if((captures[1] & promotion_rank)){
             // Promotion
@@ -994,8 +999,10 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         }
     }
     // en-passant Capture
+    //#TODO remove obvious code duplication
     uint64_t en_passant_square = board->en_passant_square;
-    if ((captures[0] & en_passant_square) || (captures[1] & en_passant_square)) {
+    if (((captures[0] & en_passant_square) && !(position & buffer_collumns[0]))
+        || ((captures[1] & en_passant_square) && !(position & buffer_collumns[1]))) {
         int captured_piece_type = (player == PLAYER_WHITE)? BLACK_PAWNS : WHITE_PAWNS;
         uint64_t captured_piece_position = (player == PLAYER_WHITE) ? (en_passant_square >> 8) : (en_passant_square << 8);
         //print_position(captured_piece_position);

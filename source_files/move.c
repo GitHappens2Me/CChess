@@ -55,7 +55,7 @@ void print_move(Move move){
     char* origin = get_notation_from_bitmap(move.moving_piece_origin);
     char* destination = get_notation_from_bitmap(move.moving_piece_destination);
     
-    printf("%s -> %s\n", origin, destination);
+    printf("%s -> %s", origin, destination);
 
     free(origin);
     free(destination);

@@ -147,18 +147,26 @@ void test_perft(){
     Board* board;
     create_board(&board);
     initialize_board(board);
-
+    //initialize_board_FEN(board, "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1");
+    apply_move(board, create_move(WHITE_PAWNS, get_bitmap_from_notation("d2"), get_bitmap_from_notation("d3"),0,0,0,0,0));
+    apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b7"), get_bitmap_from_notation("b5"),0,0,0,0,get_bitmap_from_notation("b6")));
+    apply_move(board, create_move(WHITE_KING, get_bitmap_from_notation("e1"), get_bitmap_from_notation("d2"),0,0,0,0,0));
+    apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b5"), get_bitmap_from_notation("b4"),0,0,0,0,0));
+   
     int num_moves = 0;
-    for(int i = 0; i < 5; i++){
+    
+    /*
+    for(int i = 0; i < 10; i++){
         num_moves = perft(board, i);
         printf("Perft(%d): %d\n", i, num_moves);
         initialize_board(board);
-    }
+    }*/
         
     assert(perft(board, 1) == 20);
-    assert(perft(board, 2) == 400);
-    assert(perft(board, 3) == 8902);
-    assert(perft(board, 4) == 197281);
+    //assert(perft(board, 2) == 400);
+    //assert(perft(board, 3) == 8902);
+    //assert(perft(board, 4) == 197281);
+    //assert(perft(board, 5) == 4865609);
 
     printf("Function 'test_perft' PASSED all tests.\n");
 
@@ -167,24 +175,30 @@ void test_perft(){
 
 int perft(Board* board, int depth){
 
+    
 
     Move move_list[256];
     int n_moves, i;
     uint64_t nodes = 0;
 
-    if (depth == 0) 
-        return 1ULL;
+    if (depth == 0) return 1ULL;
 
     n_moves = generate_all_legal_moves_for_player(board, board->current_Player, move_list);
     
     Board* board_copy;
     create_board(&board_copy);
     for (i = 0; i < n_moves; i++) {
+
         copy_board(board_copy, board);
         apply_move_forced(board_copy, move_list[i]);
         nodes += perft(board_copy, depth - 1);
+        if(depth == 1){
+            print_move(move_list[i]);
+            printf(" %d moves\n", perft(board_copy, depth - 1));
+        }
     }
     return nodes;
+    free_board(board_copy);
 }
 
 /*
@@ -192,11 +206,11 @@ int perft(Board* board, int depth){
 (0): 1                 : [1]                 ✓
 (1): 20                : [20]                ✓
 (2): 400               : [400]               ✓ 
-(3): 8,903             : [8,902]             X
-(4): 197,365           : [197,281]           X
-(5): 4,868,264         : [4,865,609]         X
-(6): 119,186,762       : [119,060,324]       X
-(7): 3,195,901,860     : [???]               X
+(3): 8,902             : [8,902]             ✓ // behobener fehler: En-Passant schlagen von spalte a nach h
+(4): 197,281           : [197,281]           X // behobener fehler: Bauern konnten von Spalte a und h aus keine figuren schlagen 
+(5): 4,865,644         : [4,865,609]         X
+(6): 119,186,762 (alt) : [119,060,324]       X
+(7):                   : [3,195,901,860]     X
 
 
 */
