@@ -146,27 +146,37 @@ void test_perft(){
 
     Board* board;
     create_board(&board);
-    initialize_board(board);
-    //initialize_board_FEN(board, "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1");
-    apply_move(board, create_move(WHITE_PAWNS, get_bitmap_from_notation("d2"), get_bitmap_from_notation("d3"),0,0,0,0,0));
-    apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b7"), get_bitmap_from_notation("b5"),0,0,0,0,get_bitmap_from_notation("b6")));
-    apply_move(board, create_move(WHITE_KING, get_bitmap_from_notation("e1"), get_bitmap_from_notation("d2"),0,0,0,0,0));
-    apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b5"), get_bitmap_from_notation("b4"),0,0,0,0,0));
+    //initialize_board(board);
+    char fen_string[] = "rnb1k2r/2p1bppp/p2q1n2/3pN3/1p1K1P2/3P4/PPPBP1PP/RN1Q1B1R w kq - 2 9";
+    initialize_board_FEN(board, fen_string);
+    //apply_move(board, create_move(WHITE_KNIGHTS, get_bitmap_from_notation("e5"), get_bitmap_from_notation("d7"),0,0,0,0,0));
+    //apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b7"), get_bitmap_from_notation("b5"),0,0,0,0,get_bitmap_from_notation("b6")));
+    //apply_move(board, create_move(WHITE_KING, get_bitmap_from_notation("e1"), get_bitmap_from_notation("d2"),0,0,0,0,0));
+    //apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b5"), get_bitmap_from_notation("b4"),0,0,0,0,0));
    
+
+    print_board(board);
+
     int num_moves = 0;
     
-    /*
+    
+    Board* board_copy;
+    create_board(&board_copy);
+
+    
     for(int i = 0; i < 10; i++){
-        num_moves = perft(board, i);
+        num_moves = perft(board_copy, i);
         printf("Perft(%d): %d\n", i, num_moves);
-        initialize_board(board);
-    }*/
+        copy_board(board_copy, board);
+        //print_board(board_copy);
+    }
+    free_board(board_copy);
         
-    assert(perft(board, 1) == 20);
+    //assert(perft(board, 1) == 20);
     //assert(perft(board, 2) == 400);
     //assert(perft(board, 3) == 8902);
     //assert(perft(board, 4) == 197281);
-    //assert(perft(board, 5) == 4865609);
+    assert(perft(board, 5) == 4865609);
 
     printf("Function 'test_perft' PASSED all tests.\n");
 
@@ -192,7 +202,7 @@ int perft(Board* board, int depth){
         copy_board(board_copy, board);
         apply_move_forced(board_copy, move_list[i]);
         nodes += perft(board_copy, depth - 1);
-        if(depth == 1){
+        if(depth == 10){
             print_move(move_list[i]);
             printf(" %d moves\n", perft(board_copy, depth - 1));
         }
@@ -208,7 +218,7 @@ int perft(Board* board, int depth){
 (2): 400               : [400]               ✓ 
 (3): 8,902             : [8,902]             ✓ // behobener fehler: En-Passant schlagen von spalte a nach h
 (4): 197,281           : [197,281]           X // behobener fehler: Bauern konnten von Spalte a und h aus keine figuren schlagen 
-(5): 4,865,644         : [4,865,609]         X
+(5): 4,865,609         : [4,865,609]         X // behobener fehler: Könige konnten in Schach von Bauern ziehen (is_attacked hat bauern nicht berücksichtigt)
 (6): 119,186,762 (alt) : [119,060,324]       X
 (7):                   : [3,195,901,860]     X
 

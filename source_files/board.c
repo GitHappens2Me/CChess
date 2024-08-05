@@ -248,7 +248,6 @@ void apply_move_forced(Board* board, Move move){
         board->pieces[move.promotion_to_type] |= move.moving_piece_destination;
     }
 
-    // #TODO Castling
     // Disable castling when pieces move:
     // Kings:
     if(move.moving_piece_type == WHITE_KING) board->castling_rights &= ~(WHITE_KING_SIDE_CASTLE_FLAG | WHITE_QUEEN_SIDE_CASTLE_FLAG);
@@ -390,6 +389,29 @@ int is_in_check(Board* board, int player){
 
 int results_in_check(Board* board, Move move){
 
+    //#TODO is this the right spot to check for castling through check or are there better functions 
+    //#TODO Calling is_attacked so many times is really slow as all move have to be generated each time
+    // Check for Castling through Check
+    if(move.castling_rook_position == 0x1){ 
+        if(is_attacked(board, 0x2, PLAYER_BLACK) || is_attacked(board, 0x4, PLAYER_BLACK) || is_attacked(board, 0x8, PLAYER_BLACK)){
+            return 1;
+        }
+    } else if(move.castling_rook_position == 0x80){ 
+        if(is_attacked(board, 0x10, PLAYER_BLACK) || is_attacked(board, 0x20, PLAYER_BLACK) || is_attacked(board, 0x8, PLAYER_BLACK)){
+            return 1;
+        }
+    } else if(move.castling_rook_position == 0x100000000000000){ 
+        if(is_attacked(board, 0x200000000000000, PLAYER_WHITE) || is_attacked(board, 0x400000000000000, PLAYER_WHITE) || is_attacked(board, 0x800000000000000, PLAYER_WHITE)){
+            return 1;
+        }
+    } else if(move.castling_rook_position == 0x8000000000000000){ 
+        if(is_attacked(board, 0x1000000000000000, PLAYER_WHITE) || is_attacked(board, 0x2000000000000000, PLAYER_WHITE) || is_attacked(board, 0x8000000000000000, PLAYER_WHITE)){
+            return 1;
+        }
+    }
+
+
+
     //printf("Checking if move results in Check\n");
     Board* board_copy;
     create_board(&board_copy); 
@@ -423,23 +445,26 @@ int results_in_check(Board* board, Move move){
  * 
  *  notes: 
  * 
- *  #TODO: Include Pawns (and the Opponent King) in the test
+ *  #TODO: include the Opponent King in the test ?? needed?
  */
 int is_attacked(Board* board, uint64_t position, int attacking_color){
     Move* bishop_moves = malloc(sizeof(Move) * 64);
     Move* rook_moves = malloc(sizeof(Move) * 64);
     Move* knight_moves = malloc(sizeof(Move) * 64);
+    Move* king_moves = malloc(sizeof(Move) * 64);
 
     int num_bishop_moves = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color), bishop_moves);
     int num_rook_moves = generate_pseudolegal_moves_for_rook(board, position, get_opponent(attacking_color), rook_moves);
     int num_knight_moves = generate_pseudolegal_moves_for_knight(board, position, get_opponent(attacking_color), knight_moves);
+    int num_king_moves = generate_pseudolegal_moves_for_king(board, position, get_opponent(attacking_color), king_moves);
+
 
     int queen = (attacking_color == PLAYER_WHITE) ? WHITE_QUEENS : BLACK_QUEENS;
     int rook = (attacking_color == PLAYER_WHITE) ? WHITE_ROOKS : BLACK_ROOKS;
     int bishop = (attacking_color == PLAYER_WHITE) ? WHITE_BISHOPS : BLACK_BISHOPS;
     int knight = (attacking_color == PLAYER_WHITE) ? WHITE_KNIGHTS : BLACK_KNIGHTS;
+    int king = (attacking_color == PLAYER_WHITE) ? WHITE_KING : BLACK_KING;
 
-    
 
     for(int i = 0; i < num_bishop_moves; i++){
         if(get_piece_type_at(board, bishop_moves[i].moving_piece_destination) == bishop || 
@@ -447,6 +472,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
             free(bishop_moves);
             free(rook_moves);
             free(knight_moves);
+            free(king_moves);
             return 1;
         }
     }
@@ -456,6 +482,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
             free(bishop_moves);
             free(rook_moves);
             free(knight_moves);
+            free(king_moves);
             return 1;
         }
     }
@@ -464,13 +491,33 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
             free(bishop_moves);
             free(rook_moves);
             free(knight_moves);
+            free(king_moves);
             return 1;
         }
+    }
+    for(int i = 0; i < num_king_moves; i++){
+        if(get_piece_type_at(board, king_moves[i].moving_piece_destination) == king){
+            free(bishop_moves);
+            free(rook_moves);
+            free(knight_moves);
+            free(king_moves);
+            return 1;
+        }
+    }
+
+    // Check for Pawns:
+    if(attacking_color == PLAYER_WHITE){
+        if(board->pieces[WHITE_PAWNS] & (position >> 7) || 
+           board->pieces[WHITE_PAWNS] & (position >> 9) ) return 1;
+    }else{
+        if(board->pieces[BLACK_PAWNS] & (position << 7) || 
+           board->pieces[BLACK_PAWNS] & (position << 9) ) return 1;
     }
 
     free(bishop_moves);
     free(rook_moves);
     free(knight_moves);
+    free(king_moves);
     return 0;
     /*
     uint64_t bishop_attack_path = generate_pseudolegal_moves_for_bishop(board, position, get_opponent(attacking_color));
@@ -575,6 +622,7 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
     int num_pseudo_legal_moves = generate_pseudolegal_moves_for_piece(board, position, pseudo_legal_moves);
 
     for(int i = 0; i < num_pseudo_legal_moves; i++){
+        // # TODO is_legal_move calls generate_pseudolegal_moves_for_piece too so they get generated twice! 
         if(is_legal_move(board, pseudo_legal_moves[i])){
             legal_moves_by_piece[move_counter] = pseudo_legal_moves[i];
             move_counter++;
@@ -706,7 +754,6 @@ int generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int p
     return move_counter;
 }
 
-// #BUG: Some KNIGHT moves are not possible. No idea why!   
 int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int player, Move* legal_moves){
     uint64_t possible_moves = 0ULL;
     uint64_t opponent_pieces = get_pieces_of_player(board, get_opponent(player)); // Not needed in the current implementation
@@ -846,7 +893,7 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
         }
     }
 
-    //#TODO:  prevent casting trough / into check
+
     // #TODO reduce Castling Magic numbers
     // Generate Castling Moves:
     if(player == PLAYER_WHITE){

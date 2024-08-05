@@ -36,7 +36,11 @@ int is_legal_move(Board *board, Move move){
 
 int is_pseudo_legal_move(Board *board, Move move){
 
-
+    //#TODO This function
+    //          1) is not updated for the new move format (This does not cause problems right now as the moves are not used after this function)
+    //          2) doesnt fit well into the structure of the code. 
+    //                  It is called before applying a move and during move generation.
+    //                  This causes the moves to be generated multiple times for little reason
     Move* pseudo_legal_moves = malloc(sizeof(Move) * 200);
     int move_counter = generate_pseudolegal_moves_for_piece(board, move.moving_piece_origin, pseudo_legal_moves);
     for(int i = 0; i < move_counter; i++){
