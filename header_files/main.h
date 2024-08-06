@@ -7,7 +7,7 @@
  Run with:
     ./CChess 
  Compile Tests with:
-    gcc -o test .\tests\test.c .\source_files\board.c .\source_files\inout.c .\source_files\move.c .\source_files\notation.c
+    gcc -o test ./tests/test.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c
  Run Tests with:
      ./test
  Profile with:

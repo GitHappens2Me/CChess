@@ -510,10 +510,22 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
     // Check for Pawns:
     if(attacking_color == PLAYER_WHITE){
         if(board->pieces[WHITE_PAWNS] & (position >> 7) || 
-           board->pieces[WHITE_PAWNS] & (position >> 9) ) return 1;
+           board->pieces[WHITE_PAWNS] & (position >> 9) ){
+            free(bishop_moves);
+            free(rook_moves);
+            free(knight_moves);
+            free(king_moves);
+            return 1;
+           } 
     }else{
         if(board->pieces[BLACK_PAWNS] & (position << 7) || 
-           board->pieces[BLACK_PAWNS] & (position << 9) ) return 1;
+           board->pieces[BLACK_PAWNS] & (position << 9) ) {
+            free(bishop_moves);
+            free(rook_moves);
+            free(knight_moves);
+            free(king_moves);
+            return 1;
+           } 
     }
 
     free(bishop_moves);

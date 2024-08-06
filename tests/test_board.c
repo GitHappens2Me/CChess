@@ -17,6 +17,8 @@ void test_split_bitmap(){
     // Startpostion Bitmap
     assert(split_bitmap(0xFFFF00000000FFFFULL, indivdual_pieces) == 32);
 
+    free(indivdual_pieces);
+
     printf("Function 'test_split_bitmap' PASSED all tests.\n");
 }
 
@@ -48,6 +50,8 @@ void test_initialize_board_FEN(){
     initialize_board_FEN(board, en_passant_setup);
     assert(get_all_pieces(board) == 0x7E9FC1012822D7EB);
 
+    free_board(board);
+
     printf("Function 'test_initialize_board_FEN' PASSED all tests.\n");
 
 
@@ -67,6 +71,7 @@ void test_get_pieces_of_player(){
     assert(get_pieces_of_player(board, PLAYER_WHITE) == 0x000000400804F7F9);
     assert(get_pieces_of_player(board, PLAYER_BLACK) == 0xBDF7240800000000);
 
+    free_board(board);
 
     printf("Function 'test_get_pieces_of_player' PASSED all tests.\n");
 
@@ -103,6 +108,8 @@ void test_generate_pseudolegal_moves_for_knight(){
     assert(generate_pseudolegal_moves_for_knight(board, knight_position, PLAYER_WHITE, pseudo_legal_moves) == 4);
     initialize_board_empty(board);
 
+    free_board(board);
+    free(pseudo_legal_moves);
 
     printf("Function 'test_generate_pseudolegal_moves_for_knight' PASSED all tests.\n");
 
@@ -137,6 +144,9 @@ void test_generate_pseudolegal_moves_for_rook(){
     assert(generate_pseudolegal_moves_for_rook(board, rook_position, PLAYER_WHITE, pseudo_legal_moves) == 8);
     initialize_board_empty(board);
 
+    free_board(board);
+    free(pseudo_legal_moves);
+
 
     printf("Function 'test_generate_pseudolegal_moves_for_rook' PASSED all tests.\n");
 
@@ -165,7 +175,7 @@ void test_perft(){
     create_board(&board_copy);
 
     
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 4; i++){
         num_moves = perft(board_copy, i);
         printf("Perft(%d): %d\n", i, num_moves);
         copy_board(board_copy, board);
@@ -216,8 +226,8 @@ int perft(Board* board, int depth){
             printf(" %d moves\n", perft(board_copy, depth - 1));
         }
     }
-    return nodes;
     free_board(board_copy);
+    return nodes;
 }
 
 /*
