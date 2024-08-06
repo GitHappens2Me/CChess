@@ -4,6 +4,8 @@
 
 #include "../header_files/move.h"
 
+#include "../header_files/inout.h"
+
 Move create_move(int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
                  int captured_piece_type, uint64_t captured_piece_position, 
                  uint64_t castling_rook_position, int promotion_to_type, uint64_t en_passant_square) {
@@ -59,7 +61,11 @@ void print_move(Move move){
     char* origin = get_notation_from_bitmap(move.moving_piece_origin);
     char* destination = get_notation_from_bitmap(move.moving_piece_destination);
     
-    printf("%s -> %s", origin, destination);
+    printf("%s%s", origin, destination);
+
+    if(move.captured_piece_type){
+        printf("x%c", get_symbol_for_piecetype(move.captured_piece_type));
+    }
 
     free(origin);
     free(destination);

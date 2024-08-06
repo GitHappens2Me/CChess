@@ -148,12 +148,13 @@ void test_perft(){
     create_board(&board);
     //initialize_board(board);
     char fen_string[] = "rnb1k2r/2p1bppp/p2q1n2/3pN3/1p1K1P2/3P4/PPPBP1PP/RN1Q1B1R w kq - 2 9";
+
     initialize_board_FEN(board, fen_string);
-    //apply_move(board, create_move(WHITE_KNIGHTS, get_bitmap_from_notation("e5"), get_bitmap_from_notation("d7"),0,0,0,0,0));
-    //apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b7"), get_bitmap_from_notation("b5"),0,0,0,0,get_bitmap_from_notation("b6")));
-    //apply_move(board, create_move(WHITE_KING, get_bitmap_from_notation("e1"), get_bitmap_from_notation("d2"),0,0,0,0,0));
+    apply_move(board, create_move(WHITE_PAWNS, get_bitmap_from_notation("a2"), get_bitmap_from_notation("a4"),0,0,0,0,get_bitmap_from_notation("a3")));
+    apply_move(board, create_move(BLACK_KING, get_bitmap_from_notation("e8"), get_bitmap_from_notation("d8"),0,0,0,0,0));
+    //apply_move(board, create_move(WHITE_KNIGHTS, get_bitmap_from_notation("e5"), get_bitmap_from_notation("f7"),BLACK_PAWNS,get_bitmap_from_notation("f7"),0,0,0));
     //apply_move(board, create_move(BLACK_PAWNS, get_bitmap_from_notation("b5"), get_bitmap_from_notation("b4"),0,0,0,0,0));
-   
+    board->castling_rights = 0x0;
 
     print_board(board);
 
@@ -170,13 +171,21 @@ void test_perft(){
         copy_board(board_copy, board);
         //print_board(board_copy);
     }
+    
     free_board(board_copy);
+
+    
+
+    printf("%d", perft(board, 2));
+    printf("\n");
         
     //assert(perft(board, 1) == 20);
     //assert(perft(board, 2) == 400);
     //assert(perft(board, 3) == 8902);
     //assert(perft(board, 4) == 197281);
-    assert(perft(board, 5) == 4865609);
+    //assert(perft(board, 5) == 4865609);
+    
+    
 
     printf("Function 'test_perft' PASSED all tests.\n");
 

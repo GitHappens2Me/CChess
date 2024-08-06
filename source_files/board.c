@@ -67,6 +67,8 @@ void copy_board(Board* copy, Board* source) {
     memcpy(copy->pieces, source->pieces, NUM_OF_PIECE_TYPES * sizeof(uint64_t));
     copy->current_Player = source->current_Player;
     copy->en_passant_square = source->en_passant_square;
+    copy->castling_rights = source->castling_rights;
+
 }
 
 
@@ -794,11 +796,11 @@ int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int p
         if(next & own_pieces){
             continue;
         }
-        else if(next & opponent_pieces ){
+        else if(next & opponent_pieces){
                 int captured_piece_type = get_piece_type_at(board, next);
                 legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
                 move_counter++;
-                continue;;
+                continue;
             // No Collision
         }else{
             legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);

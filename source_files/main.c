@@ -39,6 +39,9 @@ int main() {
     //char promotion_test2[] = "k7/8/8/8/8/8/PP1p4/K4Q2 w - - 0 1";
     //initialize_board_FEN(board, promotion_test2);
     // Test by Playing: 
+    char fen[] = "rnbk3r/2p1bppp/p2q1n2/3pN3/Pp1K1P2/3P4/1PPBP1PP/RN1Q1B1R w - - 1 10";
+    initialize_board_FEN(board, fen);
+    board->castling_rights = 0x0;
     printf("Starting Game :)\n");
 
     int engine_move = 1;
@@ -55,6 +58,7 @@ int main() {
             get_best_move_minimax(board, &move, 4);
             printf("Engine Move: ");
             print_move(move);
+            printf("\n");
 
             //exit(EXIT_SUCCESS); //Profiling
         }else{
@@ -68,6 +72,7 @@ int main() {
         if(apply_move(board, move) == 1){
             printf("Applied Move: ");
             print_move(move);
+            printf("\n");
             printf("Captured piece: %d\n", move.captured_piece_type);
 
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
@@ -75,6 +80,7 @@ int main() {
 
             for(int i = 0; i < num_legal_moves; i++){
                 print_move(legal_moves[i]);
+                printf("\n");
             }
 
             /*

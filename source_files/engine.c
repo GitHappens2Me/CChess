@@ -51,6 +51,7 @@ int get_best_move_minimax(Board* board, Move* best_move, int max_depth){
         }
         printf("Score %4.2f for Move %d/%d: ", ((float)current_score / 100), i + 1, num_possible_moves);
         print_move(possible_moves[i]);
+        printf("\n");
 
     }
 
