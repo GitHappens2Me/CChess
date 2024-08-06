@@ -460,7 +460,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
     int num_knight_moves = generate_pseudolegal_moves_for_knight(board, position, get_opponent(attacking_color), knight_moves);
     int num_king_moves = generate_pseudolegal_moves_for_king(board, position, get_opponent(attacking_color), king_moves);
 
-
+    int pawn = (attacking_color == PLAYER_WHITE) ? WHITE_PAWNS : BLACK_PAWNS;
     int queen = (attacking_color == PLAYER_WHITE) ? WHITE_QUEENS : BLACK_QUEENS;
     int rook = (attacking_color == PLAYER_WHITE) ? WHITE_ROOKS : BLACK_ROOKS;
     int bishop = (attacking_color == PLAYER_WHITE) ? WHITE_BISHOPS : BLACK_BISHOPS;
@@ -508,6 +508,31 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
     }
 
     // Check for Pawns:
+    //TODO: Stop attack prevention on edge 
+    uint64_t attackers[2] = {
+        (attacking_color == PLAYER_WHITE) ? (position >> 7) : (position << 7),  // Capture to the right
+        (attacking_color == PLAYER_WHITE) ? (position >> 9) : (position << 9)   // Capture to the left
+    };
+    uint64_t buffer_collumns[2] = {
+        (attacking_color == PLAYER_WHITE) ? COLLUMN_a : COLLUMN_h,  // Capture to the right
+        (attacking_color == PLAYER_WHITE) ? COLLUMN_h: COLLUMN_a   // Capture to the left
+    };
+
+    if ((get_piece_type_at(board, attackers[0]) == pawn) && !(position & buffer_collumns[0])) {
+        free(bishop_moves);
+        free(rook_moves);
+        free(knight_moves);
+        free(king_moves);
+        return 1;
+    }
+    if ((get_piece_type_at(board, attackers[1]) == pawn) && !(position & buffer_collumns[1])) {
+        free(bishop_moves);
+        free(rook_moves);
+        free(knight_moves);
+        free(king_moves);
+        return 1;
+    }
+/*
     if(attacking_color == PLAYER_WHITE){
         if(board->pieces[WHITE_PAWNS] & (position >> 7) || 
            board->pieces[WHITE_PAWNS] & (position >> 9) ){
@@ -527,7 +552,7 @@ int is_attacked(Board* board, uint64_t position, int attacking_color){
             return 1;
            } 
     }
-
+*/
     free(bishop_moves);
     free(rook_moves);
     free(knight_moves);
