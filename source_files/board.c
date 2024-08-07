@@ -256,41 +256,41 @@ void apply_move_forced(Board* board, Move move){
     if(move.moving_piece_type == BLACK_KING) board->castling_rights &= ~(BLACK_KING_SIDE_CASTLE_FLAG | BLACK_QUEEN_SIDE_CASTLE_FLAG);
 
     // Rooks:
-    if(move.moving_piece_type == WHITE_ROOKS && move.moving_piece_origin == 0x1) board->castling_rights &= ~WHITE_KING_SIDE_CASTLE_FLAG;
-    if(move.moving_piece_type == WHITE_ROOKS && move.moving_piece_origin == 0x80) board->castling_rights &= ~WHITE_QUEEN_SIDE_CASTLE_FLAG;
-    if(move.moving_piece_type == BLACK_ROOKS && move.moving_piece_origin == 0x100000000000000) board->castling_rights &= ~BLACK_KING_SIDE_CASTLE_FLAG;
-    if(move.moving_piece_type == BLACK_ROOKS && move.moving_piece_origin == 0x8000000000000000) board->castling_rights &= ~BLACK_QUEEN_SIDE_CASTLE_FLAG;
+    if(move.moving_piece_type == WHITE_ROOKS && move.moving_piece_origin == H1) board->castling_rights &= ~WHITE_KING_SIDE_CASTLE_FLAG;
+    if(move.moving_piece_type == WHITE_ROOKS && move.moving_piece_origin == A1) board->castling_rights &= ~WHITE_QUEEN_SIDE_CASTLE_FLAG;
+    if(move.moving_piece_type == BLACK_ROOKS && move.moving_piece_origin == H8) board->castling_rights &= ~BLACK_KING_SIDE_CASTLE_FLAG;
+    if(move.moving_piece_type == BLACK_ROOKS && move.moving_piece_origin == A8) board->castling_rights &= ~BLACK_QUEEN_SIDE_CASTLE_FLAG;
 
     // Apply Castling Moves:
     if(move.castling_rook_position != 0){
 
         if(move.moving_piece_type == WHITE_KING){
-            if(move.castling_rook_position == 0x1){
-                board->pieces[WHITE_ROOKS] &= ~0x1;
-                board->pieces[NO_PIECES] |= 0x1;
+            if(move.castling_rook_position == H1){
+                board->pieces[WHITE_ROOKS] &= ~H1;
+                board->pieces[NO_PIECES] |= H1;
                 // add piece to destination
-                board->pieces[WHITE_ROOKS] |= 0x4;
-                board->pieces[NO_PIECES] &= ~0x4;
-            }else if (move.castling_rook_position == 0x80){
-                board->pieces[WHITE_ROOKS] &= ~0x80;
-                board->pieces[NO_PIECES] |= 0x80;
+                board->pieces[WHITE_ROOKS] |= F1;
+                board->pieces[NO_PIECES] &= ~F1;
+            }else if (move.castling_rook_position == A1){
+                board->pieces[WHITE_ROOKS] &= ~A1;
+                board->pieces[NO_PIECES] |= A1;
                 // add piece to destination
-                board->pieces[WHITE_ROOKS] |= 0x10;
-                board->pieces[NO_PIECES] &= ~0x10;
+                board->pieces[WHITE_ROOKS] |= D1;
+                board->pieces[NO_PIECES] &= ~D1;
             }
         }else{
-            if(move.castling_rook_position == 0x100000000000000){
-                board->pieces[BLACK_ROOKS] &= ~0x100000000000000;
-                board->pieces[NO_PIECES] |= 0x100000000000000;
+            if(move.castling_rook_position == H8){
+                board->pieces[BLACK_ROOKS] &= ~H8;
+                board->pieces[NO_PIECES] |= H8;
                 // add piece to destination
-                board->pieces[BLACK_ROOKS] |= 0x400000000000000;
-                board->pieces[NO_PIECES] &= ~0x400000000000000;
-            }else if (move.castling_rook_position == 0x8000000000000000){
-                board->pieces[BLACK_ROOKS] &= ~0x8000000000000000;
-                board->pieces[NO_PIECES] |= 0x8000000000000000;
+                board->pieces[BLACK_ROOKS] |= F8;
+                board->pieces[NO_PIECES] &= ~F8;
+            }else if (move.castling_rook_position == A8){
+                board->pieces[BLACK_ROOKS] &= ~A8;
+                board->pieces[NO_PIECES] |= A8;
                 // add piece to destination
-                board->pieces[BLACK_ROOKS] |= 0x1000000000000000;
-                board->pieces[NO_PIECES] &= ~0x1000000000000000;
+                board->pieces[BLACK_ROOKS] |= D8;
+                board->pieces[NO_PIECES] &= ~D8;
             }
         }
     }
@@ -394,20 +394,20 @@ int results_in_check(Board* board, Move move){
     //#TODO is this the right spot to check for castling through check or are there better functions 
     //#TODO Calling is_attacked so many times is really slow as all move have to be generated each time
     // Check for Castling through Check
-    if(move.castling_rook_position == 0x1){ 
-        if(is_attacked(board, 0x2, PLAYER_BLACK) || is_attacked(board, 0x4, PLAYER_BLACK) || is_attacked(board, 0x8, PLAYER_BLACK)){
+    if(move.castling_rook_position == H1){ 
+        if(is_attacked(board, G1, PLAYER_BLACK) || is_attacked(board, F1, PLAYER_BLACK) || is_attacked(board, E1, PLAYER_BLACK)){
             return 1;
         }
-    } else if(move.castling_rook_position == 0x80){ 
-        if(is_attacked(board, 0x10, PLAYER_BLACK) || is_attacked(board, 0x20, PLAYER_BLACK) || is_attacked(board, 0x8, PLAYER_BLACK)){
+    } else if(move.castling_rook_position == A1){ 
+        if(is_attacked(board, D1, PLAYER_BLACK) || is_attacked(board, C1, PLAYER_BLACK) || is_attacked(board, E1, PLAYER_BLACK)){
             return 1;
         }
-    } else if(move.castling_rook_position == 0x100000000000000){ 
-        if(is_attacked(board, 0x200000000000000, PLAYER_WHITE) || is_attacked(board, 0x400000000000000, PLAYER_WHITE) || is_attacked(board, 0x800000000000000, PLAYER_WHITE)){
+    } else if(move.castling_rook_position == H8){ 
+        if(is_attacked(board, G8, PLAYER_WHITE) || is_attacked(board, F8, PLAYER_WHITE) || is_attacked(board, E8, PLAYER_WHITE)){
             return 1;
         }
-    } else if(move.castling_rook_position == 0x8000000000000000){ 
-        if(is_attacked(board, 0x1000000000000000, PLAYER_WHITE) || is_attacked(board, 0x2000000000000000, PLAYER_WHITE) || is_attacked(board, 0x800000000000000, PLAYER_WHITE)){
+    } else if(move.castling_rook_position == A8){ 
+        if(is_attacked(board, D8, PLAYER_WHITE) || is_attacked(board, C8, PLAYER_WHITE) || is_attacked(board, E8, PLAYER_WHITE)){
             return 1;
         }
     }
@@ -938,31 +938,31 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
     if(player == PLAYER_WHITE){
         // WHITE_KING_SIZE
         if( board->castling_rights & WHITE_KING_SIDE_CASTLE_FLAG  && 
-            (0x2) & board->pieces[NO_PIECES] && (0x4) & board->pieces[NO_PIECES] && 
-            (0x1) & board->pieces[WHITE_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x2), 0, 0, (0x1), 0, 0);
+            (G1) & board->pieces[NO_PIECES] && (F1) & board->pieces[NO_PIECES] && 
+            (H1) & board->pieces[WHITE_ROOKS] ){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (G1), 0, 0, (H1), 0, 0);
                 move_counter++;
         }
         // WHITE_QUEEN_SIZE
         if( board->castling_rights & WHITE_QUEEN_SIDE_CASTLE_FLAG  && 
-            (0x40) & board->pieces[NO_PIECES] && (0x20) & board->pieces[NO_PIECES] && (0x10) & board->pieces[NO_PIECES] && 
-            (0x80) & board->pieces[WHITE_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x20), 0, 0, (0x80), 0, 0);
+            (B1) & board->pieces[NO_PIECES] && (C1) & board->pieces[NO_PIECES] && (D1) & board->pieces[NO_PIECES] && 
+            (A1) & board->pieces[WHITE_ROOKS] ){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (C1), 0, 0, (A1), 0, 0);
                 move_counter++;
         }
     }else{
         // BLACK_KING_SIZE
         if( board->castling_rights & BLACK_KING_SIDE_CASTLE_FLAG  && 
-            (0x200000000000000) & board->pieces[NO_PIECES] && (0x400000000000000) & board->pieces[NO_PIECES] && 
-            (0x100000000000000) & board->pieces[BLACK_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x200000000000000), 0, 0, (0x100000000000000), 0, 0);
+            (F8) & board->pieces[NO_PIECES] && (G8) & board->pieces[NO_PIECES] && 
+            (H8) & board->pieces[BLACK_ROOKS] ){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (G8), 0, 0, (H8), 0, 0);
                 move_counter++;
         }
         // BLACK_QUEEN_SIZE
         if( board->castling_rights & BLACK_QUEEN_SIDE_CASTLE_FLAG  && 
-            (0x4000000000000000) & board->pieces[NO_PIECES] && (0x2000000000000000) & board->pieces[NO_PIECES] && (0x1000000000000000) & board->pieces[NO_PIECES] && 
-            (0x8000000000000000) & board->pieces[BLACK_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (0x2000000000000000), 0, 0, (0x8000000000000000), 0, 0);
+            (B8) & board->pieces[NO_PIECES] && (C8) & board->pieces[NO_PIECES] && (D8) & board->pieces[NO_PIECES] && 
+            (A8) & board->pieces[BLACK_ROOKS] ){
+                legal_moves[move_counter] = create_move(moving_piece_type, position, (C8), 0, 0, (A8), 0, 0);
                 move_counter++;
         }
 

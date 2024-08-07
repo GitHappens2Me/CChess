@@ -7,7 +7,79 @@
 
 
 //#TODO define all squares needed in code (for example castling)
-#define h1 
+#define H1 0x1
+#define G1 0x2
+#define F1 0x4
+#define E1 0x8
+#define D1 0x10
+#define C1 0x20
+#define B1 0x40
+#define A1 0x80
+
+#define H2 0x100
+#define G2 0x200
+#define F2 0x400
+#define E2 0x800
+#define D2 0x1000
+#define C2 0x2000
+#define B2 0x4000
+#define A2 0x8000
+
+#define H3 0x10000
+#define G3 0x20000
+#define F3 0x40000
+#define E3 0x80000
+#define D3 0x100000
+#define C3 0x200000
+#define B3 0x400000
+#define A3 0x800000
+
+#define H4 0x1000000
+#define G4 0x2000000
+#define F4 0x4000000
+#define E4 0x8000000
+#define D4 0x10000000
+#define C4 0x20000000
+#define B4 0x40000000
+#define A4 0x80000000
+
+#define H5 0x100000000
+#define G5 0x200000000
+#define F5 0x400000000
+#define E5 0x800000000
+#define D5 0x1000000000
+#define C5 0x2000000000
+#define B5 0x4000000000
+#define A5 0x8000000000
+
+#define H6 0x10000000000
+#define G6 0x20000000000
+#define F6 0x40000000000
+#define E6 0x80000000000
+#define D6 0x100000000000
+#define C6 0x200000000000
+#define B6 0x400000000000
+#define A6 0x800000000000
+
+#define H7 0x1000000000000
+#define G7 0x2000000000000
+#define F7 0x4000000000000
+#define E7 0x8000000000000
+#define D7 0x10000000000000
+#define C7 0x20000000000000
+#define B7 0x40000000000000
+#define A7 0x80000000000000
+
+#define H8 0x100000000000000
+#define G8 0x200000000000000
+#define F8 0x400000000000000
+#define E8 0x800000000000000
+#define D8 0x1000000000000000
+#define C8 0x2000000000000000
+#define B8 0x4000000000000000
+#define A8 0x8000000000000000
+
+
 
 #define NUM_OF_COLLUMNS (8)
 #define NUM_OF_ROWS (8)
