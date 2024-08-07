@@ -39,9 +39,7 @@ int main() {
     //char promotion_test2[] = "k7/8/8/8/8/8/PP1p4/K4Q2 w - - 0 1";
     //initialize_board_FEN(board, promotion_test2);
     // Test by Playing: 
-    char fen[] = "2b3R1/r1P1Pp2/2PkpPp1/pp3B2/pb1Nn2p/2B1PpP1/2q1PrQP/n3K1NR w - - 0 1";
-    initialize_board_FEN(board, fen);
-    board->castling_rights = 0x0;
+
     printf("Starting Game :)\n");
 
     int engine_move = 1;
@@ -63,6 +61,7 @@ int main() {
             //exit(EXIT_SUCCESS); //Profiling
         }else{
             move = get_move_from_user(board);
+            //move = create_move(WHITE_PAWNS, E2, E3, 0, 0, 0, 0, E2);  //Profiling
             if(get_piece_color(board, move.moving_piece_origin) != board->current_Player){
                 printf("Not your Piece. Choose a different Move\n");
                 continue;
@@ -104,11 +103,7 @@ int main() {
             }
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
-            
-            printf("Castling-Rights:\n");
-            print_position(board->castling_rights);
-
-
+        
             printf("Current Player: %d\n", board->current_Player);
 
             
