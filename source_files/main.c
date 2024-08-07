@@ -39,7 +39,7 @@ int main() {
     //char promotion_test2[] = "k7/8/8/8/8/8/PP1p4/K4Q2 w - - 0 1";
     //initialize_board_FEN(board, promotion_test2);
     // Test by Playing: 
-    char fen[] = "5R2/k1p2B1r/4p1q1/p1PPPNPp/1N2QpP1/4pRp1/KP1PpbPB/2rn2nb w - - 0 1";
+    char fen[] = "2b3R1/r1P1Pp2/2PkpPp1/pp3B2/pb1Nn2p/2B1PpP1/2q1PrQP/n3K1NR w - - 0 1";
     initialize_board_FEN(board, fen);
     board->castling_rights = 0x0;
     printf("Starting Game :)\n");
@@ -50,15 +50,6 @@ int main() {
     int num_legal_moves = 0;
     Move move;
 
-    Move* ps_legaö = malloc(sizeof(Move) * 200);
-    int num = generate_pseudolegal_moves_for_king(board, get_bitmap_from_notation("a2"), PLAYER_WHITE, ps_legaö);
-
-    for(int i = 0; i< num; i++){
-        print_move(ps_legaö[i]);
-        printf("\n");
-    }
-
-    printf("%d", is_attacked(board, get_bitmap_from_notation("a3"), PLAYER_BLACK));
 
     print_board(board);
 

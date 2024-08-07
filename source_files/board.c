@@ -407,7 +407,7 @@ int results_in_check(Board* board, Move move){
             return 1;
         }
     } else if(move.castling_rook_position == 0x8000000000000000){ 
-        if(is_attacked(board, 0x1000000000000000, PLAYER_WHITE) || is_attacked(board, 0x2000000000000000, PLAYER_WHITE) || is_attacked(board, 0x8000000000000000, PLAYER_WHITE)){
+        if(is_attacked(board, 0x1000000000000000, PLAYER_WHITE) || is_attacked(board, 0x2000000000000000, PLAYER_WHITE) || is_attacked(board, 0x800000000000000, PLAYER_WHITE)){
             return 1;
         }
     }
@@ -938,26 +938,30 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
     if(player == PLAYER_WHITE){
         // WHITE_KING_SIZE
         if( board->castling_rights & WHITE_KING_SIDE_CASTLE_FLAG  && 
-            (0x2) & board->pieces[NO_PIECES] && (0x4) & board->pieces[NO_PIECES]){
+            (0x2) & board->pieces[NO_PIECES] && (0x4) & board->pieces[NO_PIECES] && 
+            (0x1) & board->pieces[WHITE_ROOKS] ){
                 legal_moves[move_counter] = create_move(moving_piece_type, position, (0x2), 0, 0, (0x1), 0, 0);
                 move_counter++;
         }
         // WHITE_QUEEN_SIZE
         if( board->castling_rights & WHITE_QUEEN_SIDE_CASTLE_FLAG  && 
-            (0x40) & board->pieces[NO_PIECES] && (0x20) & board->pieces[NO_PIECES] && (0x10) & board->pieces[NO_PIECES]){
+            (0x40) & board->pieces[NO_PIECES] && (0x20) & board->pieces[NO_PIECES] && (0x10) & board->pieces[NO_PIECES] && 
+            (0x80) & board->pieces[WHITE_ROOKS] ){
                 legal_moves[move_counter] = create_move(moving_piece_type, position, (0x20), 0, 0, (0x80), 0, 0);
                 move_counter++;
         }
     }else{
         // BLACK_KING_SIZE
         if( board->castling_rights & BLACK_KING_SIDE_CASTLE_FLAG  && 
-            (0x200000000000000) & board->pieces[NO_PIECES] && (0x400000000000000) & board->pieces[NO_PIECES]){
+            (0x200000000000000) & board->pieces[NO_PIECES] && (0x400000000000000) & board->pieces[NO_PIECES] && 
+            (0x100000000000000) & board->pieces[BLACK_ROOKS] ){
                 legal_moves[move_counter] = create_move(moving_piece_type, position, (0x200000000000000), 0, 0, (0x100000000000000), 0, 0);
                 move_counter++;
         }
         // BLACK_QUEEN_SIZE
         if( board->castling_rights & BLACK_QUEEN_SIDE_CASTLE_FLAG  && 
-            (0x4000000000000000) & board->pieces[NO_PIECES] && (0x2000000000000000) & board->pieces[NO_PIECES] && (0x1000000000000000) & board->pieces[NO_PIECES]){
+            (0x4000000000000000) & board->pieces[NO_PIECES] && (0x2000000000000000) & board->pieces[NO_PIECES] && (0x1000000000000000) & board->pieces[NO_PIECES] && 
+            (0x8000000000000000) & board->pieces[BLACK_ROOKS] ){
                 legal_moves[move_counter] = create_move(moving_piece_type, position, (0x2000000000000000), 0, 0, (0x8000000000000000), 0, 0);
                 move_counter++;
         }

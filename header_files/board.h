@@ -6,6 +6,8 @@
 #include "../header_files/board.h"
 
 
+//#TODO define all squares needed in code (for example castling)
+#define h1 
 
 #define NUM_OF_COLLUMNS (8)
 #define NUM_OF_ROWS (8)
