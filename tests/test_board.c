@@ -159,7 +159,7 @@ void test_unmake_move(){
 
 
 
-#define DEBUGDEPTH 5
+#define DEBUGDEPTH 6
 int perft(Board* board, int depth){
 
     Move move_list[256];
@@ -245,9 +245,9 @@ void test_perft(){
     clock_t begin = clock();
 
     initialize_board(board);
-    //assert(perft(board, 4) == 197281);
+    assert(perft(board, 4) == 197281);
     //assert(perft(board, 5) == 4865609 );
-    assert(perft_with_unmake(board, 4) == 197281);
+    //assert(perft_with_unmake(board, 4) == 197281);
     //assert(perft_with_unmake(board, 5) == 4865609 );
 
     char kiwipete[] = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ";

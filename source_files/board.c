@@ -404,10 +404,6 @@ uint64_t get_all_pieces_of_type(Board* board, int piece_type){
 }
 
 int get_piece_type_at(Board* board, uint64_t position){
-    if (!board) {
-        printf("Board not allocated in 'get_piece_type_at'\n");
-        exit(EXIT_FAILURE);
-    }
 
     for(int i = 0; i < NUM_OF_PIECE_TYPES; i++){
         if((board->pieces[i] & position)){

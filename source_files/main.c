@@ -53,15 +53,15 @@ int main() {
 
     while (1) {
         if(engine_move && board->current_Player == PLAYER_BLACK){
-            get_best_move_minimax(board, &move, 4);
+            get_best_move_minimax(board, &move, 5);
             printf("Engine Move: ");
             print_move(move);
             printf("\n");
 
-            //exit(EXIT_SUCCESS); //Profiling
+            exit(EXIT_SUCCESS); //Profiling
         }else{
-            move = get_move_from_user(board);
-            //move = create_move(WHITE_PAWNS, E2, E3, 0, 0, 0, 0, E2);  //Profiling
+            //move = get_move_from_user(board);
+            move = create_move(WHITE_PAWNS, E2, E3, 0, 0, 0, 0, E2);  //Profiling
             if(get_piece_color(board, move.moving_piece_origin) != board->current_Player){
                 printf("Not your Piece. Choose a different Move\n");
                 continue;

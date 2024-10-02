@@ -6,6 +6,8 @@
 
 #include "../header_files/inout.h"
 
+
+// #TODO dont return Move, instead pass a pointer which gets modified
 Move create_move(int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
                  int captured_piece_type, uint64_t captured_piece_position, 
                  uint64_t castling_rook_position, int promotion_to_type, uint64_t en_passant_square) {

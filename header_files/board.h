@@ -6,7 +6,6 @@
 #include "../header_files/board.h"
 
 
-//#TODO define all squares needed in code (for example castling)
 #define H1 0x1
 #define G1 0x2
 #define F1 0x4
@@ -145,7 +144,7 @@ struct Board {
     // via 12 64Bit integers
     uint64_t* pieces;
 
-    // TODO: Castling Rights
+    // Castling Rights
     uint8_t castling_rights;
     
     // Square where an en-passant capture is possible this move
@@ -319,21 +318,21 @@ uint64_t get_all_pieces_of_type(Board* board, int piece_type);
  *
  *  returns: 
  *          the piece_type acording to this list:
- *          Empty Squares = -1
- *          WHITE_PAWNS =    0
- *          WHITE_ROOKS =    1
- *          WHITE_KNIGHTS =  2
- *          WHITE_BISHOPS =  3
- *          WHITE_QUEENS =   4
- *          WHITE_KING =     5
- *          BLACK_PAWNS =    6
- *          BLACK_ROOKS =    7
- *          BLACK_KNIGHTS =  8
- *          BLACK_BISHOPS =  9
- *          BLACK_QUEENS =  10
- *          BLACK_KING =    11
+ *          Empty Squares =  0
+*           WHITE_PAWNS =    1
+ *          WHITE_ROOKS =    2
+ *          WHITE_KNIGHTS =  3
+ *          WHITE_BISHOPS =  4
+ *          WHITE_QUEENS =   5
+ *          WHITE_KING =     6
+ *          BLACK_PAWNS =    7
+ *          BLACK_ROOKS =    8
+ *          BLACK_KNIGHTS =  9
+ *          BLACK_BISHOPS = 10
+ *          BLACK_QUEENS =  11
+ *          BLACK_KING =    12
  *  
- *  notes: Empty squares return -1, which might cause a #BUG (see get_piece_color())
+
  */ 
 int get_piece_type_at(Board* board, uint64_t position);
 
@@ -347,10 +346,6 @@ int get_piece_type_at(Board* board, uint64_t position);
  *          PLAYER_WHITE ( 0 ) or PLAYER_BLACK ( 1 )
  *          depending on whose piece it is
  *  
- *  notes: 
- * 
- *  #BUG: Empty squares belong to White as the check (piece_type <= 5) is true for -1
- *        which is what get_piece_type_at() returnes for empty squares. 
  */ 
 int get_piece_color(Board *board, uint64_t position);
 
