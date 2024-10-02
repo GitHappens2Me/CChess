@@ -285,6 +285,8 @@ int apply_move(Board* board, Move move);
  */ 
 void apply_move_forced(Board* board, Move move);
 
+void unmake_move(Board* board, Move move, uint64_t old_en_passant_square, uint64_t old_castling_rights);
+
 
 /*----------------------------------------
                 Board Information

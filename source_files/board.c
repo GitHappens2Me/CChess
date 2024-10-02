@@ -296,6 +296,82 @@ void apply_move_forced(Board* board, Move move){
     }
 }
 
+
+void unmake_move(Board* board, Move move, uint64_t old_en_passant_square, uint64_t old_castling_rights){
+
+    int piece_type = move.moving_piece_type;
+    //printf("Piecetype moved: %d\n", piece_type);
+    //printf("Origin: %s\n", get_notation_from_bitmap(move.origin));
+    
+
+    //printf("%d, ", move.captured_piece_type);
+    // For Captures
+    if(move.captured_piece_type != 0){
+        //printf("Capture!");
+        // add captured piece
+        board->pieces[move.captured_piece_type] |= move.captured_piece_position;
+        board->pieces[NO_PIECES] &= ~move.captured_piece_position;
+    }else{
+        board->pieces[NO_PIECES] |= move.moving_piece_destination;
+    }
+     // add piece to origin
+    board->pieces[piece_type] |= move.moving_piece_origin;
+    board->pieces[NO_PIECES] &= ~move.moving_piece_origin;
+    // remove piece from destination
+    board->pieces[piece_type] &= ~move.moving_piece_destination;
+    
+    // Changes whose turn it is:
+    board->current_Player = get_opponent(board->current_Player);
+
+    // Set En-Passant Square
+    //board->en_passant_square = move.en_passant_square;
+
+    // Remove Promoted Piece:
+    if(move.promotion_to_type != 0){
+        board->pieces[move.promotion_to_type] &= ~move.moving_piece_destination;
+    }
+
+
+    // Apply Castling Moves:
+    if(move.castling_rook_position != 0){
+
+        if(move.moving_piece_type == WHITE_KING){
+            if(move.castling_rook_position == H1){
+                board->pieces[WHITE_ROOKS] |= H1;
+                board->pieces[NO_PIECES] &= ~H1;
+                // add piece to destination
+                board->pieces[WHITE_ROOKS] &= ~F1;
+                board->pieces[NO_PIECES] |= F1;
+            }else if (move.castling_rook_position == A1){
+                board->pieces[WHITE_ROOKS] |= A1;
+                board->pieces[NO_PIECES] &= ~A1;
+                // add piece to destination
+                board->pieces[WHITE_ROOKS] &= ~D1;
+                board->pieces[NO_PIECES]  |= D1;
+            }
+        }else{
+            if(move.castling_rook_position == H8){
+                board->pieces[BLACK_ROOKS] |= H8;
+                board->pieces[NO_PIECES] &= ~H8;
+                // add piece to destination
+                board->pieces[BLACK_ROOKS] &= ~F8;
+                board->pieces[NO_PIECES] |= F8;
+            }else if (move.castling_rook_position == A8){
+                board->pieces[BLACK_ROOKS] |= A8;
+                board->pieces[NO_PIECES] &= ~A8;
+                // add piece to destination
+                board->pieces[BLACK_ROOKS] &= ~D8;
+                board->pieces[NO_PIECES] |= D8;
+            }
+        }
+    }
+
+    board->castling_rights = old_castling_rights;
+    board->en_passant_square = old_en_passant_square;
+}
+
+
+
 /*----------------------------------------
                 Board Information
 ------------------------------------------*/

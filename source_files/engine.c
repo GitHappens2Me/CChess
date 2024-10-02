@@ -91,27 +91,32 @@ int maxi(Board* board, int depth, int alpha, int beta) {
 
     qsort(possible_moves, num_possible_moves, sizeof(Move), compare_moves);
 
-    
-    Board* board_copy;
-    create_board(&board_copy);
-    //printf("created board - ");
+    uint8_t old_castling_rights;
+    uint64_t old_en_passant_square;
+
+ 
     for (int i = 0; i < num_possible_moves; i++) {
-        copy_board(board_copy, board);
-        //printf("copied board - ");
-        apply_move_forced(board_copy, possible_moves[i]);
+        old_castling_rights = board->castling_rights;
+        old_en_passant_square = board->en_passant_square;
+
+        apply_move_forced(board, possible_moves[i]);
         //printf("call recursivle\n");
-        int score = mini(board_copy, depth - 1, alpha, beta);
+        int score = mini(board, depth - 1, alpha, beta);
         if( score > max ){
             max = score;
         }
         if (max >= beta) {
+            unmake_move(board, possible_moves[i], old_en_passant_square, old_castling_rights);
             break; // Beta cutoff
         }
         if (max > alpha) {
             alpha = max;
         }
+
+        unmake_move(board, possible_moves[i], old_en_passant_square, old_castling_rights);
+
     }
-    free_board(board_copy);
+
     free(possible_moves);
     return max;
 }
@@ -147,27 +152,31 @@ int mini(Board* board, int depth, int alpha, int beta) {
     qsort(possible_moves, num_possible_moves, sizeof(Move), compare_moves);
 
     
-    Board* board_copy;
-    create_board(&board_copy);
-    //printf("created board - ");
+    uint8_t old_castling_rights;
+    uint64_t old_en_passant_square;
+
+ 
     for (int i = 0; i < num_possible_moves; i++) {
-        copy_board(board_copy, board);
-        //printf("copied board - ");
-        apply_move_forced(board_copy, possible_moves[i]);
+        old_castling_rights = board->castling_rights;
+        old_en_passant_square = board->en_passant_square;
+
+        apply_move_forced(board, possible_moves[i]);
         //printf("call recursivle\n");
-        int score = maxi(board_copy, depth - 1, alpha, beta);
+        int score = maxi(board, depth - 1, alpha, beta);
         if( score < min){
             min = score;
         }
         if (min <= alpha) {
+            unmake_move(board, possible_moves[i], old_en_passant_square, old_castling_rights);
             break; // Alpha cutoff
         }
         if (min < beta) {
             beta = min;
         }
+        unmake_move(board, possible_moves[i], old_en_passant_square, old_castling_rights);
+
     }
 
-    free_board(board_copy);
     free(possible_moves);
     return min;
 }
