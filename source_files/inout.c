@@ -258,7 +258,8 @@ Move get_move_from_user(Board* board){
     }
 
 
-    Move user_move = create_move(moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, castling_rook, piece_to_promote_to, en_passant_square); 
+    Move user_move;
+    create_move(&user_move, moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, castling_rook, piece_to_promote_to, en_passant_square); 
 
 
     free(origin);

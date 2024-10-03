@@ -798,12 +798,12 @@ int generate_pseudolegal_moves_for_rook(Board* board, uint64_t position, int pla
             // Collision with opponent piece
             }else if(next & opponent_pieces){
                 int captured_piece_type = get_piece_type_at(board, next);
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
                 move_counter++;
                 break;
             // No Collision
             }else{
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, 0, 0);
                 move_counter++;
             }
         }
@@ -848,12 +848,12 @@ int generate_pseudolegal_moves_for_bishop(Board* board, uint64_t position, int p
                 if(move_counter > 100){
                     printf("%d, ",move_counter);
                 }
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
                 move_counter++;
                 break;
             // No Collision
             }else{
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, 0, 0);
                 move_counter++;
 
             }
@@ -907,12 +907,12 @@ int generate_pseudolegal_moves_for_knight(Board* board, uint64_t position, int p
         }
         else if(next & opponent_pieces){
                 int captured_piece_type = get_piece_type_at(board, next);
-                legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
                 move_counter++;
                 continue;
             // No Collision
         }else{
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, 0, 0);
             move_counter++;
         }
     
@@ -995,11 +995,11 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
 
         }else if(next & opponent_pieces){        
             int captured_piece_type = get_piece_type_at(board, next);
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, captured_piece_type, next, 0, 0, 0);
             move_counter++;
         // No Collision
         }else{   
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, 0, 0);
             move_counter++;
         }
     }
@@ -1012,14 +1012,14 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
         if( board->castling_rights & WHITE_KING_SIDE_CASTLE_FLAG  && 
             (G1) & board->pieces[NO_PIECES] && (F1) & board->pieces[NO_PIECES] && 
             (H1) & board->pieces[WHITE_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (G1), 0, 0, (H1), 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, (G1), 0, 0, (H1), 0, 0);
                 move_counter++;
         }
         // WHITE_QUEEN_SIZE
         if( board->castling_rights & WHITE_QUEEN_SIDE_CASTLE_FLAG  && 
             (B1) & board->pieces[NO_PIECES] && (C1) & board->pieces[NO_PIECES] && (D1) & board->pieces[NO_PIECES] && 
             (A1) & board->pieces[WHITE_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (C1), 0, 0, (A1), 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, (C1), 0, 0, (A1), 0, 0);
                 move_counter++;
         }
     }else{
@@ -1027,14 +1027,14 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
         if( board->castling_rights & BLACK_KING_SIDE_CASTLE_FLAG  && 
             (F8) & board->pieces[NO_PIECES] && (G8) & board->pieces[NO_PIECES] && 
             (H8) & board->pieces[BLACK_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (G8), 0, 0, (H8), 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, (G8), 0, 0, (H8), 0, 0);
                 move_counter++;
         }
         // BLACK_QUEEN_SIZE
         if( board->castling_rights & BLACK_QUEEN_SIDE_CASTLE_FLAG  && 
             (B8) & board->pieces[NO_PIECES] && (C8) & board->pieces[NO_PIECES] && (D8) & board->pieces[NO_PIECES] && 
             (A8) & board->pieces[BLACK_ROOKS] ){
-                legal_moves[move_counter] = create_move(moving_piece_type, position, (C8), 0, 0, (A8), 0, 0);
+                create_move(&legal_moves[move_counter], moving_piece_type, position, (C8), 0, 0, (A8), 0, 0);
                 move_counter++;
         }
 
@@ -1088,17 +1088,17 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         
         if((next & promotion_rank)){
             // Promotion
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, bishop_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, bishop_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, knight_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, knight_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, rook_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, rook_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, queen_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, queen_type, 0);
             move_counter++;
         }else{
             // No Promotion
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, 0, 0);
             move_counter++;
         }
         
@@ -1110,7 +1110,7 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         if(shift_direction == LEFT)           next <<= 8;
         else /*if(shift_direction == RIGHT)*/ next >>= 8;
         if (!(next & (opponent_pieces | own_pieces))) {
-            legal_moves[move_counter] = create_move(moving_piece_type, position, next, 0, 0, 0, 0, en_passant_square);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, next, 0, 0, 0, 0, en_passant_square);
             move_counter++;
         }
     }
@@ -1130,16 +1130,16 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         int captured_piece_type = get_piece_type_at(board, captures[0]);
         if((captures[0] & promotion_rank)){
             // Promotion
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, bishop_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, bishop_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, knight_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, knight_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, rook_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, rook_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, queen_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, queen_type, 0);
             move_counter++;
         }else{
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, 0, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[0], captured_piece_type, captures[0], 0, 0, 0);
             move_counter++;
         }
     }
@@ -1147,16 +1147,16 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         int captured_piece_type = get_piece_type_at(board, captures[1]);
         if((captures[1] & promotion_rank)){
             // Promotion
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, bishop_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, bishop_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, knight_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, knight_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, rook_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, rook_type, 0);
             move_counter++;
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, queen_type, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, queen_type, 0);
             move_counter++;
         }else{
-            legal_moves[move_counter] = create_move(moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, 0, 0);
+            create_move(&legal_moves[move_counter], moving_piece_type, position, captures[1], captured_piece_type, captures[1], 0, 0, 0);
             move_counter++;
         }
     }
@@ -1168,7 +1168,7 @@ int generate_pseudolegal_moves_for_pawn(Board* board, uint64_t position, int pla
         int captured_piece_type = (player == PLAYER_WHITE)? BLACK_PAWNS : WHITE_PAWNS;
         uint64_t captured_piece_position = (player == PLAYER_WHITE) ? (en_passant_square >> 8) : (en_passant_square << 8);
         //print_position(captured_piece_position);
-        legal_moves[move_counter] = create_move(moving_piece_type, position, en_passant_square, captured_piece_type, captured_piece_position, 0, 0, 0);
+        create_move(&legal_moves[move_counter], moving_piece_type, position, en_passant_square, captured_piece_type, captured_piece_position, 0, 0, 0);
         move_counter++;
     }
 

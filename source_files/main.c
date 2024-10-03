@@ -61,7 +61,7 @@ int main() {
             exit(EXIT_SUCCESS); //Profiling
         }else{
             //move = get_move_from_user(board);
-            move = create_move(WHITE_PAWNS, E2, E3, 0, 0, 0, 0, E2);  //Profiling
+            create_move(&move, WHITE_PAWNS, E2, E3, 0, 0, 0, 0, E2);  //Profiling
             if(get_piece_color(board, move.moving_piece_origin) != board->current_Player){
                 printf("Not your Piece. Choose a different Move\n");
                 continue;

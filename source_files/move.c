@@ -8,22 +8,18 @@
 
 
 // #TODO dont return Move, instead pass a pointer which gets modified
-Move create_move(int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
+void create_move(Move* move, int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
                  int captured_piece_type, uint64_t captured_piece_position, 
                  uint64_t castling_rook_position, int promotion_to_type, uint64_t en_passant_square) {
     
-    Move move = {
-        .moving_piece_type = moving_piece_type,
-        .moving_piece_origin = moving_piece_origin,
-        .moving_piece_destination = moving_piece_destination,
-        .captured_piece_type = captured_piece_type,
-        .captured_piece_position = captured_piece_position,
-        .castling_rook_position = castling_rook_position,
-        .promotion_to_type = promotion_to_type,
-        .en_passant_square = en_passant_square
-    };
-    
-    return move;
+    move->moving_piece_type = moving_piece_type;
+    move->moving_piece_origin = moving_piece_origin;
+    move->moving_piece_destination = moving_piece_destination;
+    move->captured_piece_type = captured_piece_type;
+    move->captured_piece_position = captured_piece_position;
+    move->castling_rook_position = castling_rook_position;
+    move->promotion_to_type = promotion_to_type;
+    move->en_passant_square = en_passant_square;
 }
 
 
