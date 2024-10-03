@@ -53,36 +53,27 @@ int main() {
 
     while (1) {
         if(engine_move && board->current_Player == PLAYER_BLACK){
-            get_best_move_minimax(board, &move, 5);
-            printf("Engine Move: ");
+            get_best_move_minimax(board, &move, 3);
+
+            //exit(EXIT_SUCCESS); //Profiling
+            apply_move_forced(board, move);
+
+            printf("Best Engine Move: ");
             print_move(move);
             printf("\n");
 
-            exit(EXIT_SUCCESS); //Profiling
-        }else{
-            //move = get_move_from_user(board);
-            create_move(&move, WHITE_PAWNS, E2, E3, 0, 0, 0, 0, E2);  //Profiling
-            if(get_piece_color(board, move.moving_piece_origin) != board->current_Player){
-                printf("Not your Piece. Choose a different Move\n");
-                continue;
+            if(move.captured_piece_type != 0) {
+                printf("Captured piece: %d\n", move.captured_piece_type);
             }
-        }
 
-        if(apply_move(board, move) == 1){
-            printf("Applied Move: ");
-            print_move(move);
-            printf("\n");
-            printf("Captured piece: %d\n", move.captured_piece_type);
+            printf("Simple Board Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
+            
 
-            num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
-            printf("Simple Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
-
+            /*
             for(int i = 0; i < num_legal_moves; i++){
                 print_move(legal_moves[i]);
                 printf("\n");
             }
-
-            /*
             printf("WHITE\n");
             print_position(get_pieces_of_player(board, PLAYER_WHITE));
             printf("BLACK\n");
@@ -94,19 +85,69 @@ int main() {
             print_board(board);
 
 
-            
+            num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
             if(num_legal_moves == 0){
                 printf("Player %d is Checkmate\n", board->current_Player);
                 exit(EXIT_SUCCESS);
             }else{
-                printf("Player %d has %d Legal Moves.\n", board->current_Player, num_legal_moves);
+                if(board->current_Player == PLAYER_WHITE){
+                    printf("Player White has %d Legal Moves.\n", num_legal_moves);
+                }else{
+                    printf("Player Black has %d Legal Moves.\n", num_legal_moves);
+                }
             }
             if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
             if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
         
-            printf("Current Player: %d\n", board->current_Player);
 
+        }else{
+            move = get_move_from_user(board);
+            //create_move(&move, WHITE_PAWNS, E2, E3, 0, 0, 0, 0, E2);  //Profiling
             
+            if(apply_move(board, move) == 1){
+                printf("Applied Move: ");
+                print_move(move);
+                printf("\n");
+                if(move.captured_piece_type != 0) {
+                    printf("Captured piece: %d\n", move.captured_piece_type);
+                }
+
+                printf("Simple Board Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
+            
+                /*
+                for(int i = 0; i < num_legal_moves; i++){
+                    print_move(legal_moves[i]);
+                    printf("\n");
+                }
+
+                
+                printf("WHITE\n");
+                print_position(get_pieces_of_player(board, PLAYER_WHITE));
+                printf("BLACK\n");
+                print_position(get_pieces_of_player(board, PLAYER_BLACK));
+                printf("EMPTY\n");
+                print_position(board->pieces[0]);
+                */
+                
+                print_board(board);
+
+
+                num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
+                if(num_legal_moves == 0){
+                    printf("Player %d is Checkmate\n", board->current_Player);
+                    exit(EXIT_SUCCESS);
+                }else{
+                    if(board->current_Player == PLAYER_WHITE){
+                        printf("Player White has %d Legal Moves.\n", num_legal_moves);
+                    }else{
+                        printf("Player Black has %d Legal Moves.\n", num_legal_moves);
+                    }
+                }
+                if(is_in_check(board, PLAYER_WHITE)) printf("White is in Check");
+                if(is_in_check(board, PLAYER_BLACK)) printf("Black is in Check"); 
+            
+            }
         }
+
     }
 }

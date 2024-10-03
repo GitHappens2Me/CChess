@@ -464,7 +464,9 @@ int is_in_check(Board* board, int player){
 int results_in_check(Board* board, Move move){
 
     //#TODO is this the right spot to check for castling through check or are there better functions 
-    //#TODO Calling is_attacked so many times is really slow as all move have to be generated each time
+    //#TODO Calling is_attacked so many times is really slow as all moves have to be generated each time
+    // better -> calculate an attack-map of all attacked squares once and check that 
+
     // Check for Castling through Check
     if(move.castling_rook_position == H1){ 
         if(is_attacked(board, G1, PLAYER_BLACK) || is_attacked(board, F1, PLAYER_BLACK) || is_attacked(board, E1, PLAYER_BLACK)){
@@ -733,8 +735,8 @@ int generate_legal_moves_for_piece(Board* board, uint64_t position, Move* legal_
     int num_pseudo_legal_moves = generate_pseudolegal_moves_for_piece(board, position, pseudo_legal_moves);
 
     for(int i = 0; i < num_pseudo_legal_moves; i++){
-        // # TODO is_legal_move calls generate_pseudolegal_moves_for_piece too so they get generated twice! 
-        if(is_legal_move(board, pseudo_legal_moves[i])){
+        //Adds move to legal move if it doesnt result in check afterwards 
+        if(!results_in_check(board, pseudo_legal_moves[i])){
             legal_moves_by_piece[move_counter] = pseudo_legal_moves[i];
             move_counter++;
         }
@@ -1005,7 +1007,7 @@ int generate_pseudolegal_moves_for_king(Board* board, uint64_t position, int pla
     }
 
 
-    // #TODO reduce Castling Magic numbers
+
     // Generate Castling Moves:
     if(player == PLAYER_WHITE){
         // WHITE_KING_SIZE

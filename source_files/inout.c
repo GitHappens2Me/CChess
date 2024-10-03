@@ -261,6 +261,9 @@ Move get_move_from_user(Board* board){
     Move user_move;
     create_move(&user_move, moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, castling_rook, piece_to_promote_to, en_passant_square); 
 
+    //if( !(is_pseudo_legal_move(board, user_move) && !results_in_check(board, user_move))){
+    //    printf("This Move is not legal. Please enter a legal move\n   ");
+    //}
 
     free(origin);
     free(input);
