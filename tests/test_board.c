@@ -263,8 +263,8 @@ void test_perft(){
     board->castling_rights = 0x0; // FEN initialzation does not recognize Castling rights yet
     //assert(perft(board, 4) == 43238);  
     //assert(perft(board, 5) == 674624);
-    assert(perft_with_unmake(board, 4) == 43238);  
-    //assert(perft_with_unmake(board, 5) == 674624);
+    //assert(perft_with_unmake(board, 4) == 43238);  
+    assert(perft_with_unmake(board, 5) == 674624);
 
     char middle_game[] = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1";
     initialize_board_FEN(board, middle_game);

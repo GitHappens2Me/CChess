@@ -30,8 +30,10 @@ int main() {
     //char en_passant_setup2[] = "k7/8/8/8/3p4/8/4P3/K7 w - - 0 1";
     //initialize_board_FEN(board, en_passant_setup2);
 
-    //char fen[] = "8/8/3r1r2/2r3r1/4N3/2R3R1/3R1R2/8 w - - 0 1";
-    //initialize_board_FEN(board, fen);
+    //BUG "1n5r/3p1p2/5k1p/1pN3p1/p2P4/P7/BPb2PPP/2b1R1K1 w - - 2 24" : e1c1 not legal?
+
+    char fen[] = "1n5r/3pkp2/4N2p/1p4p1/p2P4/P7/BPb2PPP/2b1R1K1 w - - 0 23";
+    initialize_board_FEN(board, fen);
 
     //char promotion_test1[] = "k1r5/3P4/8/8/8/8/PP1p4/K7 w - - 0 1";
     //initialize_board_FEN(board, promotion_test1);
@@ -53,7 +55,7 @@ int main() {
 
     while (1) {
         if(engine_move && board->current_Player == PLAYER_BLACK){
-            get_best_move_minimax(board, &move, 3);
+            get_best_move_minimax(board, &move, 5);
 
             //exit(EXIT_SUCCESS); //Profiling
             apply_move_forced(board, move);
@@ -69,11 +71,9 @@ int main() {
             printf("Simple Board Evaluation: %4.2f\n", ((float)evaluate(board) / 100));
             
 
+            
+            
             /*
-            for(int i = 0; i < num_legal_moves; i++){
-                print_move(legal_moves[i]);
-                printf("\n");
-            }
             printf("WHITE\n");
             print_position(get_pieces_of_player(board, PLAYER_WHITE));
             printf("BLACK\n");
@@ -86,6 +86,10 @@ int main() {
 
 
             num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
+            for(int i = 0; i < num_legal_moves; i++){
+                print_move(legal_moves[i]);
+                printf("\n");
+            }
             if(num_legal_moves == 0){
                 printf("Player %d is Checkmate\n", board->current_Player);
                 exit(EXIT_SUCCESS);
@@ -133,6 +137,10 @@ int main() {
 
 
                 num_legal_moves = generate_all_legal_moves_for_player(board, board->current_Player, legal_moves);
+                for(int i = 0; i < num_legal_moves; i++){
+                    print_move(legal_moves[i]);
+                    printf("\n");
+                }
                 if(num_legal_moves == 0){
                     printf("Player %d is Checkmate\n", board->current_Player);
                     exit(EXIT_SUCCESS);
