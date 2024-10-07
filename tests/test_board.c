@@ -152,57 +152,14 @@ void test_generate_pseudolegal_moves_for_rook(){
 
 }
 
-#define DEBUGDEPTH 6
-void test_perft(){
+void test_unmake_move(){
 
-    Board* board;
-    create_board(&board);
-    
-    printf("Starting Perft-Test: ");
-    clock_t begin = clock();
-
-    initialize_board(board);
-    assert(perft(board, 4) == 197281);
-    //assert(perft(board, 5) == 4865609 );
-
-    char kiwipete[] = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ";
-    initialize_board_FEN(board, kiwipete);
-    board->castling_rights = 0xF; // FEN initialzation does not recognize Castling rights yet
-    assert(perft(board, 4) == 4085603);    
-    //assert(perft(board, 5) == 193690690 );
-
-    char rook_endgame[] = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - ";
-    initialize_board_FEN(board, rook_endgame);
-    board->castling_rights = 0x0; // FEN initialzation does not recognize Castling rights yet
-    assert(perft(board, 4) == 43238);  
-    //assert(perft(board, 5) == 674624);
-
-    char middle_game[] = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1";
-    initialize_board_FEN(board, middle_game);
-    board->castling_rights = 0xC; // FEN initialzation does not recognize Castling rights yet
-    assert(perft(board, 4) == 422333);
-    //assert(perft(board, 5) ==  15833292); 
-
-    char difficult_pos[] = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8 ";
-    initialize_board_FEN(board, difficult_pos);
-    board->castling_rights = 0x3; // FEN initialzation does not recognize Castling rights yet
-    assert(perft(board, 4) == 2103487);  
-    //assert(perft(board, 5) ==  89941194); 
-
-    char alternative[] = "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10";
-    initialize_board_FEN(board, alternative);
-    board->castling_rights = 0x0; // FEN initialzation does not recognize Castling rights yet
-    assert(perft(board, 4) == 3894594); 
-    //assert(perft(board, 5) ==  164075551); 
-
-    clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-    printf("Function 'test_perft' PASSED all tests in %lf Seconds.\n", time_spent);
-
-    free_board(board);
 }
 
+
+
+
+#define DEBUGDEPTH 6
 int perft(Board* board, int depth){
 
     Move move_list[256];
@@ -229,6 +186,37 @@ int perft(Board* board, int depth){
     return nodes;
 }
 
+int perft_with_unmake(Board* board, int depth){
+
+    Move move_list[256];
+    int n_moves, i;
+    uint64_t nodes = 0;
+
+    if (depth == 0) return 1ULL;
+
+    n_moves = generate_all_legal_moves_for_player(board, board->current_Player, move_list);
+    
+
+    for (i = 0; i < n_moves; i++) {
+
+        // store unreversable board info
+        uint8_t old_castling_rights = board->castling_rights;
+        uint64_t old_en_passant_square = board->en_passant_square;
+
+        apply_move_forced(board, move_list[i]);
+        nodes += perft_with_unmake(board, depth - 1);
+        if(depth == DEBUGDEPTH){
+            print_move(move_list[i]);
+            printf(" %d moves\n", perft_with_unmake(board, depth - 1));
+        }
+        unmake_move(board, move_list[i], old_en_passant_square, old_castling_rights);
+
+    }
+
+    return nodes;
+}
+
+
 /*
 (Tiefe): Mein Ergebnis : [Richtige Lösung]
 (0): 1                 : [1]                 ✓
@@ -242,3 +230,70 @@ int perft(Board* board, int depth){
 
 
 */
+
+
+
+
+
+
+void test_perft(){
+
+    Board* board;
+    create_board(&board);
+    
+    printf("Starting Perft-Test: ");
+    clock_t begin = clock();
+
+    initialize_board(board);
+    assert(perft(board, 4) == 197281);
+    //assert(perft(board, 5) == 4865609 );
+    //assert(perft_with_unmake(board, 4) == 197281);
+    //assert(perft_with_unmake(board, 5) == 4865609 );
+
+    char kiwipete[] = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ";
+    initialize_board_FEN(board, kiwipete);
+    board->castling_rights = 0xF; // FEN initialzation does not recognize Castling rights yet
+    //assert(perft(board, 4) == 4085603);    
+    //assert(perft(board, 5) == 193690690 );
+    assert(perft_with_unmake(board, 4) == 4085603);    
+    //assert(perft_with_unmake(board, 5) == 193690690 );
+
+    char rook_endgame[] = "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - ";
+    initialize_board_FEN(board, rook_endgame);
+    board->castling_rights = 0x0; // FEN initialzation does not recognize Castling rights yet
+    //assert(perft(board, 4) == 43238);  
+    //assert(perft(board, 5) == 674624);
+    //assert(perft_with_unmake(board, 4) == 43238);  
+    assert(perft_with_unmake(board, 5) == 674624);
+
+    char middle_game[] = "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1";
+    initialize_board_FEN(board, middle_game);
+    board->castling_rights = 0xC; // FEN initialzation does not recognize Castling rights yet
+    //assert(perft(board, 4) == 422333);
+    //assert(perft(board, 5) ==  15833292); 
+    assert(perft_with_unmake(board, 4) == 422333);
+    //assert(perft_with_unmake(board, 5) ==  15833292); 
+
+    char difficult_pos[] = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8 ";
+    initialize_board_FEN(board, difficult_pos);
+    board->castling_rights = 0x3; // FEN initialzation does not recognize Castling rights yet
+    //assert(perft(board, 4) == 2103487);  
+    //assert(perft(board, 5) ==  89941194); 
+    assert(perft_with_unmake(board, 4) == 2103487);  
+    //assert(perft_with_unmake(board, 5) ==  89941194); 
+
+    char alternative[] = "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10";
+    initialize_board_FEN(board, alternative);
+    board->castling_rights = 0x0; // FEN initialzation does not recognize Castling rights yet
+    //assert(perft(board, 4) == 3894594); 
+    //assert(perft(board, 5) ==  164075551); 
+    assert(perft_with_unmake(board, 4) == 3894594); 
+    //assert(perft_with_unmake(board, 5) ==  164075551); 
+
+    clock_t end = clock();
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+    printf("Function 'test_perft' PASSED all tests in %lf Seconds.\n", time_spent);
+
+    free_board(board);
+}

@@ -6,34 +6,24 @@
 
 #include "../header_files/inout.h"
 
-Move create_move(int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
+
+inline void create_move(Move* move, int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
                  int captured_piece_type, uint64_t captured_piece_position, 
                  uint64_t castling_rook_position, int promotion_to_type, uint64_t en_passant_square) {
-    Move move;
-
-    // Quit Moves
-    move.moving_piece_type = moving_piece_type;
-    move.moving_piece_origin = moving_piece_origin;
-    move.moving_piece_destination = moving_piece_destination;
-
-    // Captures
-    move.captured_piece_type = captured_piece_type;
-    move.captured_piece_position = captured_piece_position;
-
-    // Castling
-    move.castling_rook_position = castling_rook_position;
-
-    // Pawn-Promotion
-    move.promotion_to_type = promotion_to_type; 
-
-    move.en_passant_square = en_passant_square;
-
-    return move;
+    
+    move->moving_piece_type = moving_piece_type;
+    move->moving_piece_origin = moving_piece_origin;
+    move->moving_piece_destination = moving_piece_destination;
+    move->captured_piece_type = captured_piece_type;
+    move->captured_piece_position = captured_piece_position;
+    move->castling_rook_position = castling_rook_position;
+    move->promotion_to_type = promotion_to_type;
+    move->en_passant_square = en_passant_square;
 }
 
 
 int is_legal_move(Board *board, Move move){
-    return (is_pseudo_legal_move(board, move) && !results_in_check(board, move));
+    return ( is_pseudo_legal_move(board, move) && !results_in_check(board, move));
 }
 
 int is_pseudo_legal_move(Board *board, Move move){
@@ -43,6 +33,9 @@ int is_pseudo_legal_move(Board *board, Move move){
     //          2) doesnt fit well into the structure of the code. 
     //                  It is called before applying a move and during move generation.
     //                  This causes the moves to be generated multiple times for little reason
+
+    if(board->current_Player != get_piece_color(board, move.moving_piece_origin)) return 0;
+
     Move* pseudo_legal_moves = malloc(sizeof(Move) * 200);
     int move_counter = generate_pseudolegal_moves_for_piece(board, move.moving_piece_origin, pseudo_legal_moves);
     for(int i = 0; i < move_counter; i++){

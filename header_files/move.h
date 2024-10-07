@@ -40,7 +40,7 @@ extern int get_piece_color(Board *board, uint64_t position);
 extern int get_current_player(Board *board); // this is needed for checking whose turn it is but it is convoluted
 extern int results_in_check(Board* board, Move move);
 
-Move create_move(int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
+void create_move(Move* move, int moving_piece_type, uint64_t moving_piece_origin, uint64_t moving_piece_destination, 
                  int captured_piece_type, uint64_t captured_piece_position, 
                  uint64_t castling_rook_position, int promotion_to_type, uint64_t en_passant_square);
 

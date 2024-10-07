@@ -247,19 +247,26 @@ Move get_move_from_user(Board* board){
     }
 
     uint64_t castling_rook = 0;
-    if(move_origin == get_bitmap_from_notation("e1") && move_destination == get_bitmap_from_notation("g1")){
-        castling_rook = get_bitmap_from_notation("h1");
-    }else if(move_origin == get_bitmap_from_notation("e1") && move_destination == get_bitmap_from_notation("c1")){
-        castling_rook = get_bitmap_from_notation("a1");
-    }else if(move_origin == get_bitmap_from_notation("e8") && move_destination == get_bitmap_from_notation("g8")){
-        castling_rook = get_bitmap_from_notation("h8");
-    }else if(move_origin == get_bitmap_from_notation("e8") && move_destination == get_bitmap_from_notation("c8")){
-        castling_rook = get_bitmap_from_notation("a8");
+    if(moving_piece_type == WHITE_KING || moving_piece_type == BLACK_KING){
+        if(move_origin == get_bitmap_from_notation("e1") && move_destination == get_bitmap_from_notation("g1")){
+            castling_rook = get_bitmap_from_notation("h1");
+        }else if(move_origin == get_bitmap_from_notation("e1") && move_destination == get_bitmap_from_notation("c1")){
+            castling_rook = get_bitmap_from_notation("a1");
+        }else if(move_origin == get_bitmap_from_notation("e8") && move_destination == get_bitmap_from_notation("g8")){
+            castling_rook = get_bitmap_from_notation("h8");
+        }else if(move_origin == get_bitmap_from_notation("e8") && move_destination == get_bitmap_from_notation("c8")){
+            castling_rook = get_bitmap_from_notation("a8");
+        }    
     }
+    
 
 
-    Move user_move = create_move(moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, castling_rook, piece_to_promote_to, en_passant_square); 
+    Move user_move;
+    create_move(&user_move, moving_piece_type, move_origin, move_destination, captured_piece_type, captured_piece_position, castling_rook, piece_to_promote_to, en_passant_square); 
 
+    //if( !(is_pseudo_legal_move(board, user_move) && !results_in_check(board, user_move))){
+    //    printf("This Move is not legal. Please enter a legal move\n   ");
+    //}
 
     free(origin);
     free(input);
