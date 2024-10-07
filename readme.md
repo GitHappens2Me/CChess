@@ -16,19 +16,25 @@ Welcome to the [CChess](https://github.com/GitHappens2Me/CChess) project! Here y
 - **FEN Parsing**: Initializes the board from a FEN string.
 
 
+
 ## Installation and Usage
 
-To build the project, you need to have a C compiler installed. Clone the repository and compile the source files using the following commands:
+To build the project, you need to have a C compiler installed. The following Examples assume gcc is installed. Clone the repository and compile the source files using the following commands:
 
 ```bash
 git clone https://github.com/GitHappens2Me/CChess.git
 cd CChess
 
-gcc -o CChess .\source_files\main.c .\source_files\board.c .\source_files\inout.c .\source_files\move.c .\source_files\notation.c .\source_files\engine.c
+
+# Compiling
+gcc -O3 -o CChess ./source_files/main.c ./source_files/board.c ./source_files/inout.c ./source_files/move.c ./source_files/notation.c ./source_files/engine.c
+
+# Running the Program
 ./CChess
 ```
 
-
+## Usage
+Running the program starts a game between You (White) and the Engine (Black). You will see a simple visualization of the current board position in the output. Enter a Move by specifying the Starting Square and the End Square [e.g. e2e4]
 
 ---
 
