@@ -42,10 +42,7 @@ Running the program starts a game between You (White) and the Engine (Black). Yo
 
 Please note that this project is still under development. Here are some planned features and improvements:
 
-- [ ] **Complete Move Generation**: Handle all special moves (castling, en passant, pawn promotion).
 - [ ] **Game Ending Detection**: Implement functions to detect all game-ending conditions. (Stalemate, 50 move Rule)
-- [ ] **Board Evaluation**: Implement the evaluation function for move selection.
-- [ ] **MiniMax Algorithm**: Implement the MiniMax Algorithm to select optimal Moves.
 - [ ] **Performance Optimization**: Optimize the code for faster move generation and board evaluation.
 - [ ] **Unit Tests**: Add comprehensive unit tests to ensure code quality and correctness.
 
